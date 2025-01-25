@@ -9,3 +9,5 @@ export const HTTP_STATUS_CODES = {
     TOO_MANY_REQUESTS: 429,
     SERVER_ERROR: 500,
 } as const;
+
+export const saltRounds = 10;

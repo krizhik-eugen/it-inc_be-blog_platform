@@ -9,6 +9,12 @@ import {
     Query,
 } from '@nestjs/common';
 import { HTTP_STATUS_CODES } from 'src/constants';
+import { PaginatedViewDto } from 'src/core/dto/base.paginated.view-dto';
+import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
+import { UsersService } from '../application/users.service';
+import { GetUsersQueryParams } from './dto/get-users-query-params.input-dto';
+import { UserViewDto } from './dto/users.view-dto';
+import { CreateUserInputDto } from './dto/users.input-dto';
 
 @Controller('users')
 export class UsersController {
@@ -18,18 +24,16 @@ export class UsersController {
     ) {}
 
     @Get()
-    getAllUsers(@Query() query: any) {
+    getAllUsers(
+        @Query() query: GetUsersQueryParams,
+    ): Promise<PaginatedViewDto<UserViewDto[]>> {
         return this.usersQueryRepository.getAllUsers(query);
     }
 
-    @Get(':id')
-    getUserById(@Param('id') id: string) {
-        return this.usersQueryRepository.getUserById(id);
-    }
-
     @Post()
-    createUser(@Body() body: any) {
-        this.usersService.createUser(body);
+    async createUser(@Body() body: CreateUserInputDto) {
+        const newUserId = await this.usersService.createUser(body);
+        return this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
     }
 
     @Delete(':id')
