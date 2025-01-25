@@ -11,7 +11,7 @@ export class TestingController {
 
     @Delete('all-data')
     @HttpCode(HttpStatus.NO_CONTENT)
-    deleteAll() {
-        this.UserModel.deleteMany({});
+    async deleteAll() {
+        await this.UserModel.deleteMany({});
     }
 }
