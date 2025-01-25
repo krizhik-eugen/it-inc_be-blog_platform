@@ -10,9 +10,8 @@ import { AppService } from './app.service';
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        // MongooseModule.forRoot(`${mongoDBUrl}/${mongoDBName}`),
         MongooseModule.forRoot(
-            `${process.env.MONGO_URL}/${process.env.MONGO_NAME}`, //TODO: move to app config
+            process.env.MONGO_URL ?? 'mongodb://localhost:27017', //TODO: move to app config
         ),
         AccountsModule,
         PlatformModule,
