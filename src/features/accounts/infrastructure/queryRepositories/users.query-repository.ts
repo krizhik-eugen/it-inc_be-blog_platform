@@ -28,7 +28,7 @@ export class UsersQueryRepository {
     async getAllUsers(
         query: GetUsersQueryParams,
     ): Promise<PaginatedViewDto<UserViewDto[]>> {
-        const findQuery: FilterQuery<User> = {};
+        const findQuery: FilterQuery<User> = { deletedAt: null };
         const searchConditions: FilterQuery<User>[] = [];
 
         if (query.searchLoginTerm) {
@@ -50,6 +50,8 @@ export class UsersQueryRepository {
         if (searchConditions.length) {
             findQuery.$or = searchConditions;
         }
+
+        console.log('query', query.sortBy);
 
         const result = await this.UserModel.find(findQuery)
             .sort({ [query.sortBy]: query.sortDirection })

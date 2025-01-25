@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { port } from './app-settings';
 
 async function bootstrap() {
+    const port = process.env.PORT ?? 3000; //TODO: move to app config
     const app = await NestFactory.create(AppModule);
     app.enableCors();
     await app.listen(port);
