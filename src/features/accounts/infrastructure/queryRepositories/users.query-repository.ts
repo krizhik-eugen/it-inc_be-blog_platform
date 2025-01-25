@@ -51,8 +51,6 @@ export class UsersQueryRepository {
             findQuery.$or = searchConditions;
         }
 
-        console.log('query', query.sortBy);
-
         const result = await this.UserModel.find(findQuery)
             .sort({ [query.sortBy]: query.sortDirection })
             .skip(query.calculateSkip())
