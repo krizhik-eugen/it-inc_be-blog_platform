@@ -1,4 +1,3 @@
-//базовый класс view модели для запросов за списком с пагинацией
 export abstract class PaginatedViewDto<T> {
     abstract items: T;
     totalCount: number;

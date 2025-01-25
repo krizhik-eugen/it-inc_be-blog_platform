@@ -8,8 +8,8 @@ import {
     Post,
     Query,
 } from '@nestjs/common';
-import { HTTP_STATUS_CODES } from 'src/constants';
-import { PaginatedViewDto } from 'src/core/dto/base.paginated.view-dto';
+import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
+import { HTTP_STATUS_CODES } from '../../../constants';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { UsersService } from '../application/users.service';
 import { GetUsersQueryParams } from './dto/get-users-query-params.input-dto';
