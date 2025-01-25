@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from './core/core.module';
 import { AccountsModule } from './features/accounts/accounts.module';
 import { PlatformModule } from './features/platform/platform.module';
+import { TestingModule } from './features/testing/testing.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -14,6 +15,7 @@ import { AppService } from './app.service';
             process.env.MONGO_URL ?? 'mongodb://localhost:27017', //TODO: move to app config
         ),
         AccountsModule,
+        TestingModule,
         PlatformModule,
         CoreModule,
     ],
