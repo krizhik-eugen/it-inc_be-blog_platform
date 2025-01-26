@@ -11,9 +11,12 @@ import {
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { UsersService } from '../application/users.service';
-import { GetUsersQueryParams } from './dto/get-users-query-params.input-dto';
-import { PaginatedUsersViewDto, UserViewDto } from './dto/users.view-dto';
-import { CreateUserInputDto } from './dto/users.input-dto';
+import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
+import {
+    PaginatedUsersViewDto,
+    UserViewDto,
+} from './dto/view-dto/users.view-dto';
+import { CreateUserInputDto } from './dto/input-dto/users.input-dto';
 import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
@@ -29,10 +32,10 @@ export class UsersController {
         description: 'Success',
         type: PaginatedUsersViewDto,
     })
-    getAllUsers(
+    async getAllUsers(
         @Query() query: GetUsersQueryParams,
     ): Promise<PaginatedUsersViewDto> {
-        return this.usersQueryRepository.getAllUsers(query);
+        return await this.usersQueryRepository.getAllUsers(query);
     }
 
     @Post()
@@ -47,7 +50,7 @@ export class UsersController {
     })
     async createUser(@Body() body: CreateUserInputDto) {
         const newUserId = await this.usersService.createUser(body);
-        return this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
+        return await this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
     }
 
     @ApiParam({
@@ -64,7 +67,7 @@ export class UsersController {
         description: 'If specified user does not exist',
     })
     @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
-    deleteUser(@Param('id') id: string) {
-        return this.usersService.deleteUser(id);
+    async deleteUser(@Param('id') id: string) {
+        return await this.usersService.deleteUser(id);
     }
 }

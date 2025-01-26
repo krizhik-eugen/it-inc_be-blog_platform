@@ -6,6 +6,7 @@ class PaginationParams {
     @ApiPropertyOptional({
         type: Number,
         example: 1,
+        default: 1,
         description: 'pageNumber is number of portion that should be returned',
     })
     @Type(() => Number)
@@ -16,6 +17,7 @@ class PaginationParams {
     @ApiPropertyOptional({
         type: Number,
         example: 10,
+        default: 10,
         description: 'pageSize is portion size that should be returned',
     })
     @Type(() => Number)

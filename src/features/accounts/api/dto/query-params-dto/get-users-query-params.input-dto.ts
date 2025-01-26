@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { BaseSortablePaginationParams } from '../../../../core/dto/base.query-params.input-dto';
+import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
 
 enum UsersSortBy {
     CreatedAt = 'createdAt',
@@ -11,6 +11,7 @@ export class GetUsersQueryParams extends BaseSortablePaginationParams<UsersSortB
     @ApiPropertyOptional({
         type: String,
         example: UsersSortBy.CreatedAt,
+        default: UsersSortBy.CreatedAt,
     })
     sortBy = UsersSortBy.CreatedAt;
 

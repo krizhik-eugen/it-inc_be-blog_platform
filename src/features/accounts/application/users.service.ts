@@ -2,8 +2,8 @@ import bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserModelType } from '../domain/user.entity';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UsersRepository } from '../infrastructure/users.repository';
+import { CreateUserDto } from '../dto/create/create-user.dto';
+import { UsersRepository } from '../infrastructure/repositories/users.repository';
 import { saltRounds } from '../../../constants';
 
 @Injectable()

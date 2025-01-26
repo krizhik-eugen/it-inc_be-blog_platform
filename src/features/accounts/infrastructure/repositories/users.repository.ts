@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserModelType } from '../domain/user.entity';
+import { User, UserDocument, UserModelType } from '../../domain/user.entity';
 
 export class UsersRepository {
     constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
@@ -13,7 +13,7 @@ export class UsersRepository {
     }
 
     async save(user: UserDocument) {
-        await user.save();
+        return await user.save();
     }
 
     async findOrNotFoundFail(id: string): Promise<UserDocument> {

@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateUserDto } from '../../dto/create-user.dto';
+import { CreateUserDto } from '../../../dto/create/create-user.dto';
 import {
     userEmailValidation,
     userLoginValidation,
-} from '../../domain/validation-rules';
+} from '../../../domain/validation-rules';
 
 export class CreateUserInputDto implements CreateUserDto {
     @ApiProperty({

@@ -2,8 +2,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
-import { UserViewDto } from '../../api/dto/users.view-dto';
-import { GetUsersQueryParams } from '../../api/dto/get-users-query-params.input-dto';
+import { UserViewDto } from '../../api/dto/view-dto/users.view-dto';
+import { GetUsersQueryParams } from '../../api/dto/query-params-dto/get-users-query-params.input-dto';
 import { User, UserModelType } from '../../domain/user.entity';
 
 export class UsersQueryRepository {
@@ -44,10 +44,6 @@ export class UsersQueryRepository {
         }
 
         if (searchConditions.length > 0) {
-            findQuery.$or = searchConditions;
-        }
-
-        if (searchConditions.length) {
             findQuery.$or = searchConditions;
         }
 
