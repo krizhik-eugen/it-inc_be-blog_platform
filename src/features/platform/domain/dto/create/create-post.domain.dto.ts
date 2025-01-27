@@ -1,9 +1,7 @@
-export class CreateBlogPostDto {
+export class CreatePostDomainDto {
     title: string;
     shortDescription: string;
     content: string;
-}
-
-export class CreatePostDto extends CreateBlogPostDto {
     blogId: string;
+    blogName: string;
 }

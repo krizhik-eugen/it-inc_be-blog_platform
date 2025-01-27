@@ -5,12 +5,16 @@ import { BlogsService } from './application/blogs.service';
 import { BlogsQueryRepository } from './infrastructure/queryRepositories/blogs.query-repository';
 import { BlogsRepository } from './infrastructure/repositories/blogs.repository';
 import { BlogsController } from './api/blogs.controller';
+import { PostsService } from './application/posts.service';
+import { Post, PostSchema } from './domain/post.entity';
+import { PostsRepository } from './infrastructure/repositories/posts.repository';
+import { PostsQueryRepository } from './infrastructure/queryRepositories/posts.query-repository';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: Blog.name, schema: BlogSchema },
-            // { name: Post.name, schema: PostSchema },
+            { name: Post.name, schema: PostSchema },
             // { name: Comment.name, schema: CommentSchema },
         ]),
     ],
@@ -19,9 +23,9 @@ import { BlogsController } from './api/blogs.controller';
         BlogsService,
         BlogsRepository,
         BlogsQueryRepository,
-        // PostsService,
-        // PostsRepository,
-        // PostsQueryRepository,
+        PostsService,
+        PostsRepository,
+        PostsQueryRepository,
         // CommentsQueryRepository,
     ],
     exports: [MongooseModule],

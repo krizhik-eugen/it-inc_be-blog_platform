@@ -18,6 +18,7 @@ export class PostsQueryRepository {
 
     async getByIdOrNotFoundFail(
         id: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<PostViewDto> {
         const post = await this.PostModel.findOne({
@@ -35,6 +36,7 @@ export class PostsQueryRepository {
 
     async getAllPosts(
         query: GetPostsQueryParams,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<PaginatedViewDto<PostViewDto[]>> {
         const findQuery: FilterQuery<Post> = { deletedAt: null };
@@ -62,6 +64,7 @@ export class PostsQueryRepository {
     async getAllBlogPosts(
         query: GetPostsQueryParams,
         blogId: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<PaginatedViewDto<PostViewDto[]>> {
         const blog = await this.BlogModel.findOne({

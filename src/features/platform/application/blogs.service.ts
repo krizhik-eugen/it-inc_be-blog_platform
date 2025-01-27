@@ -14,11 +14,7 @@ export class BlogsService {
     ) {}
 
     async createBlog(dto: CreateBlogDto): Promise<string> {
-        const blog = this.BlogModel.createInstance({
-            name: dto.name,
-            description: dto.description,
-            websiteUrl: dto.websiteUrl,
-        });
+        const blog = this.BlogModel.createInstance(dto);
 
         await this.blogsRepository.save(blog);
 
@@ -26,13 +22,11 @@ export class BlogsService {
     }
 
     async updateBlog(id: string, dto: UpdateBlogDto) {
-        console.log('dto', dto);
-
         const blog =
             await this.blogsRepository.findNonDeletedOrNotFoundFail(id);
 
         blog.update(dto);
-        await this.blogsRepository.save(blog);
+        return await this.blogsRepository.save(blog);
     }
 
     async deleteBlog(id: string) {

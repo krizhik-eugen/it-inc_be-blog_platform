@@ -20,12 +20,25 @@ import {
 import { CreateBlogInputDto } from './dto/input-dto/create/blogs.input-dto';
 import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UpdateBlogInputDto } from './dto/input-dto/update/blogs.input-dto';
+import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
+import {
+    PaginatedPostsViewDto,
+    PostViewDto,
+} from './dto/view-dto/posts.view-dto';
+import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
+import {
+    CreateBlogPostInputDto,
+    CreatePostInputDto,
+} from './dto/input-dto/create/posts.input-dto';
+import { PostsService } from '../application/posts.service';
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
-        private blogsQueryRepository: BlogsQueryRepository,
         private blogsService: BlogsService,
+        private blogsQueryRepository: BlogsQueryRepository,
+        private postsService: PostsService,
+        private postsQueryRepository: PostsQueryRepository,
     ) {}
 
     @Get()
@@ -96,6 +109,56 @@ export class BlogsController {
         @Body() body: UpdateBlogInputDto,
     ) {
         return await this.blogsService.updateBlog(id, body);
+    }
+
+    @Get(':id/posts')
+    @ApiParam({
+        name: 'id',
+        description: 'Blog id',
+    })
+    @ApiResponse({
+        status: HTTP_STATUS_CODES.OK,
+        description: 'Success',
+        type: PaginatedBlogsViewDto,
+    })
+    @ApiResponse({
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        description: 'Not found',
+    })
+    async getAllBlogPosts(
+        @Param('id') id: string,
+        @Query() query: GetPostsQueryParams,
+    ): Promise<PaginatedPostsViewDto> {
+        return await this.postsQueryRepository.getAllBlogPosts(query, id, null);
+    }
+
+    @Post(':id')
+    @ApiParam({
+        name: 'id',
+        description: 'Blog id',
+    })
+    @ApiBody({
+        type: CreatePostInputDto,
+        description: 'Data for constructing new Post entity',
+    })
+    @ApiResponse({
+        status: HTTP_STATUS_CODES.CREATED,
+        description: 'Returns the newly created post',
+        type: PostViewDto,
+    })
+    async createBlogPost(
+        @Param('id') id: string,
+        @Body() body: CreateBlogPostInputDto,
+    ) {
+        const newPostId = await this.postsService.createPost({
+            ...body,
+            blogId: id,
+        });
+
+        return await this.postsQueryRepository.getByIdOrNotFoundFail(
+            newPostId,
+            null,
+        );
     }
 
     @Delete(':id')

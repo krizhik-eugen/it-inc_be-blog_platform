@@ -8,4 +8,4 @@ export type NewestLikes = {
     addedAt: string;
     userId: string;
     login: string;
-}[]
+}[];

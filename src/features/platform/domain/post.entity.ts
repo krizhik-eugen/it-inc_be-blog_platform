@@ -1,8 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
+import { postValidationRules } from './validation-rules';
 import { CreatePostDomainDto } from './dto/create/create-post.domain.dto';
 import { UpdatePostDomainDto } from './dto/update/update-post.domain.dto';
-import { postValidationRules } from './validation-rules';
 
 /**
  * Post Entity Schema
@@ -110,15 +110,17 @@ export class Post {
 
     /**
      * Factory method to create a Post instance
-     * @param {CreatePostDto} dto - The data transfer object for post creation
+     * @param {CreateBlogPostDto} dto - The data transfer object for post creation
      * @returns {PostDocument} The created post document
      */
     static createInstance(dto: CreatePostDomainDto): PostDocument {
         const post = new this();
 
-        post.name = dto.name;
-        post.description = dto.description;
-        post.websiteUrl = dto.websiteUrl;
+        post.title = dto.title;
+        post.shortDescription = dto.shortDescription;
+        post.content = dto.content;
+        post.blogId = dto.blogId;
+        post.blogName = dto.blogName;
 
         return post as PostDocument;
     }
@@ -128,14 +130,14 @@ export class Post {
      * @param {UpdatePostDto} dto - The data transfer object for post creation
      */
     update(dto: UpdatePostDomainDto) {
-        if (dto.name) {
-            this.name = dto.name;
+        if (dto.title) {
+            this.title = dto.title;
         }
-        if (dto.description) {
-            this.description = dto.description;
+        if (dto.shortDescription) {
+            this.shortDescription = dto.shortDescription;
         }
-        if (dto.websiteUrl) {
-            this.websiteUrl = dto.websiteUrl;
+        if (dto.content) {
+            this.content = dto.content;
         }
     }
 

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ApiResponse } from '@nestjs/swagger';
 import { User, UserModelType } from '../accounts/domain/user.entity';
 import { Blog, BlogModelType } from '../platform/domain/blog.entity';
+import { Post, PostModelType } from '../platform/domain/post.entity';
 
 @Controller('testing')
 export class TestingController {
@@ -11,6 +12,8 @@ export class TestingController {
         private UserModel: UserModelType,
         @InjectModel(Blog.name)
         private BlogModel: BlogModelType,
+        @InjectModel(Post.name)
+        private PostModel: PostModelType,
     ) {}
 
     @Delete('all-data')
@@ -22,5 +25,6 @@ export class TestingController {
     async deleteAll() {
         await this.UserModel.deleteMany({});
         await this.BlogModel.deleteMany({});
+        await this.PostModel.deleteMany({});
     }
 }
