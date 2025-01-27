@@ -132,7 +132,7 @@ export class BlogsController {
         return await this.postsQueryRepository.getAllBlogPosts(query, id, null);
     }
 
-    @Post(':id')
+    @Post(':id/posts')
     @ApiParam({
         name: 'id',
         description: 'Blog id',

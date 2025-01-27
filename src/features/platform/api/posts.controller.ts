@@ -28,7 +28,7 @@ export class PostsController {
         private postsService: PostsService,
     ) {}
 
-    @Get(':id')
+    @Get()
     @ApiParam({
         name: 'id',
         description: 'Blog id',
@@ -39,10 +39,9 @@ export class PostsController {
         type: PaginatedPostsViewDto,
     })
     async getAllPosts(
-        @Param('id') id: string,
         @Query() query: GetPostsQueryParams,
     ): Promise<PaginatedPostsViewDto> {
-        return await this.postsQueryRepository.getAllPosts(query, id);
+        return await this.postsQueryRepository.getAllPosts(query, null);
     }
 
     @Post()
