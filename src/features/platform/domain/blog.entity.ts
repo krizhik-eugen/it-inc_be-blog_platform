@@ -2,11 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDomainDto } from './dto/create/create-blog.domain.dto';
 import { UpdateBlogDomainDto } from './dto/update/update-blog.domain.dto';
-import {
-    blogDescriptionValidation,
-    blogNameValidation,
-    blogWebsiteUrlValidation,
-} from './validation-rules';
+import { blogValidationRules } from './validation-rules';
 
 /**
  * Blog Entity Schema
@@ -22,19 +18,19 @@ export class Blog {
     @Prop({
         type: String,
         required: true,
-        maxlength: blogNameValidation.maxLength,
+        maxlength: blogValidationRules.name.maxLength,
     })
     name: string;
 
     /**
-     * Description hash for authentication
+     * Description of the blog
      * @type {string}
      * @required
      */
     @Prop({
         type: String,
         required: true,
-        maxlength: blogDescriptionValidation.maxLength,
+        maxlength: blogValidationRules.description.maxLength,
     })
     description: string;
 
@@ -46,11 +42,11 @@ export class Blog {
     @Prop({
         type: String,
         required: true,
-        maxlength: blogWebsiteUrlValidation.maxLength,
+        maxlength: blogValidationRules.websiteUrl.maxLength,
         validate: {
             validator: (value: string) =>
-                blogWebsiteUrlValidation.pattern.test(value),
-            message: blogWebsiteUrlValidation.errorMessagePattern,
+                blogValidationRules.websiteUrl.pattern.test(value),
+            message: blogValidationRules.websiteUrl.errorMessagePattern,
         },
     })
     websiteUrl: string;

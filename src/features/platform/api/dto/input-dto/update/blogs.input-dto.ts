@@ -1,22 +1,20 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { UpdateBlogDto } from '../../../../dto/update/update-blog.dto';
-import {
-    blogDescriptionValidation,
-    blogNameValidation,
-    blogWebsiteUrlValidation,
-} from '../../../../domain/validation-rules';
+import { blogValidationRules } from '../../../../domain/validation-rules';
 
 export class UpdateBlogInputDto implements UpdateBlogDto {
     @ApiPropertyOptional({
-        maxLength: blogNameValidation.maxLength,
+        maxLength: blogValidationRules.name.maxLength,
     })
     name: string;
 
-    @ApiPropertyOptional({ maxLength: blogDescriptionValidation.maxLength })
+    @ApiPropertyOptional({
+        maxLength: blogValidationRules.description.maxLength,
+    })
     description: string;
 
     @ApiPropertyOptional({
-        pattern: String(blogWebsiteUrlValidation.pattern),
+        pattern: String(blogValidationRules.websiteUrl.pattern),
         example: 'https://example.com',
     })
     websiteUrl: string;
