@@ -102,6 +102,7 @@ export class PostsController {
         status: HTTP_STATUS_CODES.NOT_FOUND,
         description: 'Not found',
     })
+    @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
     async updatePost(
         @Param('id') id: string,
         @Body() body: UpdatePostInputDto,

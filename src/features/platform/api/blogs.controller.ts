@@ -104,6 +104,7 @@ export class BlogsController {
         status: HTTP_STATUS_CODES.NOT_FOUND,
         description: 'Not found',
     })
+    @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
     async updateBlog(
         @Param('id') id: string,
         @Body() body: UpdateBlogInputDto,
