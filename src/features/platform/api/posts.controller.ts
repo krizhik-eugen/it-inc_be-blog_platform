@@ -20,12 +20,16 @@ import {
 import { CreatePostInputDto } from './dto/input-dto/create/posts.input-dto';
 import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UpdatePostInputDto } from './dto/input-dto/update/posts.input-dto';
+import { PaginatedCommentsViewDto } from './dto/view-dto/comments.view-dto';
+import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
+import { GetCommentsQueryParams } from './dto/query-params-dto/get-comments-query-params.input-dto';
 
 @Controller('posts')
 export class PostsController {
     constructor(
         private postsQueryRepository: PostsQueryRepository,
         private postsService: PostsService,
+        private commentsQueryRepository: CommentsQueryRepository,
     ) {}
 
     @Get()
@@ -103,6 +107,31 @@ export class PostsController {
         @Body() body: UpdatePostInputDto,
     ) {
         return await this.postsService.updatePost(id, body);
+    }
+
+    @Get(':id/comments')
+    @ApiParam({
+        name: 'id',
+        description: 'Post id',
+    })
+    @ApiResponse({
+        status: HTTP_STATUS_CODES.OK,
+        description: 'Success',
+        type: PaginatedCommentsViewDto,
+    })
+    @ApiResponse({
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        description: 'Not found',
+    })
+    async getAllPostComments(
+        @Param('id') id: string,
+        @Query() query: GetCommentsQueryParams,
+    ): Promise<PaginatedCommentsViewDto> {
+        return await this.commentsQueryRepository.getAllPostComments(
+            query,
+            id,
+            null,
+        );
     }
 
     //TODO: implement update like status

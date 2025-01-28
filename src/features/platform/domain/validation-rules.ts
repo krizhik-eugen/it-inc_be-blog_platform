@@ -24,3 +24,12 @@ export const postValidationRules = {
         maxLength: 1000,
     },
 };
+
+export const commentValidationRules = {
+    content: {
+        minLength: 20,
+        maxLength: 300,
+        errorMessageMinLength:
+            'Comment content must be between 20 and 300 characters',
+    },
+};

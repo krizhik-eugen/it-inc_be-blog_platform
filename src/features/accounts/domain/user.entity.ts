@@ -24,7 +24,7 @@ export class User {
             validator: (value: string) =>
                 userLoginValidation.pattern.test(value),
             message: userLoginValidation.errorMessagePattern,
-        },
+        }
     })
     login: string;
 

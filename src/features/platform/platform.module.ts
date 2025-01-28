@@ -10,13 +10,15 @@ import { Post, PostSchema } from './domain/post.entity';
 import { PostsRepository } from './infrastructure/repositories/posts.repository';
 import { PostsQueryRepository } from './infrastructure/queryRepositories/posts.query-repository';
 import { PostsController } from './api/posts.controller';
+import { CommentsQueryRepository } from './infrastructure/queryRepositories/comments.query-repository';
+import { CommentSchema } from './domain/comment.entity';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: Blog.name, schema: BlogSchema },
             { name: Post.name, schema: PostSchema },
-            // { name: Comment.name, schema: CommentSchema },
+            { name: Comment.name, schema: CommentSchema },
         ]),
     ],
     controllers: [BlogsController, PostsController],
@@ -27,7 +29,7 @@ import { PostsController } from './api/posts.controller';
         PostsService,
         PostsRepository,
         PostsQueryRepository,
-        // CommentsQueryRepository,
+        CommentsQueryRepository,
     ],
     exports: [MongooseModule],
 })
