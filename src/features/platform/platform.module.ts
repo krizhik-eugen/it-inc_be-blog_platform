@@ -11,7 +11,7 @@ import { PostsRepository } from './infrastructure/repositories/posts.repository'
 import { PostsQueryRepository } from './infrastructure/queryRepositories/posts.query-repository';
 import { PostsController } from './api/posts.controller';
 import { CommentsQueryRepository } from './infrastructure/queryRepositories/comments.query-repository';
-import { CommentSchema } from './domain/comment.entity';
+import { Comment, CommentSchema } from './domain/comment.entity';
 
 @Module({
     imports: [
