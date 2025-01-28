@@ -14,8 +14,8 @@ export class UpdateBlogInputDto implements UpdateBlogDto {
     description: string;
 
     @ApiPropertyOptional({
+        maxLength: blogValidationRules.websiteUrl.maxLength,
         pattern: String(blogValidationRules.websiteUrl.pattern),
-        example: 'https://example.com',
     })
     websiteUrl: string;
 }

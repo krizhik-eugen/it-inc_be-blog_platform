@@ -2,16 +2,18 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { HTTP_STATUS_CODES } from '../../../constants';
 import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
 import { CommentViewDto } from './dto/view-dto/comments.view-dto';
-import { ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('comments')
 export class CommentsController {
     constructor(private commentsQueryRepository: CommentsQueryRepository) {}
 
     @Get(':id')
+    @ApiOperation({
+        summary: 'Returns comment by id',
+    })
     @ApiParam({
         name: 'id',
-        description: 'Comment id',
     })
     @ApiResponse({
         status: HTTP_STATUS_CODES.OK,

@@ -17,7 +17,7 @@ import {
     UserViewDto,
 } from './dto/view-dto/users.view-dto';
 import { CreateUserInputDto } from './dto/input-dto/users.input-dto';
-import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -27,6 +27,9 @@ export class UsersController {
     ) {}
 
     @Get()
+    @ApiOperation({
+        summary: 'Returns all users',
+    })
     @ApiResponse({
         status: HTTP_STATUS_CODES.OK,
         description: 'Success',
@@ -39,6 +42,9 @@ export class UsersController {
     }
 
     @Post()
+    @ApiOperation({
+        summary: 'Adds new user to the system',
+    })
     @ApiBody({
         type: CreateUserInputDto,
         description: 'Data for constructing new user',
@@ -55,7 +61,9 @@ export class UsersController {
 
     @ApiParam({
         name: 'id',
-        description: 'User id',
+    })
+    @ApiOperation({
+        summary: 'Deletes user by id',
     })
     @Delete(':id')
     @ApiResponse({

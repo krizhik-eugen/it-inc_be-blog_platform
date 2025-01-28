@@ -18,7 +18,38 @@ export class PostViewDto {
     blogId: string;
     @ApiProperty()
     blogName: string;
-    @ApiProperty()
+    @ApiProperty({
+        type: 'object',
+        properties: {
+            likesCount: {
+                type: 'number',
+            },
+            dislikesCount: {
+                type: 'number',
+            },
+            myStatus: {
+                type: 'string',
+                default: LikeStatus.None,
+            },
+            newestLikes: {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        addedAt: {
+                            type: 'string',
+                        },
+                        userId: {
+                            type: 'string',
+                        },
+                        login: {
+                            type: 'string',
+                        },
+                    },
+                },
+            },
+        },
+    })
     extendedLikesInfo: {
         likesCount: number;
         dislikesCount: number;

@@ -1,6 +1,6 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User, UserModelType } from '../accounts/domain/user.entity';
 import { Blog, BlogModelType } from '../platform/domain/blog.entity';
 import { Post, PostModelType } from '../platform/domain/post.entity';
@@ -17,6 +17,10 @@ export class TestingController {
     ) {}
 
     @Delete('all-data')
+    @ApiOperation({
+        summary:
+            'Clears database: deletes all data from all tables/collections',
+    })
     @ApiResponse({
         status: HttpStatus.NO_CONTENT,
         description: 'All data is deleted',

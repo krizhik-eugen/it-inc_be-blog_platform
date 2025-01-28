@@ -8,14 +8,38 @@ export class CommentViewDto {
     id: string;
     @ApiProperty()
     content: string;
-    @ApiProperty()
+    @ApiProperty({
+        type: 'object',
+        properties: {
+            userId: {
+                type: 'string',
+            },
+            userLogin: {
+                type: 'string',
+            },
+        },
+    })
     commentatorInfo: {
         userId: string;
         userLogin: string;
     };
     @ApiProperty()
     createdAt: string;
-    @ApiProperty()
+    @ApiProperty({
+        type: 'object',
+        properties: {
+            likesCount: {
+                type: 'number',
+            },
+            dislikesCount: {
+                type: 'number',
+            },
+            myStatus: {
+                type: 'string',
+                default: LikeStatus.None,
+            },
+        },
+    })
     likesInfo: {
         likesCount: number;
         dislikesCount: number;
