@@ -33,10 +33,6 @@ export class PostsController {
     ) {}
 
     @Get()
-    @ApiParam({
-        name: 'id',
-        description: 'Blog id',
-    })
     @ApiResponse({
         status: HTTP_STATUS_CODES.OK,
         description: 'Success',
