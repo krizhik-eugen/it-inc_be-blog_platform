@@ -1,4 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { NotFoundException } from '@nestjs/common';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateUserDomainDto } from './dto/create/create-user.domain.dto';
 import { userEmailValidation, userLoginValidation } from './validation-rules';
@@ -24,7 +25,7 @@ export class User {
             validator: (value: string) =>
                 userLoginValidation.pattern.test(value),
             message: userLoginValidation.errorMessagePattern,
-        }
+        },
     })
     login: string;
 
@@ -91,7 +92,7 @@ export class User {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new Error('Entity already deleted');
+            throw new NotFoundException('Entity already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }

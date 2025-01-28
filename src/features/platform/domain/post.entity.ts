@@ -1,4 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { NotFoundException } from '@nestjs/common';
 import { HydratedDocument, Model } from 'mongoose';
 import { postValidationRules } from './validation-rules';
 import { CreatePostDomainDto } from './dto/create/create-post.domain.dto';
@@ -148,7 +149,7 @@ export class Post {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new Error('Entity already deleted');
+            throw new NotFoundException('Entity already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }
