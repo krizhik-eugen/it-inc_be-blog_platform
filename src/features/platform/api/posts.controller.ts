@@ -4,12 +4,13 @@ import {
     Delete,
     Get,
     HttpCode,
+    HttpStatus,
     Param,
     Post,
     Put,
     Query,
 } from '@nestjs/common';
-import { HTTP_STATUS_CODES } from '../../../constants';
+
 import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
 import { PostsService } from '../application/posts.service';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
@@ -40,12 +41,12 @@ export class PostsController {
         name: 'postId',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: PaginatedCommentsViewDto,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'If specified post not found',
     })
     async getAllPostComments(
@@ -64,7 +65,7 @@ export class PostsController {
         summary: 'Returns all posts',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: PaginatedPostsViewDto,
     })
@@ -83,7 +84,7 @@ export class PostsController {
         description: 'Data for constructing new Post entity',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.CREATED,
+        status: HttpStatus.CREATED,
         description: 'Returns the newly created post',
         type: PostViewDto,
     })
@@ -103,12 +104,12 @@ export class PostsController {
         name: 'id',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: PostViewDto,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
     async getPost(@Param('id') id: string) {
@@ -128,14 +129,14 @@ export class PostsController {
         required: false,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NO_CONTENT,
+        status: HttpStatus.NO_CONTENT,
         description: 'No content',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
-    @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(
         @Param('id') id: string,
         @Body() body: UpdatePostInputDto,
@@ -154,14 +155,14 @@ export class PostsController {
         description: 'Post id',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NO_CONTENT,
+        status: HttpStatus.NO_CONTENT,
         description: 'No content',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
-    @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async deletePost(@Param('id') id: string) {
         return await this.postsService.deletePost(id);
     }

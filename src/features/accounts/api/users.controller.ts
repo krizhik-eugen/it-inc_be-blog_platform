@@ -4,11 +4,11 @@ import {
     Delete,
     Get,
     HttpCode,
+    HttpStatus,
     Param,
     Post,
     Query,
 } from '@nestjs/common';
-import { HTTP_STATUS_CODES } from '../../../constants';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { UsersService } from '../application/users.service';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
@@ -31,7 +31,7 @@ export class UsersController {
         summary: 'Returns all users',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: PaginatedUsersViewDto,
     })
@@ -50,7 +50,7 @@ export class UsersController {
         description: 'Data for constructing new user',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.CREATED,
+        status: HttpStatus.CREATED,
         description: 'Returns the newly created user',
         type: UserViewDto,
     })
@@ -67,14 +67,14 @@ export class UsersController {
     })
     @Delete(':id')
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NO_CONTENT,
+        status: HttpStatus.NO_CONTENT,
         description: 'No content',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'If specified user does not exist',
     })
-    @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async deleteUser(@Param('id') id: string) {
         return await this.usersService.deleteUser(id);
     }

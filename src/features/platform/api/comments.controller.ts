@@ -1,5 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { HTTP_STATUS_CODES } from '../../../constants';
+import { Controller, Get, HttpStatus, Param } from '@nestjs/common';
 import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
 import { CommentViewDto } from './dto/view-dto/comments.view-dto';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
@@ -16,12 +15,12 @@ export class CommentsController {
         name: 'id',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: CommentViewDto,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
     async getComment(@Param('id') id: string) {

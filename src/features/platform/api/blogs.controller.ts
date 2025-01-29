@@ -4,12 +4,12 @@ import {
     Delete,
     Get,
     HttpCode,
+    HttpStatus,
     Param,
     Post,
     Put,
     Query,
 } from '@nestjs/common';
-import { HTTP_STATUS_CODES } from '../../../constants';
 import { BlogsQueryRepository } from '../infrastructure/queryRepositories/blogs.query-repository';
 import { BlogsService } from '../application/blogs.service';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
@@ -46,7 +46,7 @@ export class BlogsController {
         summary: 'Returns blogs with pagination',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: PaginatedBlogsViewDto,
     })
@@ -65,7 +65,7 @@ export class BlogsController {
         description: 'Data for constructing new Blog entity',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.CREATED,
+        status: HttpStatus.CREATED,
         description: 'Returns a newly created blog',
         type: BlogViewDto,
     })
@@ -82,12 +82,12 @@ export class BlogsController {
         name: 'blogId',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: PaginatedPostsViewDto,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'If specified blog does not exist',
     })
     async getAllBlogPosts(
@@ -113,12 +113,12 @@ export class BlogsController {
         description: 'Data for constructing new Post entity',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.CREATED,
+        status: HttpStatus.CREATED,
         description: 'Returns a newly created post',
         type: PostViewDto,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'If specified blog does not exist',
     })
     async createBlogPost(
@@ -144,12 +144,12 @@ export class BlogsController {
         name: 'id',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.OK,
+        status: HttpStatus.OK,
         description: 'Success',
         type: BlogViewDto,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
     async getBlog(@Param('id') id: string) {
@@ -169,14 +169,14 @@ export class BlogsController {
         required: false,
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NO_CONTENT,
+        status: HttpStatus.NO_CONTENT,
         description: 'No content',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
-    @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async updateBlog(
         @Param('id') id: string,
         @Body() body: UpdateBlogInputDto,
@@ -192,14 +192,14 @@ export class BlogsController {
         name: 'id',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NO_CONTENT,
+        status: HttpStatus.NO_CONTENT,
         description: 'No content',
     })
     @ApiResponse({
-        status: HTTP_STATUS_CODES.NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
         description: 'Not found',
     })
-    @HttpCode(HTTP_STATUS_CODES.NO_CONTENT)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async deleteBlog(@Param('id') id: string) {
         return await this.blogsService.deleteBlog(id);
     }
