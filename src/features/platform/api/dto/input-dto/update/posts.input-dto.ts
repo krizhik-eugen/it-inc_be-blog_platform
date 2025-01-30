@@ -15,15 +15,15 @@ export class UpdatePostInputDto implements UpdatePostDto {
     @ApiPropertyOptional({
         maxLength: postValidationRules.shortDescription.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.shortDescription.maxLength)
-    @IsOptional()
+    // @IsStringWithTrim(1, postValidationRules.shortDescription.maxLength)
+    // @IsOptional()
     shortDescription: string;
 
     @ApiPropertyOptional({
         maxLength: postValidationRules.content.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.content.maxLength)
-    @IsOptional()
+    // @IsStringWithTrim(1, postValidationRules.content.maxLength)
+    // @IsOptional()
     content: string;
 
     @ApiPropertyOptional()
