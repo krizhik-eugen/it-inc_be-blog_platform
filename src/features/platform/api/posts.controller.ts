@@ -10,7 +10,15 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-
+import {
+    ApiBody,
+    ApiCreatedResponse,
+    ApiNoContentResponse,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+} from '@nestjs/swagger';
 import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
 import { PostsService } from '../application/posts.service';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
@@ -19,7 +27,6 @@ import {
     PostViewDto,
 } from './dto/view-dto/posts.view-dto';
 import { CreatePostInputDto } from './dto/input-dto/create/posts.input-dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UpdatePostInputDto } from './dto/input-dto/update/posts.input-dto';
 import { PaginatedCommentsViewDto } from './dto/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
@@ -37,17 +44,15 @@ export class PostsController {
     @ApiOperation({
         summary: 'Returns comments for specified post',
     })
-    @ApiParam({
-        name: 'postId',
-    })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Success',
         type: PaginatedCommentsViewDto,
     })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
+    @ApiNotFoundResponse({
         description: 'If specified post not found',
+    })
+    @ApiParam({
+        name: 'postId',
     })
     async getAllPostComments(
         @Param('postId') postId: string,
@@ -64,8 +69,7 @@ export class PostsController {
     @ApiOperation({
         summary: 'Returns all posts',
     })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Success',
         type: PaginatedPostsViewDto,
     })
@@ -79,14 +83,13 @@ export class PostsController {
     @ApiOperation({
         summary: 'Creates a new post',
     })
+    @ApiCreatedResponse({
+        description: 'Returns the newly created post',
+        type: PostViewDto,
+    })
     @ApiBody({
         type: CreatePostInputDto,
         description: 'Data for constructing new Post entity',
-    })
-    @ApiResponse({
-        status: HttpStatus.CREATED,
-        description: 'Returns the newly created post',
-        type: PostViewDto,
     })
     async createPost(@Body() body: CreatePostInputDto) {
         const newPostId = await this.postsService.createPost(body);
@@ -100,17 +103,15 @@ export class PostsController {
     @ApiOperation({
         summary: 'Returns post by id',
     })
-    @ApiParam({
-        name: 'id',
-    })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Success',
         type: PostViewDto,
     })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
+    @ApiNotFoundResponse({
         description: 'Not found',
+    })
+    @ApiParam({
+        name: 'id',
     })
     async getPost(@Param('id') id: string) {
         return await this.postsQueryRepository.getByIdOrNotFoundFail(id, null);
@@ -120,6 +121,12 @@ export class PostsController {
     @ApiOperation({
         summary: 'Updates existing post by id with InputModel',
     })
+    @ApiNoContentResponse({
+        description: 'No content',
+    })
+    @ApiNotFoundResponse({
+        description: 'Not found',
+    })
     @ApiParam({
         name: 'id',
     })
@@ -127,14 +134,6 @@ export class PostsController {
         type: UpdatePostInputDto,
         description: 'Data for updating post',
         required: false,
-    })
-    @ApiResponse({
-        status: HttpStatus.NO_CONTENT,
-        description: 'No content',
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(
@@ -150,17 +149,15 @@ export class PostsController {
     @ApiOperation({
         summary: 'Deletes post by id',
     })
+    @ApiNoContentResponse({
+        description: 'No content',
+    })
+    @ApiNotFoundResponse({
+        description: 'Not found',
+    })
     @ApiParam({
         name: 'id',
         description: 'Post id',
-    })
-    @ApiResponse({
-        status: HttpStatus.NO_CONTENT,
-        description: 'No content',
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
     async deletePost(@Param('id') id: string) {

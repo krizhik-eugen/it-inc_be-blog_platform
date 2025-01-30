@@ -3,48 +3,39 @@ import { CommentDocument } from '../../../domain/comment.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { LikeStatus } from '../../../types';
 
+class LikesInfoViewDto {
+    //TODO: move to likes
+    @ApiProperty()
+    likesCount: number;
+    @ApiProperty()
+    dislikesCount: number;
+    @ApiProperty({ default: LikeStatus.None })
+    myStatus: LikeStatus;
+}
+
+class CommentatorInfoViewDto {
+    //TODO: define if we need to move somewhere else
+    @ApiProperty()
+    userId: string;
+    @ApiProperty()
+    userLogin: string;
+}
+
 export class CommentViewDto {
     @ApiProperty()
     id: string;
     @ApiProperty()
     content: string;
     @ApiProperty({
-        type: 'object',
-        properties: {
-            userId: {
-                type: 'string',
-            },
-            userLogin: {
-                type: 'string',
-            },
-        },
+        type: CommentatorInfoViewDto,
     })
-    commentatorInfo: {
-        userId: string;
-        userLogin: string;
-    };
+    commentatorInfo: CommentatorInfoViewDto;
     @ApiProperty()
     createdAt: string;
     @ApiProperty({
-        type: 'object',
-        properties: {
-            likesCount: {
-                type: 'number',
-            },
-            dislikesCount: {
-                type: 'number',
-            },
-            myStatus: {
-                type: 'string',
-                default: LikeStatus.None,
-            },
-        },
+        type: LikesInfoViewDto,
     })
-    likesInfo: {
-        likesCount: number;
-        dislikesCount: number;
-        myStatus: LikeStatus;
-    };
+    likesInfo: LikesInfoViewDto;
 
     static mapToView(
         comment: CommentDocument,

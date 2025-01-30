@@ -12,7 +12,7 @@ import { AppService } from './app.service';
     imports: [
         ConfigModule.forRoot(),
         MongooseModule.forRoot(
-            process.env.MONGO_URL ?? 'mongodb://localhost:27017', //TODO: move to app config
+            process.env.MONGO_URL ?? 'mongodb://localhost', //TODO: move to app config
         ),
         AccountsModule,
         TestingModule,

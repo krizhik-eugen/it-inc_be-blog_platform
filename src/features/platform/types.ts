@@ -3,9 +3,3 @@ export enum LikeStatus {
     Like = 'Like',
     Dislike = 'Dislike',
 }
-
-export type NewestLikes = {
-    addedAt: string;
-    userId: string;
-    login: string;
-}[];

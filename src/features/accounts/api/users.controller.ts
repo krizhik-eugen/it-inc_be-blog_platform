@@ -9,6 +9,15 @@ import {
     Post,
     Query,
 } from '@nestjs/common';
+import {
+    ApiBody,
+    ApiCreatedResponse,
+    ApiNoContentResponse,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+} from '@nestjs/swagger';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { UsersService } from '../application/users.service';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
@@ -17,7 +26,6 @@ import {
     UserViewDto,
 } from './dto/view-dto/users.view-dto';
 import { CreateUserInputDto } from './dto/input-dto/users.input-dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -30,8 +38,7 @@ export class UsersController {
     @ApiOperation({
         summary: 'Returns all users',
     })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Success',
         type: PaginatedUsersViewDto,
     })
@@ -45,34 +52,31 @@ export class UsersController {
     @ApiOperation({
         summary: 'Adds new user to the system',
     })
+    @ApiCreatedResponse({
+        description: 'Returns the newly created user',
+        type: UserViewDto,
+    })
     @ApiBody({
         type: CreateUserInputDto,
         description: 'Data for constructing new user',
-    })
-    @ApiResponse({
-        status: HttpStatus.CREATED,
-        description: 'Returns the newly created user',
-        type: UserViewDto,
     })
     async createUser(@Body() body: CreateUserInputDto) {
         const newUserId = await this.usersService.createUser(body);
         return await this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
     }
 
-    @ApiParam({
-        name: 'id',
-    })
+    @Delete(':id')
     @ApiOperation({
         summary: 'Deletes user by id',
     })
-    @Delete(':id')
-    @ApiResponse({
-        status: HttpStatus.NO_CONTENT,
+    @ApiNoContentResponse({
         description: 'No content',
     })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
+    @ApiNotFoundResponse({
         description: 'If specified user does not exist',
+    })
+    @ApiParam({
+        name: 'id',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteUser(@Param('id') id: string) {

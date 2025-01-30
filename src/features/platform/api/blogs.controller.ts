@@ -10,6 +10,15 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
+import {
+    ApiBody,
+    ApiCreatedResponse,
+    ApiNoContentResponse,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+} from '@nestjs/swagger';
 import { BlogsQueryRepository } from '../infrastructure/queryRepositories/blogs.query-repository';
 import { BlogsService } from '../application/blogs.service';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
@@ -18,7 +27,6 @@ import {
     BlogViewDto,
 } from './dto/view-dto/blogs.view-dto';
 import { CreateBlogInputDto } from './dto/input-dto/create/blogs.input-dto';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { UpdateBlogInputDto } from './dto/input-dto/update/blogs.input-dto';
 import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
 import {
@@ -45,8 +53,7 @@ export class BlogsController {
     @ApiOperation({
         summary: 'Returns blogs with pagination',
     })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Success',
         type: PaginatedBlogsViewDto,
     })
@@ -60,14 +67,13 @@ export class BlogsController {
     @ApiOperation({
         summary: 'Creates a new blog',
     })
+    @ApiCreatedResponse({
+        description: 'Returns a newly created blog',
+        type: BlogViewDto,
+    })
     @ApiBody({
         type: CreateBlogInputDto,
         description: 'Data for constructing new Blog entity',
-    })
-    @ApiResponse({
-        status: HttpStatus.CREATED,
-        description: 'Returns a newly created blog',
-        type: BlogViewDto,
     })
     async createBlog(@Body() body: CreateBlogInputDto) {
         const newBlogId = await this.blogsService.createBlog(body);
@@ -78,17 +84,15 @@ export class BlogsController {
     @ApiOperation({
         summary: 'Returns all posts for specified blog',
     })
-    @ApiParam({
-        name: 'blogId',
-    })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Success',
         type: PaginatedPostsViewDto,
     })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
+    @ApiNotFoundResponse({
         description: 'If specified blog does not exist',
+    })
+    @ApiParam({
+        name: 'blogId',
     })
     async getAllBlogPosts(
         @Param('blogId') blogId: string,
@@ -105,21 +109,19 @@ export class BlogsController {
     @ApiOperation({
         summary: 'Creates a new post for specified blog',
     })
+    @ApiCreatedResponse({
+        description: 'Returns a newly created post',
+        type: PostViewDto,
+    })
+    @ApiNotFoundResponse({
+        description: 'If specified blog does not exist',
+    })
     @ApiParam({
         name: 'blogId',
     })
     @ApiBody({
         type: CreatePostInputDto,
         description: 'Data for constructing new Post entity',
-    })
-    @ApiResponse({
-        status: HttpStatus.CREATED,
-        description: 'Returns a newly created post',
-        type: PostViewDto,
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'If specified blog does not exist',
     })
     async createBlogPost(
         @Param('blogId') blogId: string,
@@ -140,17 +142,15 @@ export class BlogsController {
     @ApiOperation({
         summary: 'Returns blog by id',
     })
-    @ApiParam({
-        name: 'id',
-    })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Success',
         type: BlogViewDto,
     })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
+    @ApiNotFoundResponse({
         description: 'Not found',
+    })
+    @ApiParam({
+        name: 'id',
     })
     async getBlog(@Param('id') id: string) {
         return await this.blogsQueryRepository.getByIdOrNotFoundFail(id);
@@ -160,6 +160,12 @@ export class BlogsController {
     @ApiOperation({
         summary: 'Updates existing blog by id with InputModel',
     })
+    @ApiNoContentResponse({
+        description: 'No content',
+    })
+    @ApiNotFoundResponse({
+        description: 'Not found',
+    })
     @ApiParam({
         name: 'id',
     })
@@ -167,14 +173,6 @@ export class BlogsController {
         type: UpdateBlogInputDto,
         description: 'Data for updating blog',
         required: false,
-    })
-    @ApiResponse({
-        status: HttpStatus.NO_CONTENT,
-        description: 'No content',
-    })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
-        description: 'Not found',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateBlog(
@@ -191,12 +189,10 @@ export class BlogsController {
     @ApiParam({
         name: 'id',
     })
-    @ApiResponse({
-        status: HttpStatus.NO_CONTENT,
+    @ApiNoContentResponse({
         description: 'No content',
     })
-    @ApiResponse({
-        status: HttpStatus.NOT_FOUND,
+    @ApiNotFoundResponse({
         description: 'Not found',
     })
     @HttpCode(HttpStatus.NO_CONTENT)

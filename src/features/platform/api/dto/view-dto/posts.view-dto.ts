@@ -1,8 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PostDocument } from '../../../domain/post.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
-import { LikeStatus, NewestLikes } from '../../../types';
+import { LikeStatus } from '../../../types';
 
+class LikeViewDto {
+    //TODO: move to likes
+    @ApiProperty()
+    addedAt: string;
+    @ApiProperty()
+    userId: string;
+    @ApiProperty()
+    login: string;
+}
+
+class ExtendedLikesInfo {
+    @ApiProperty()
+    likesCount: number;
+    @ApiProperty()
+    dislikesCount: number;
+    @ApiProperty({ default: LikeStatus.None })
+    myStatus: LikeStatus;
+    @ApiProperty({
+        type: [LikeViewDto],
+    })
+    newestLikes: LikeViewDto[];
+}
 export class PostViewDto {
     @ApiProperty()
     id: string;
@@ -19,48 +41,14 @@ export class PostViewDto {
     @ApiProperty()
     blogName: string;
     @ApiProperty({
-        type: 'object',
-        properties: {
-            likesCount: {
-                type: 'number',
-            },
-            dislikesCount: {
-                type: 'number',
-            },
-            myStatus: {
-                type: 'string',
-                default: LikeStatus.None,
-            },
-            newestLikes: {
-                type: 'array',
-                items: {
-                    type: 'object',
-                    properties: {
-                        addedAt: {
-                            type: 'string',
-                        },
-                        userId: {
-                            type: 'string',
-                        },
-                        login: {
-                            type: 'string',
-                        },
-                    },
-                },
-            },
-        },
+        type: ExtendedLikesInfo,
     })
-    extendedLikesInfo: {
-        likesCount: number;
-        dislikesCount: number;
-        myStatus: LikeStatus;
-        newestLikes: NewestLikes;
-    };
+    extendedLikesInfo: ExtendedLikesInfo;
 
     static mapToView(
         post: PostDocument,
         myStatus: LikeStatus,
-        newestLikes: NewestLikes,
+        newestLikes: LikeViewDto[],
     ): PostViewDto {
         const dto = new PostViewDto();
 
