@@ -29,5 +29,6 @@ export class UpdatePostInputDto implements UpdatePostDto {
     @ApiPropertyOptional()
     //TODO: add validation for objectid
     @IsStringWithTrim()
+    @IsOptional()
     blogId: string;
 }
