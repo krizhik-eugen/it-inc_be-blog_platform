@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UpdateCommentDto } from '../../../../dto/update/update-comment.dto';
 import { commentValidationRules } from '../../../../domain/validation-rules';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
+import { IsOptional } from 'class-validator';
 
 export class UpdateCommentInputDto implements UpdateCommentDto {
     @ApiProperty({
@@ -12,5 +13,6 @@ export class UpdateCommentInputDto implements UpdateCommentDto {
         commentValidationRules.content.minLength,
         commentValidationRules.content.maxLength,
     )
+    @IsOptional()
     content: string;
 }
