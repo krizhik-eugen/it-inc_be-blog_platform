@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 enum BlogsSortBy {
     CreatedAt = 'createdAt',
@@ -12,6 +13,7 @@ export class GetBlogsQueryParams extends BaseSortablePaginationParams<BlogsSortB
         example: BlogsSortBy.CreatedAt,
         default: BlogsSortBy.CreatedAt,
     })
+    @IsEnum(BlogsSortBy)
     sortBy = BlogsSortBy.CreatedAt;
 
     @ApiPropertyOptional({
@@ -20,5 +22,7 @@ export class GetBlogsQueryParams extends BaseSortablePaginationParams<BlogsSortB
             'Search term for blog Name: Name should contain this term in any position',
         default: null,
     })
+    @IsString()
+    @IsOptional()
     searchNameTerm: string | null = null;
 }
