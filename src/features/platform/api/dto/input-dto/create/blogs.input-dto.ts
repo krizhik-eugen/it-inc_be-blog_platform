@@ -9,14 +9,14 @@ export class CreateBlogInputDto implements CreateBlogDto {
         maxLength: blogValidationRules.name.maxLength,
         required: true,
     })
-    // @IsStringWithTrim(1, blogValidationRules.name.maxLength)
+    @IsStringWithTrim(1, blogValidationRules.name.maxLength)
     name: string;
 
     @ApiProperty({
         maxLength: blogValidationRules.description.maxLength,
         required: true,
     })
-    // @IsStringWithTrim(1, blogValidationRules.description.maxLength)
+    @IsStringWithTrim(1, blogValidationRules.description.maxLength)
     description: string;
 
     @ApiProperty({
@@ -24,7 +24,7 @@ export class CreateBlogInputDto implements CreateBlogDto {
         pattern: String(blogValidationRules.websiteUrl.pattern),
         required: true,
     })
-    // @Matches(blogValidationRules.websiteUrl.pattern)
-    // @IsStringWithTrim(1, blogValidationRules.websiteUrl.maxLength)
+    @Matches(blogValidationRules.websiteUrl.pattern)
+    @IsStringWithTrim(1, blogValidationRules.websiteUrl.maxLength)
     websiteUrl: string;
 }
