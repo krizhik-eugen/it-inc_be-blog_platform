@@ -19,6 +19,7 @@ import {
     ApiOperation,
     ApiParam,
 } from '@nestjs/swagger';
+import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 import { BlogsQueryRepository } from '../infrastructure/queryRepositories/blogs.query-repository';
 import { BlogsService } from '../application/blogs.service';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
@@ -95,7 +96,7 @@ export class BlogsController {
         name: 'blogId',
     })
     async getAllBlogPosts(
-        @Param('blogId') blogId: string,
+        @Param('blogId', ObjectIdValidationPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
     ): Promise<PaginatedPostsViewDto> {
         return await this.postsQueryRepository.getAllBlogPosts(
@@ -124,7 +125,7 @@ export class BlogsController {
         description: 'Data for constructing new Post entity',
     })
     async createBlogPost(
-        @Param('blogId') blogId: string,
+        @Param('blogId', ObjectIdValidationPipe) blogId: string,
         @Body() body: CreateBlogPostInputDto,
     ) {
         const newPostId = await this.postsService.createPost({
@@ -152,7 +153,7 @@ export class BlogsController {
     @ApiParam({
         name: 'id',
     })
-    async getBlog(@Param('id') id: string) {
+    async getBlog(@Param('id', ObjectIdValidationPipe) id: string) {
         return await this.blogsQueryRepository.getByIdOrNotFoundFail(id);
     }
 
@@ -176,7 +177,7 @@ export class BlogsController {
     })
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateBlog(
-        @Param('id') id: string,
+        @Param('id', ObjectIdValidationPipe) id: string,
         @Body() body: UpdateBlogInputDto,
     ) {
         return await this.blogsService.updateBlog(id, body);
@@ -196,7 +197,7 @@ export class BlogsController {
         description: 'Not found',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteBlog(@Param('id') id: string) {
+    async deleteBlog(@Param('id', ObjectIdValidationPipe) id: string) {
         return await this.blogsService.deleteBlog(id);
     }
 }

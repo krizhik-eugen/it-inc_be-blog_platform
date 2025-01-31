@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
+import { IsObjectId } from '../../../../../../core/decorators/validation/is-object-id';
 import { postValidationRules } from '../../../../domain/validation-rules';
 import { CreateBlogPostDto } from '../../../../dto/create/create-post.dto';
-import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
 
 export class CreateBlogPostInputDto implements CreateBlogPostDto {
     @ApiProperty({
@@ -26,7 +27,7 @@ export class CreatePostInputDto
     implements CreateBlogPostDto
 {
     @ApiProperty()
-    //TODO: add validation for objectid
+    @IsObjectId()
     @IsStringWithTrim()
     blogId: string;
 }

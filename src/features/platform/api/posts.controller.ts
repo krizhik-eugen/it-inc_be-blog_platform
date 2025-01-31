@@ -19,6 +19,7 @@ import {
     ApiOperation,
     ApiParam,
 } from '@nestjs/swagger';
+import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
 import { PostsService } from '../application/posts.service';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
@@ -55,7 +56,7 @@ export class PostsController {
         name: 'postId',
     })
     async getAllPostComments(
-        @Param('postId') postId: string,
+        @Param('postId', ObjectIdValidationPipe) postId: string,
         @Query() query: GetCommentsQueryParams,
     ): Promise<PaginatedCommentsViewDto> {
         return await this.commentsQueryRepository.getAllPostComments(
@@ -113,7 +114,7 @@ export class PostsController {
     @ApiParam({
         name: 'id',
     })
-    async getPost(@Param('id') id: string) {
+    async getPost(@Param('id', ObjectIdValidationPipe) id: string) {
         return await this.postsQueryRepository.getByIdOrNotFoundFail(id, null);
     }
 
@@ -137,7 +138,7 @@ export class PostsController {
     })
     @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(
-        @Param('id') id: string,
+        @Param('id', ObjectIdValidationPipe) id: string,
         @Body() body: UpdatePostInputDto,
     ) {
         return await this.postsService.updatePost(id, body);
@@ -160,7 +161,7 @@ export class PostsController {
         description: 'Post id',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deletePost(@Param('id') id: string) {
+    async deletePost(@Param('id', ObjectIdValidationPipe) id: string) {
         return await this.postsService.deletePost(id);
     }
 }

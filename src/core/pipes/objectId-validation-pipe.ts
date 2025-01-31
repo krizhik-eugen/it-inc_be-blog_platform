@@ -1,19 +1,14 @@
-// import { PipeTransform, Injectable } from '@nestjs/common';
-// import { isValidObjectId } from 'mongoose';
+import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import { isValidObjectId } from 'mongoose';
 
-// @Injectable()
-// export class ObjectIdValidationPipe implements PipeTransform {
-//     transform(value: string) {
-//         if (!isValidObjectId(value)) {
-//             // throw BadRequestDomainException.create(
-//             //     `Invalid ObjectId format: ${value}`,
-//             //     'userId',
-//             // );
-//             throw Error('not a valid object id'); //TODO: add exception handler
-//         }
+@Injectable()
+export class ObjectIdValidationPipe implements PipeTransform {
+    transform(value: string) {
+        if (!isValidObjectId(value)) {
+            throw new BadRequestException(`Invalid ObjectId format: ${value}`);
+        }
 
-//         return value;
-//     }
-// }
+        return value;
+    }
+}
 
-//TODO: check this code to work in body validation

@@ -18,6 +18,7 @@ import {
     ApiOperation,
     ApiParam,
 } from '@nestjs/swagger';
+import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { UsersService } from '../application/users.service';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
@@ -79,7 +80,7 @@ export class UsersController {
         name: 'id',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteUser(@Param('id') id: string) {
+    async deleteUser(@Param('id', ObjectIdValidationPipe) id: string) {
         return await this.usersService.deleteUser(id);
     }
 }
