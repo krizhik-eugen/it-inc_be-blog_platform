@@ -7,17 +7,17 @@ export class CreateBlogPostInputDto implements CreateBlogPostDto {
     @ApiProperty({
         maxLength: postValidationRules.title.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.title.maxLength)
+    // @IsStringWithTrim(1, postValidationRules.title.maxLength)
     title: string;
 
     @ApiProperty({ maxLength: postValidationRules.shortDescription.maxLength })
-    @IsStringWithTrim(1, postValidationRules.shortDescription.maxLength)
+    // @IsStringWithTrim(1, postValidationRules.shortDescription.maxLength)
     shortDescription: string;
 
     @ApiProperty({
         maxLength: postValidationRules.content.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.content.maxLength)
+    // @IsStringWithTrim(1, postValidationRules.content.maxLength)
     content: string;
 }
 

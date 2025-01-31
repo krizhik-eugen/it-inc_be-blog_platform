@@ -13,6 +13,6 @@ export class GetPostsQueryParams extends BaseSortablePaginationParams<PostsSortB
         example: PostsSortBy.CreatedAt,
         default: PostsSortBy.CreatedAt,
     })
-    @IsEnum(PostsSortBy)
+    // @IsEnum(PostsSortBy)
     sortBy = PostsSortBy.CreatedAt;
 }
