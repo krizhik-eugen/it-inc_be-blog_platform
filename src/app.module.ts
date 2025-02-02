@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from './core/core.module';
-import { AccountsModule } from './features/accounts/accounts.module';
-import { PlatformModule } from './features/platform/platform.module';
-import { TestingModule } from './features/testing/testing.module';
+import { AccountsModule } from './modules/accounts/accounts.module';
+import { PlatformModule } from './modules/platform/platform.module';
+import { TestingModule } from './modules/testing/testing.module';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
     imports: [
@@ -20,6 +19,6 @@ import { AppService } from './app.service';
         CoreModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [],
 })
 export class AppModule {}
