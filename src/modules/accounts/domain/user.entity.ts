@@ -211,9 +211,10 @@ export class User {
      */
     confirmUserEmail(code: string) {
         if (this.emailConfirmation.isConfirmed) {
-            throw new BadRequestException(
-                'The user has already been confirmed',
-            );
+            throw new BadRequestException({
+                message: 'The user has already been confirmed',
+                field: 'code',
+            });
         }
 
         if (this.emailConfirmation.confirmationCode !== code) {
@@ -229,7 +230,7 @@ export class User {
             );
         }
 
-        if (Date.now() > this.emailConfirmation.expirationDate.getTime()) {
+        if (new Date() > this.emailConfirmation.expirationDate) {
             throw new BadRequestException({
                 message: 'Code expired',
                 field: 'code',
