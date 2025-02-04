@@ -141,9 +141,14 @@ export class AuthService {
 
     async resendRegistrationCode(email: string) {
         const foundUser =
-            await this.usersRepository.findByLoginOrEmailNonDeletedOrNotFoundFail(
-                email,
-            );
+            await this.usersRepository.findByLoginOrEmailNonDeleted(email);
+
+        if (!foundUser) {
+            throw new BadRequestException({
+                message: 'No user found for this email',
+                field: 'email',
+            });
+        }
 
         const confirmationCode = randomUUID();
 

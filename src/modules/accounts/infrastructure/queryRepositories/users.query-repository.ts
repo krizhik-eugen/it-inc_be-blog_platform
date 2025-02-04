@@ -19,7 +19,7 @@ export class UsersQueryRepository {
         }).exec();
 
         if (!user) {
-            throw new NotFoundException('user not found');
+            throw new NotFoundException('User is not found');
         }
 
         return MeViewDto.mapToView(user);
@@ -32,7 +32,7 @@ export class UsersQueryRepository {
         }).exec();
 
         if (!user) {
-            throw new NotFoundException('user not found');
+            throw new NotFoundException('User is not found');
         }
 
         return UserViewDto.mapToView(user);

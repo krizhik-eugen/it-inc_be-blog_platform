@@ -21,7 +21,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         let errorStatusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 
         console.log('exception', exception);
-        
 
         const defaultError: ErrorResponse = {
             field: null,

@@ -20,7 +20,7 @@ export class UsersRepository {
         const user = await this.findById(id);
 
         if (!user) {
-            throw new NotFoundException('user not found');
+            throw new NotFoundException('User is not found');
         }
 
         return user;
@@ -32,7 +32,7 @@ export class UsersRepository {
             deletedAt: null,
         });
         if (!user) {
-            throw new NotFoundException('user not found');
+            throw new NotFoundException('User is not found');
         }
         return user;
     }
@@ -47,6 +47,15 @@ export class UsersRepository {
         return user;
     }
 
+    async findByLoginOrEmailNonDeleted(
+        loginOrEmail: string,
+    ): Promise<UserDocument | null> {
+        const user = await this.UserModel.findOne()
+            .and([{ deletedAt: null }])
+            .or([{ login: loginOrEmail }, { email: loginOrEmail }]);
+        return user;
+    }
+
     async findByLoginOrEmailNonDeletedOrNotFoundFail(
         loginOrEmail: string,
     ): Promise<UserDocument> {
@@ -54,7 +63,7 @@ export class UsersRepository {
             .and([{ deletedAt: null }])
             .or([{ login: loginOrEmail }, { email: loginOrEmail }]);
         if (!user) {
-            throw new NotFoundException('user not found');
+            throw new NotFoundException('User is not found');
         }
         return user;
     }
