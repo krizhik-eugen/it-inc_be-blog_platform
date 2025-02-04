@@ -214,7 +214,7 @@ export class User {
         if (this.emailConfirmation.isConfirmed) {
             throw new BadRequestException({
                 message: 'The user has already been confirmed',
-                field: 'code',
+                field: 'email',
             });
         }
 

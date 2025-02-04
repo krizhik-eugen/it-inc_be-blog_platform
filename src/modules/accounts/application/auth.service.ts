@@ -83,9 +83,14 @@ export class AuthService {
 
     async confirmUserEmail(code: string) {
         const foundUser =
-            await this.usersRepository.findUserByConfirmationCodeOrNotFoundFail(
-                code,
-            );
+            await this.usersRepository.findUserByConfirmationCode(code);
+
+        if (!foundUser) {
+            throw new BadRequestException({
+                message: 'No user found for this confirmation code',
+                field: 'code',
+            });
+        }
 
         foundUser.confirmUserEmail(code);
 

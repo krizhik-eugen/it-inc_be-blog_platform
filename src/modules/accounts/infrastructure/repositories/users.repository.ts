@@ -59,18 +59,12 @@ export class UsersRepository {
         return user;
     }
 
-    async findUserByConfirmationCodeOrNotFoundFail(
+    async findUserByConfirmationCode(
         code: string,
-    ): Promise<UserDocument> {
+    ): Promise<UserDocument | null> {
         const user = await this.UserModel.findOne({
             'emailConfirmation.confirmationCode': code,
         });
-        if (!user) {
-            throw new NotFoundException({
-                message: 'No user found for this confirmation code',
-                field: 'code',
-            });
-        }
         return user;
     }
 
