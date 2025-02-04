@@ -1,5 +1,4 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { NotFoundException } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetPostsQueryParams } from '../../api/dto/query-params-dto/get-posts-query-params.input-dto';
@@ -7,6 +6,7 @@ import { Post, PostModelType } from '../../domain/post.entity';
 import { PostViewDto } from '../../api/dto/view-dto/posts.view-dto';
 import { LikeStatus } from '../../types';
 import { Blog, BlogModelType } from '../../domain/blog.entity';
+import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export class PostsQueryRepository {
     constructor(
@@ -27,7 +27,7 @@ export class PostsQueryRepository {
         }).exec();
 
         if (!post) {
-            throw new NotFoundException('post not found');
+            throw new NotFoundDomainException('post not found');
         }
 
         //TODO: get likes and newest likes
@@ -73,7 +73,7 @@ export class PostsQueryRepository {
         });
 
         if (!blog) {
-            throw new NotFoundException('blog not found');
+            throw new NotFoundDomainException('blog not found');
         }
 
         const findQuery: FilterQuery<Post> = {

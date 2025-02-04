@@ -1,5 +1,4 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { NotFoundException } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { Comment, CommentModelType } from '../../domain/comment.entity';
@@ -7,6 +6,7 @@ import { LikeStatus } from '../../types';
 import { Post, PostModelType } from '../../domain/post.entity';
 import { CommentViewDto } from '../../api/dto/view-dto/comments.view-dto';
 import { GetCommentsQueryParams } from '../../api/dto/query-params-dto/get-comments-query-params.input-dto';
+import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export class CommentsQueryRepository {
     constructor(
@@ -27,7 +27,7 @@ export class CommentsQueryRepository {
         }).exec();
 
         if (!comment) {
-            throw new NotFoundException('comment not found');
+            throw new NotFoundDomainException('comment not found');
         }
 
         //TODO: get likes and my status
@@ -46,7 +46,7 @@ export class CommentsQueryRepository {
         });
 
         if (!post) {
-            throw new NotFoundException('post not found');
+            throw new NotFoundDomainException('post not found');
         }
 
         const findQuery: FilterQuery<Comment> = {

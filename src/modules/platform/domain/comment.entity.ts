@@ -1,9 +1,12 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { NotFoundException, ForbiddenException } from '@nestjs/common';
 import { HydratedDocument, Model } from 'mongoose';
 import { commentValidationRules } from './validation-rules';
 import { CreateCommentDomainDto } from './dto/create/create-comment.domain.dto';
 import { UpdateCommentDomainDto } from './dto/update/update-comment.domain.dto';
+import {
+    ForbiddenDomainException,
+    NotFoundDomainException,
+} from '../../../core/exceptions/domain-exceptions';
 
 /**
  * Comment Entity Schema
@@ -117,7 +120,7 @@ export class Comment {
      */
     update(dto: UpdateCommentDomainDto) {
         if (dto.userId !== this.commentatorInfo.userId) {
-            throw new ForbiddenException(
+            throw new ForbiddenDomainException(
                 'You are not an owner of this comment',
             );
         }
@@ -131,7 +134,7 @@ export class Comment {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new NotFoundException('Entity already deleted');
+            throw new NotFoundDomainException('Entity already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }

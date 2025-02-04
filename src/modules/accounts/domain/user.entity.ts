@@ -1,10 +1,10 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { HydratedDocument, Model } from 'mongoose';
 import { add } from 'date-fns';
 import { CreateUserDomainDto } from './dto/create/create-user.domain.dto';
 import { userEmailValidation, userLoginValidation } from './validation-rules';
 import { CONFIRMATION_CODE_EXPIRATION_TIME } from '../../../constants';
+import { BadRequestDomainException, NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
 
 /**
  * User Entity Schema
@@ -179,15 +179,15 @@ export class User {
      *
      * @param {string} code - The confirmation code to be set.
      *
-     * @throws {BadRequestException} If the user's email has already been confirmed.
+     * @throws {BadRequestDomainException} If the user's email has already been confirmed.
      * @throws {Error} If the confirmation code is not provided.
      */
     setConfirmationCode(code: string) {
         if (this.emailConfirmation.isConfirmed) {
-            throw new BadRequestException({
-                message: 'The user has already been confirmed',
-                field: 'email',
-            });
+            throw new BadRequestDomainException(
+                'The user has already been confirmed',
+                'email',
+            );
         }
 
         if (!code) {
@@ -205,24 +205,21 @@ export class User {
      *
      * @param {string} code - The confirmation code to be used for email confirmation.
      *
-     * @throws {BadRequestException} If the user's email has already been confirmed.
-     * @throws {BadRequestException} If the confirmation code is invalid.
+     * @throws {BadRequestDomainException} If the user's email has already been confirmed.
+     * @throws {BadRequestDomainException} If the confirmation code is invalid.
      * @throws {Error} If the expiration date for email confirmation is not set.
-     * @throws {BadRequestException} If the confirmation code has expired.
+     * @throws {BadRequestDomainException} If the confirmation code has expired.
      */
     confirmUserEmail(code: string) {
         if (this.emailConfirmation.isConfirmed) {
-            throw new BadRequestException({
-                message: 'The user has already been confirmed',
-                field: 'code',
-            });
+            throw new BadRequestDomainException(
+                'The user has already been confirmed',
+                'code',
+            );
         }
 
         if (this.emailConfirmation.confirmationCode !== code) {
-            throw new BadRequestException({
-                message: 'Invalid code',
-                field: 'code',
-            });
+            throw new BadRequestDomainException('Invalid code', 'code');
         }
 
         if (!this.emailConfirmation.expirationDate) {
@@ -232,10 +229,7 @@ export class User {
         }
 
         if (new Date() > this.emailConfirmation.expirationDate) {
-            throw new BadRequestException({
-                message: 'Code expired',
-                field: 'code',
-            });
+            throw new BadRequestDomainException('Code expired', 'code');
         }
 
         this.emailConfirmation.isConfirmed = true;
@@ -265,16 +259,13 @@ export class User {
      * @param {string} code - The password recovery code to be used for password change.
      * @param {string} passwordHash - The new password hash to be set.
      *
-     * @throws {BadRequestException} If the password recovery code is invalid.
+     * @throws {BadRequestDomainException} If the password recovery code is invalid.
      * @throws {Error} If the expiration date for password recovery is not set.
-     * @throws {BadRequestException} If the password recovery code has expired.
+     * @throws {BadRequestDomainException} If the password recovery code has expired.
      */
     changePassword(code: string, passwordHash: string) {
         if (this.passwordRecovery.recoveryCode !== code) {
-            throw new BadRequestException({
-                message: 'Invalid code',
-                field: 'code',
-            });
+            throw new BadRequestDomainException('Invalid code', 'code');
         }
 
         if (!this.passwordRecovery.expirationDate) {
@@ -284,10 +275,10 @@ export class User {
         }
 
         if (Date.now() > this.passwordRecovery.expirationDate.getTime()) {
-            throw new BadRequestException({
-                message: 'Confirmation code expired',
-                field: 'recoveryCode',
-            });
+            throw new BadRequestDomainException(
+                'Confirmation code expired',
+                'recoveryCode',
+            );
         }
 
         this.passwordHash = passwordHash;
@@ -302,7 +293,7 @@ export class User {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new NotFoundException('Entity already deleted');
+            throw new NotFoundDomainException('Entity is already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }

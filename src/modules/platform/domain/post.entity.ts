@@ -1,9 +1,9 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { NotFoundException } from '@nestjs/common';
 import { HydratedDocument, Model } from 'mongoose';
 import { postValidationRules } from './validation-rules';
 import { CreatePostDomainDto } from './dto/create/create-post.domain.dto';
 import { UpdatePostDomainDto } from './dto/update/update-post.domain.dto';
+import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
 
 /**
  * Post Entity Schema
@@ -149,7 +149,7 @@ export class Post {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new NotFoundException('Entity already deleted');
+            throw new NotFoundDomainException('Entity already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }

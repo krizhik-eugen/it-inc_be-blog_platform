@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { UsersRepository } from '../infrastructure/repositories/users.repository';
@@ -11,6 +11,7 @@ import { SALT_ROUNDS } from 'src/constants';
 import { randomUUID } from 'crypto';
 import { EmailService } from 'src/modules/notifications/email.service';
 import { UpdatePasswordDto } from '../dto/create/update-password.dto';
+import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class AuthService {
@@ -86,10 +87,10 @@ export class AuthService {
             await this.usersRepository.findUserByConfirmationCode(code);
 
         if (!foundUser) {
-            throw new BadRequestException({
-                message: 'No user found for this confirmation code',
-                field: 'code',
-            });
+            throw new BadRequestDomainException(
+                'No user found for this confirmation code',
+                'code',
+            );
         }
 
         foundUser.confirmUserEmail(code);
@@ -113,10 +114,7 @@ export class AuthService {
                 message = `User with this ${fieldName} was in the system and has been deleted`;
             }
 
-            throw new BadRequestException({
-                message,
-                field: fieldName,
-            });
+            throw new BadRequestDomainException(message, fieldName);
         }
 
         const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
@@ -144,10 +142,10 @@ export class AuthService {
             await this.usersRepository.findByLoginOrEmailNonDeleted(email);
 
         if (!foundUser) {
-            throw new BadRequestException({
-                message: 'No user found for this email',
-                field: 'email',
-            });
+            throw new BadRequestDomainException(
+                'No user found for this email',
+                'email',
+            );
         }
 
         const confirmationCode = randomUUID();

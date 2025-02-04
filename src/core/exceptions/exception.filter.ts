@@ -29,13 +29,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
             errorsMessages: [defaultError],
         };
 
-        //TODO: consider environment to send or not send mongo error
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        if (exception.name === 'MongoServerError') {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            defaultError.message = `${exception.name}, code: ${exception.code},`;
+        // Show Mongo error only in development
+        const isDevEnvironment = process.env.NODE_ENV === 'development';
+        if (
+            isDevEnvironment &&
+            exception instanceof Error &&
+            exception.name === 'MongoServerError' &&
+            'code' in exception
+        ) {
+            defaultError.message = `${exception.name}, code: ${exception.code as string},`;
         }
 
         if (exception instanceof HttpException) {
@@ -56,8 +58,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             } else if (Array.isArray(exceptionResponse.message)) {
                 httpErrorResponse.errorsMessages = exceptionResponse.message;
             }
-
-            response.status(errorStatusCode).json(httpErrorResponse);
         }
+        response.status(errorStatusCode).json(httpErrorResponse);
     }
 }

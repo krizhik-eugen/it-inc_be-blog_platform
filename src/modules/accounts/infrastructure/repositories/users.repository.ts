@@ -1,6 +1,6 @@
-import { NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument, UserModelType } from '../../domain/user.entity';
+import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
 
 export class UsersRepository {
     constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
@@ -20,7 +20,7 @@ export class UsersRepository {
         const user = await this.findById(id);
 
         if (!user) {
-            throw new NotFoundException('User is not found');
+            throw new NotFoundDomainException('User is not found');
         }
 
         return user;
@@ -32,7 +32,7 @@ export class UsersRepository {
             deletedAt: null,
         });
         if (!user) {
-            throw new NotFoundException('User is not found');
+            throw new NotFoundDomainException('User is not found');
         }
         return user;
     }
@@ -63,7 +63,7 @@ export class UsersRepository {
             .and([{ deletedAt: null }])
             .or([{ login: loginOrEmail }, { email: loginOrEmail }]);
         if (!user) {
-            throw new NotFoundException('User is not found');
+            throw new NotFoundDomainException('User is not found');
         }
         return user;
     }
@@ -84,7 +84,9 @@ export class UsersRepository {
             'passwordRecovery.recoveryCode': code,
         });
         if (!user) {
-            throw new NotFoundException('No user found for this recovery code');
+            throw new NotFoundDomainException(
+                'No user found for this recovery code',
+            );
         }
         return user;
     }
