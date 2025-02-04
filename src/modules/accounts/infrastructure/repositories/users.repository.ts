@@ -72,4 +72,16 @@ export class UsersRepository {
         }
         return user;
     }
+
+    async findUserByRecoveryCodeOrNotFoundFail(
+        code: string,
+    ): Promise<UserDocument> {
+        const user = await this.UserModel.findOne({
+            'passwordRecovery.recoveryCode': code,
+        });
+        if (!user) {
+            throw new NotFoundException('No user found for this recovery code');
+        }
+        return user;
+    }
 }

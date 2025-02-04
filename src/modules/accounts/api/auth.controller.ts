@@ -19,6 +19,8 @@ import { JwtAuthGuard } from '../guards/bearer/jwt-auth.guard';
 import {
     GetCurrentUserApi,
     LoginApi,
+    NewPasswordApi,
+    PasswordRecoveryApi,
     RegisterNewUserApi,
     RegistrationConfirmationApi,
     RegistrationEmailResendingApi,
@@ -26,6 +28,8 @@ import {
 import { CreateUserInputDto } from './dto/input-dto/users.input-dto';
 import { RegistrationConfirmationInputDto } from './dto/input-dto/registration-confirmation.input-dto';
 import { RegistrationEmailResendingInputDto } from './dto/input-dto/registration-email-resending.input-dto';
+import { PasswordRecoveryInputDto } from './dto/input-dto/password-recovery.input-dto';
+import { NewPasswordInputDto } from './dto/input-dto/new-password.input-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -45,6 +49,22 @@ export class AuthController {
         const accessToken = await this.authService.login(user.id);
 
         return accessToken;
+    }
+
+    @Post('password-recovery')
+    @PasswordRecoveryApi()
+    //TODO: add ratelimit
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async passwordRecovery(@Body() body: PasswordRecoveryInputDto) {
+        await this.authService.passwordRecovery(body.email);
+    }
+
+    @Post('new-password')
+    @NewPasswordApi()
+    //TODO: add ratelimit
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async confirmPasswordRecovery(@Body() body: NewPasswordInputDto) {
+        await this.authService.confirmPasswordRecovery(body);
     }
 
     @Post('registration-confirmation')

@@ -10,6 +10,7 @@ import { User, UserModelType } from '../domain/user.entity';
 import { SALT_ROUNDS } from 'src/constants';
 import { randomUUID } from 'crypto';
 import { EmailService } from 'src/modules/notifications/email.service';
+import { UpdatePasswordDto } from '../dto/create/update-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -53,6 +54,46 @@ export class AuthService {
         return Promise.resolve({ accessToken });
     }
 
+    async passwordRecovery(email: string) {
+        const foundUser = await this.usersRepository.findByLoginOrEmail(email);
+        if (foundUser) {
+            const newRecoveryCode = randomUUID();
+
+            foundUser.setPasswordRecoveryCode(newRecoveryCode);
+
+            await this.usersRepository.save(foundUser);
+
+            await this.emailService.sendEmailPasswordRecoveryMessage(
+                email,
+                newRecoveryCode,
+            );
+        }
+    }
+
+    async confirmPasswordRecovery(dto: UpdatePasswordDto) {
+        const foundUser =
+            await this.usersRepository.findUserByRecoveryCodeOrNotFoundFail(
+                dto.recoveryCode,
+            );
+
+        const newPasswordHash = await bcrypt.hash(dto.newPassword, SALT_ROUNDS);
+
+        foundUser.changePassword(dto.recoveryCode, newPasswordHash);
+
+        await this.usersRepository.save(foundUser);
+    }
+
+    async confirmUserEmail(code: string) {
+        const foundUser =
+            await this.usersRepository.findUserByConfirmationCodeOrNotFoundFail(
+                code,
+            );
+
+        foundUser.confirmUserEmail(code);
+
+        await this.usersRepository.save(foundUser);
+    }
+
     async registerNewUser(dto: CreateUserDto) {
         const foundUserByLogin = await this.usersRepository.findByLoginOrEmail(
             dto.login,
@@ -93,17 +134,6 @@ export class AuthService {
             newUser.email,
             confirmationCode,
         );
-    }
-
-    async confirmUserEmail(code: string) {
-        const foundUser =
-            await this.usersRepository.findUserByConfirmationCodeOrNotFoundFail(
-                code,
-            );
-
-        foundUser.confirmUserEmail(code);
-
-        await this.usersRepository.save(foundUser);
     }
 
     async resendRegistrationCode(email: string) {
