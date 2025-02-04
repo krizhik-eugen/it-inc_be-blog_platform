@@ -3,7 +3,7 @@ import {
     ApiBadRequestResponse,
     ApiBearerAuth,
     ApiBody,
-    ApiCreatedResponse,
+    ApiNoContentResponse,
     ApiOkResponse,
     ApiOperation,
     ApiTooManyRequestsResponse,
@@ -48,7 +48,7 @@ export const PasswordRecoveryApi = () => {
             summary:
                 'Password recovery via Email confirmation. Email should be sent with RecoveryCode inside link',
         }),
-        ApiCreatedResponse({
+        ApiNoContentResponse({
             description:
                 "Even if current email is not registered (to prevent user's email detection)",
         }),
@@ -70,7 +70,7 @@ export const NewPasswordApi = () => {
         ApiOperation({
             summary: 'Confirm password recovery',
         }),
-        ApiCreatedResponse({
+        ApiNoContentResponse({
             description: 'If code is valid and new password is accepted',
         }),
         ApiBadRequestResponse({
@@ -91,7 +91,7 @@ export const RegistrationConfirmationApi = () => {
         ApiOperation({
             summary: 'Confirm registration',
         }),
-        ApiCreatedResponse({
+        ApiNoContentResponse({
             description: 'Email has been verified. Account has been activated',
         }),
         ApiBadRequestResponse({
@@ -113,7 +113,7 @@ export const RegisterNewUserApi = () => {
             summary:
                 'Registration in the system. Email with confirmation code will be sent to provided email address',
         }),
-        ApiCreatedResponse({
+        ApiNoContentResponse({
             description:
                 'Input data is accepted. Email with confirmation code will be sent to provided email address',
         }),
@@ -135,7 +135,7 @@ export const RegistrationEmailResendingApi = () => {
         ApiOperation({
             summary: 'Resend confirmation registration email if user exists',
         }),
-        ApiCreatedResponse({
+        ApiNoContentResponse({
             description:
                 'Input data is accepted. Email with confirmation code will be sent to provided email. Confirmation code should be inside link as query param, for example: https://some-front.com/confirm-registration?code=youtcodehere',
         }),
