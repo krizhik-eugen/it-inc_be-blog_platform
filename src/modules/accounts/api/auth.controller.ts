@@ -30,7 +30,9 @@ import { RegistrationConfirmationInputDto } from './dto/input-dto/registration-c
 import { RegistrationEmailResendingInputDto } from './dto/input-dto/registration-email-resending.input-dto';
 import { PasswordRecoveryInputDto } from './dto/input-dto/password-recovery.input-dto';
 import { NewPasswordInputDto } from './dto/input-dto/new-password.input-dto';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
+@UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class AuthController {
     constructor(

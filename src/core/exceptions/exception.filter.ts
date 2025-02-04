@@ -20,8 +20,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const response = ctx.getResponse<Response<HttpErrorResponse>>();
         let errorStatusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        console.log('exception', exception);
-
         const defaultError: ErrorResponse = {
             field: null,
             message: 'Unknown error occurred',
@@ -42,6 +40,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
         if (exception instanceof HttpException) {
             errorStatusCode = exception.getStatus();
+
+            if (errorStatusCode === HttpStatus.TOO_MANY_REQUESTS) {
+                defaultError.message = 'Too many requests';
+            }
 
             const exceptionResponse =
                 exception.getResponse() as ExceptionResponse;

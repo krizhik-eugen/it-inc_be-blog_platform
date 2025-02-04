@@ -6,6 +6,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { TestingModule } from './modules/testing/testing.module';
 import { AppController } from './app.controller';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
     imports: [
@@ -13,6 +14,12 @@ import { AppController } from './app.controller';
         MongooseModule.forRoot(
             process.env.MONGO_URL ?? 'mongodb://localhost', //TODO: move to app config
         ),
+        ThrottlerModule.forRoot([
+            {
+                ttl: 10000,
+                limit: 5,
+            },
+        ]),
         AccountsModule,
         TestingModule,
         PlatformModule,
