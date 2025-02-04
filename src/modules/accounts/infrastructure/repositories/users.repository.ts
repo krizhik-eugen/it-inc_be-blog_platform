@@ -66,9 +66,10 @@ export class UsersRepository {
             'emailConfirmation.confirmationCode': code,
         });
         if (!user) {
-            throw new NotFoundException(
-                'No user found for this confirmation code',
-            );
+            throw new NotFoundException({
+                message: 'No user found for this confirmation code',
+                field: 'code',
+            });
         }
         return user;
     }

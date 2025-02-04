@@ -184,9 +184,10 @@ export class User {
      */
     setConfirmationCode(code: string) {
         if (this.emailConfirmation.isConfirmed) {
-            throw new BadRequestException(
-                'The user has already been confirmed',
-            );
+            throw new BadRequestException({
+                message: 'The user has already been confirmed',
+                field: 'code',
+            });
         }
 
         if (!code) {
