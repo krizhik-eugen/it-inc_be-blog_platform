@@ -16,7 +16,7 @@ import {
     UserViewDto,
 } from '../dto/view-dto/users.view-dto';
 import { CreateUserInputDto } from '../dto/input-dto/users.input-dto';
-import { HttpErrorResponse } from '../../../../core/dto/error.view-dto';
+import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
 
 export const GetUsersApi = () => {
     return applyDecorators(
@@ -45,7 +45,7 @@ export const CreateUserApi = () => {
             type: UserViewDto,
         }),
         ApiBadRequestResponse({
-            type: HttpErrorResponse,
+            type: HttpErrorViewDto,
             description:
                 'If the inputModel has incorrect values <br/> <br/> <i>Note: If the error should be in the BLL, for example, "the email address is not unique", do not try to mix this error with input validation errors in the middleware, just return one element in the errors array</i>',
         }),

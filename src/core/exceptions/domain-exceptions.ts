@@ -1,10 +1,10 @@
+import { ErrorResponse } from '../../setup/pipes.setup';
 import {
     BadRequestException,
     ForbiddenException,
     NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
-import { ErrorResponse } from '../dto/error.view-dto';
 
 type TMessage = ErrorResponse['message'];
 type TField = ErrorResponse['field'];

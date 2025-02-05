@@ -6,7 +6,8 @@ import {
     HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ErrorResponse, HttpErrorResponse } from '../dto/error.view-dto';
+import { HttpErrorResponse } from '../dto/error.view-dto';
+import { ErrorResponse } from '../../setup/pipes.setup';
 
 type ExceptionResponse = {
     message: string | ErrorResponse[];

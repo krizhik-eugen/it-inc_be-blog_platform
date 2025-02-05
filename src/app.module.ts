@@ -10,13 +10,16 @@ import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
     imports: [
-        ConfigModule.forRoot({
-            envFilePath: [
-                `.env.${process.env.NODE_ENV}.local`,
-                `.env.${process.env.NODE_ENV}`,
-                '.env.production',
-            ],
-        }),
+        ConfigModule
+            .forRoot
+            //     {
+            //     envFilePath: [
+            //         `.env.${process.env.NODE_ENV}.local`,
+            //         `.env.${process.env.NODE_ENV}`,
+            //         '.env.production',
+            //     ],
+            // }
+            (),
         MongooseModule.forRoot(
             process.env.MONGO_URL ?? 'mongodb://localhost', //TODO: move to app config
         ),

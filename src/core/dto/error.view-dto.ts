@@ -1,12 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ErrorResponse } from '../../setup/pipes.setup';
 
-export class ErrorResponse {
+export class ErrorViewDto extends ErrorResponse {
     @ApiProperty({
         type: 'string',
         nullable: true,
         description: 'Message with error explanation for certain field',
     })
     field: string | null;
+
     @ApiProperty({
         type: 'string',
         nullable: true,
@@ -16,6 +18,9 @@ export class ErrorResponse {
 }
 
 export class HttpErrorResponse {
-    @ApiProperty({ type: [ErrorResponse], nullable: true, required: false })
+    errorsMessages: Array<ErrorResponse | string>;
+}
+export class HttpErrorViewDto extends HttpErrorResponse {
+    @ApiProperty({ type: [ErrorViewDto], nullable: true, required: false })
     errorsMessages: Array<ErrorResponse | string>;
 }

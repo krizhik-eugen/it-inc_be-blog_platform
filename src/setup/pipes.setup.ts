@@ -4,8 +4,8 @@ import {
     ValidationError,
     ValidationPipe,
 } from '@nestjs/common';
-interface ErrorResponse {
-    field: string;
+export class ErrorResponse {
+    field: string | null;
     message: string;
 }
 
