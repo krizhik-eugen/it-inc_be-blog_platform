@@ -92,7 +92,7 @@ export class PostsController {
         type: CreatePostInputDto,
         description: 'Data for constructing new Post entity',
     })
-    async createPost(@Body() body: CreatePostInputDto) {
+    async createPost(@Body() body: CreatePostInputDto): Promise<PostViewDto> {
         const newPostId = await this.postsService.createPost(body);
         return await this.postsQueryRepository.getByIdOrNotFoundFail(
             newPostId,
@@ -114,7 +114,9 @@ export class PostsController {
     @ApiParam({
         name: 'id',
     })
-    async getPost(@Param('id', ObjectIdValidationPipe) id: string) {
+    async getPost(
+        @Param('id', ObjectIdValidationPipe) id: string,
+    ): Promise<PostViewDto> {
         return await this.postsQueryRepository.getByIdOrNotFoundFail(id, null);
     }
 
@@ -140,7 +142,7 @@ export class PostsController {
     async updatePost(
         @Param('id', ObjectIdValidationPipe) id: string,
         @Body() body: UpdatePostInputDto,
-    ) {
+    ): Promise<void> {
         return await this.postsService.updatePost(id, body);
     }
 
@@ -161,7 +163,9 @@ export class PostsController {
         description: 'Post id',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deletePost(@Param('id', ObjectIdValidationPipe) id: string) {
+    async deletePost(
+        @Param('id', ObjectIdValidationPipe) id: string,
+    ): Promise<void> {
         return await this.postsService.deletePost(id);
     }
 }

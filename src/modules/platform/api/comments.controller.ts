@@ -27,7 +27,9 @@ export class CommentsController {
     @ApiParam({
         name: 'id',
     })
-    async getComment(@Param('id', ObjectIdValidationPipe) id: string) {
+    async getComment(
+        @Param('id', ObjectIdValidationPipe) id: string,
+    ): Promise<CommentViewDto> {
         return await this.commentsQueryRepository.getByIdOrNotFoundFail(
             id,
             null,

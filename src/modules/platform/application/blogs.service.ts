@@ -21,20 +21,20 @@ export class BlogsService {
         return blog._id.toString();
     }
 
-    async updateBlog(id: string, dto: UpdateBlogDto) {
+    async updateBlog(id: string, dto: UpdateBlogDto): Promise<void> {
         const blog =
             await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(id);
 
         blog.update(dto);
-        return await this.blogsRepository.save(blog);
+        await this.blogsRepository.save(blog);
     }
 
-    async deleteBlog(id: string) {
+    async deleteBlog(id: string): Promise<void> {
         const blog =
             await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(id);
 
         blog.makeDeleted();
 
-        return await this.blogsRepository.save(blog);
+        await this.blogsRepository.save(blog);
     }
 }

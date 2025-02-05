@@ -9,7 +9,11 @@ import {
 export class EmailService {
     constructor(private mailerService: MailerService) {}
 
-    private async sendEmail(email: string, subject: string, html: string) {
+    private async sendEmail(
+        email: string,
+        subject: string,
+        html: string,
+    ): Promise<void> {
         this.mailerService
             .sendMail({
                 subject,
@@ -26,7 +30,7 @@ export class EmailService {
     async sendEmailConfirmationMessage(
         email: string,
         confirmationCode: string,
-    ) {
+    ): Promise<void> {
         const htmlTemplate = getEmailConfirmationTemplate(confirmationCode);
         const subject = 'Confirm your registration email';
         await this.sendEmail(email, subject, htmlTemplate);
@@ -36,7 +40,7 @@ export class EmailService {
     async sendEmailPasswordRecoveryMessage(
         email: string,
         confirmationCode: string,
-    ) {
+    ): Promise<void> {
         const htmlTemplate = getPasswordRecoveryTemplate(confirmationCode);
         const subject = 'Confirm your password recovery email';
         await this.sendEmail(email, subject, htmlTemplate);

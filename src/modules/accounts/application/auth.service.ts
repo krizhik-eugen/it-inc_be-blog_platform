@@ -53,7 +53,7 @@ export class AuthService {
         return Promise.resolve({ accessToken });
     }
 
-    async passwordRecovery(email: string) {
+    async passwordRecovery(email: string): Promise<void> {
         const foundUser = await this.usersRepository.findByLoginOrEmail(email);
         if (foundUser) {
             const newRecoveryCode = randomUUID();
@@ -69,7 +69,7 @@ export class AuthService {
         }
     }
 
-    async confirmPasswordRecovery(dto: UpdatePasswordDto) {
+    async confirmPasswordRecovery(dto: UpdatePasswordDto): Promise<void> {
         const foundUser =
             await this.usersRepository.findUserByRecoveryCodeOrNotFoundFail(
                 dto.recoveryCode,
@@ -82,7 +82,7 @@ export class AuthService {
         await this.usersRepository.save(foundUser);
     }
 
-    async confirmUserEmail(code: string) {
+    async confirmUserEmail(code: string): Promise<void> {
         const foundUser =
             await this.usersRepository.findUserByConfirmationCode(code);
 
@@ -98,7 +98,7 @@ export class AuthService {
         await this.usersRepository.save(foundUser);
     }
 
-    async registerNewUser(dto: CreateUserDto) {
+    async registerNewUser(dto: CreateUserDto): Promise<void> {
         const foundUserByLogin = await this.usersRepository.findByLoginOrEmail(
             dto.login,
         );
@@ -137,7 +137,7 @@ export class AuthService {
         );
     }
 
-    async resendRegistrationCode(email: string) {
+    async resendRegistrationCode(email: string): Promise<void> {
         const foundUser =
             await this.usersRepository.findByLoginOrEmailNonDeleted(email);
 

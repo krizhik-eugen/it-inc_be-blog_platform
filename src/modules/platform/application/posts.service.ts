@@ -31,22 +31,22 @@ export class PostsService {
         return post._id.toString();
     }
 
-    async updatePost(id: string, dto: UpdatePostDto) {
+    async updatePost(id: string, dto: UpdatePostDto): Promise<void> {
         const post =
             await this.postsRepository.findByIdNonDeletedOrNotFoundFail(id);
 
         post.update(dto);
-        return await this.postsRepository.save(post);
+        await this.postsRepository.save(post);
     }
 
     //TODO: implement update like status
 
-    async deletePost(id: string) {
+    async deletePost(id: string): Promise<void> {
         const post =
             await this.postsRepository.findByIdNonDeletedOrNotFoundFail(id);
 
         post.makeDeleted();
 
-        return await this.postsRepository.save(post);
+        await this.postsRepository.save(post);
     }
 }

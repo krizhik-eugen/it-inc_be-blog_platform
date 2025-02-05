@@ -49,51 +49,49 @@ export class AuthController {
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<SuccessLoginViewDto> {
         const accessToken = await this.authService.login(user.id);
-
         return accessToken;
     }
 
     @Post('password-recovery')
     @PasswordRecoveryApi()
-    //TODO: add ratelimit
     @HttpCode(HttpStatus.NO_CONTENT)
-    async passwordRecovery(@Body() body: PasswordRecoveryInputDto) {
+    async passwordRecovery(
+        @Body() body: PasswordRecoveryInputDto,
+    ): Promise<void> {
         await this.authService.passwordRecovery(body.email);
     }
 
     @Post('new-password')
     @NewPasswordApi()
-    //TODO: add ratelimit
     @HttpCode(HttpStatus.NO_CONTENT)
-    async confirmPasswordRecovery(@Body() body: NewPasswordInputDto) {
+    async confirmPasswordRecovery(
+        @Body() body: NewPasswordInputDto,
+    ): Promise<void> {
         await this.authService.confirmPasswordRecovery(body);
     }
 
     @Post('registration-confirmation')
     @RegistrationConfirmationApi()
-    //TODO: add ratelimit
     @HttpCode(HttpStatus.NO_CONTENT)
     async confirmRegistrationEmail(
         @Body() body: RegistrationConfirmationInputDto,
-    ) {
+    ): Promise<void> {
         await this.authService.confirmUserEmail(body.code);
     }
 
     @Post('registration')
     @RegisterNewUserApi()
-    //TODO: add ratelimit
     @HttpCode(HttpStatus.NO_CONTENT)
-    async registerNewUser(@Body() body: CreateUserInputDto) {
+    async registerNewUser(@Body() body: CreateUserInputDto): Promise<void> {
         await this.authService.registerNewUser(body);
     }
 
     @Post('registration-email-resending')
     @RegistrationEmailResendingApi()
-    //TODO: add ratelimit
     @HttpCode(HttpStatus.NO_CONTENT)
     async resendRegistrationCode(
         @Body() body: RegistrationEmailResendingInputDto,
-    ) {
+    ): Promise<void> {
         await this.authService.resendRegistrationCode(body.email);
     }
 

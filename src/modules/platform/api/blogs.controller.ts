@@ -76,7 +76,7 @@ export class BlogsController {
         type: CreateBlogInputDto,
         description: 'Data for constructing new Blog entity',
     })
-    async createBlog(@Body() body: CreateBlogInputDto) {
+    async createBlog(@Body() body: CreateBlogInputDto): Promise<BlogViewDto> {
         const newBlogId = await this.blogsService.createBlog(body);
         return await this.blogsQueryRepository.getByIdOrNotFoundFail(newBlogId);
     }
@@ -127,7 +127,7 @@ export class BlogsController {
     async createBlogPost(
         @Param('blogId', ObjectIdValidationPipe) blogId: string,
         @Body() body: CreateBlogPostInputDto,
-    ) {
+    ): Promise<PostViewDto> {
         const newPostId = await this.postsService.createPost({
             ...body,
             blogId,
@@ -153,7 +153,9 @@ export class BlogsController {
     @ApiParam({
         name: 'id',
     })
-    async getBlog(@Param('id', ObjectIdValidationPipe) id: string) {
+    async getBlog(
+        @Param('id', ObjectIdValidationPipe) id: string,
+    ): Promise<BlogViewDto> {
         return await this.blogsQueryRepository.getByIdOrNotFoundFail(id);
     }
 
@@ -179,7 +181,7 @@ export class BlogsController {
     async updateBlog(
         @Param('id', ObjectIdValidationPipe) id: string,
         @Body() body: UpdateBlogInputDto,
-    ) {
+    ): Promise<void> {
         return await this.blogsService.updateBlog(id, body);
     }
 
@@ -197,7 +199,9 @@ export class BlogsController {
         description: 'Not found',
     })
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteBlog(@Param('id', ObjectIdValidationPipe) id: string) {
+    async deleteBlog(
+        @Param('id', ObjectIdValidationPipe) id: string,
+    ): Promise<void> {
         return await this.blogsService.deleteBlog(id);
     }
 }

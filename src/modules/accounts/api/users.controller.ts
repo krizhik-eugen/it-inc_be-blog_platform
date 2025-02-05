@@ -14,7 +14,10 @@ import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { UsersService } from '../application/users.service';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
-import { PaginatedUsersViewDto } from './dto/view-dto/users.view-dto';
+import {
+    PaginatedUsersViewDto,
+    UserViewDto,
+} from './dto/view-dto/users.view-dto';
 import { CreateUserInputDto } from './dto/input-dto/users.input-dto';
 import { BasicAuthGuard } from '../guards/basic/basic-auth.guard';
 import {
@@ -41,7 +44,7 @@ export class UsersController {
 
     @Post()
     @CreateUserApi()
-    async createUser(@Body() body: CreateUserInputDto) {
+    async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
         const newUserId = await this.usersService.createUser(body);
         return await this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
     }
@@ -49,7 +52,9 @@ export class UsersController {
     @Delete(':id')
     @DeleteUserApi()
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteUser(@Param('id', ObjectIdValidationPipe) id: string) {
+    async deleteUser(
+        @Param('id', ObjectIdValidationPipe) id: string,
+    ): Promise<void> {
         return await this.usersService.deleteUser(id);
     }
 }
