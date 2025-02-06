@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 import { UsersRepository } from '../infrastructure/repositories/users.repository';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { SuccessLoginViewDto } from '../api/dto/view-dto/success-login.view.dto';
 import { CreateUserDto } from '../dto/create/create-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { User, UserModelType } from '../domain/user.entity';
-import { SALT_ROUNDS } from 'src/constants';
-import { randomUUID } from 'crypto';
-import { EmailService } from 'src/modules/notifications/email.service';
 import { UpdatePasswordDto } from '../dto/create/update-password.dto';
 import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
+import { EmailService } from '../../notifications/email.service';
+import { SALT_ROUNDS } from '../../../constants';
 
 @Injectable()
 export class AuthService {

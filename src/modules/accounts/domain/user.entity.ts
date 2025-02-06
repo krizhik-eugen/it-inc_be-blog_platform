@@ -4,7 +4,10 @@ import { add } from 'date-fns';
 import { CreateUserDomainDto } from './dto/create/create-user.domain.dto';
 import { userEmailValidation, userLoginValidation } from './validation-rules';
 import { CONFIRMATION_CODE_EXPIRATION_TIME } from '../../../constants';
-import { BadRequestDomainException, NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+import {
+    BadRequestDomainException,
+    NotFoundDomainException,
+} from '../../../core/exceptions/domain-exceptions';
 
 /**
  * User Entity Schema
