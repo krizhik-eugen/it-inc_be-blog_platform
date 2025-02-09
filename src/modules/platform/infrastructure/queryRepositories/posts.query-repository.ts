@@ -27,7 +27,7 @@ export class PostsQueryRepository {
         }).exec();
 
         if (!post) {
-            throw new NotFoundDomainException('post not found');
+            throw NotFoundDomainException.create('Post not found');
         }
 
         //TODO: get likes and newest likes
@@ -73,7 +73,7 @@ export class PostsQueryRepository {
         });
 
         if (!blog) {
-            throw new NotFoundDomainException('blog not found');
+            throw NotFoundDomainException.create('Blog not found');
         }
 
         const findQuery: FilterQuery<Post> = {

@@ -20,7 +20,7 @@ export class BlogsRepository {
         const blog = await this.findById(id);
 
         if (!blog) {
-            throw new NotFoundDomainException('blog not found');
+            throw NotFoundDomainException.create('Blog not found');
         }
 
         return blog;
@@ -32,7 +32,7 @@ export class BlogsRepository {
             deletedAt: null,
         });
         if (!blog) {
-            throw new NotFoundDomainException('blog not found');
+            throw NotFoundDomainException.create('Blog not found');
         }
         return blog;
     }

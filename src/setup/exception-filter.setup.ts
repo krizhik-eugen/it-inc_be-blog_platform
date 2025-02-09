@@ -1,6 +1,10 @@
 import { INestApplication } from '@nestjs/common';
-import { HttpExceptionFilter } from '../core/exceptions/exception.filter';
+import { AllExceptionsFilter } from '../core/exceptions/filters/all-exceptions-filter';
+import { DomainExceptionsFilter } from '../core/exceptions/filters/domain-exceptions-filter';
 
 export function exceptionFilterSetup(app: INestApplication) {
-    app.useGlobalFilters(new HttpExceptionFilter());
+    app.useGlobalFilters(
+        new AllExceptionsFilter(),
+        new DomainExceptionsFilter(),
+    );
 }

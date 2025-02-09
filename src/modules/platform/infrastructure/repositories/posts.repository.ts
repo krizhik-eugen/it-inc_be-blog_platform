@@ -20,7 +20,7 @@ export class PostsRepository {
         const post = await this.findById(id);
 
         if (!post) {
-            throw new NotFoundDomainException('post not found');
+            throw NotFoundDomainException.create('Post not found');
         }
 
         return post;
@@ -32,7 +32,7 @@ export class PostsRepository {
             deletedAt: null,
         });
         if (!post) {
-            throw new NotFoundDomainException('post not found');
+            throw NotFoundDomainException.create('Post not found');
         }
         return post;
     }

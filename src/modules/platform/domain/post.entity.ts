@@ -160,7 +160,7 @@ export class Post {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new NotFoundDomainException('Entity already deleted');
+            throw NotFoundDomainException.create('Entity already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }

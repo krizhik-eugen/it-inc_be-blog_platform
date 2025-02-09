@@ -19,7 +19,6 @@ import {
     ApiOperation,
     ApiParam,
 } from '@nestjs/swagger';
-import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
 import { PostsService } from '../application/posts.service';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
@@ -32,6 +31,7 @@ import { UpdatePostInputDto } from './dto/input-dto/update/posts.input-dto';
 import { PaginatedCommentsViewDto } from './dto/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
 import { GetCommentsQueryParams } from './dto/query-params-dto/get-comments-query-params.input-dto';
+import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
 
 @Controller('posts')
 export class PostsController {

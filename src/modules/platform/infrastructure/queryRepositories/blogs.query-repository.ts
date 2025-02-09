@@ -19,7 +19,7 @@ export class BlogsQueryRepository {
         }).exec();
 
         if (!blog) {
-            throw new NotFoundDomainException('blog not found');
+            throw NotFoundDomainException.create('Blog not found');
         }
 
         return BlogViewDto.mapToView(blog);

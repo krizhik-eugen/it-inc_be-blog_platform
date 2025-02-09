@@ -19,7 +19,6 @@ import {
     ApiOperation,
     ApiParam,
 } from '@nestjs/swagger';
-import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 import { BlogsQueryRepository } from '../infrastructure/queryRepositories/blogs.query-repository';
 import { BlogsService } from '../application/blogs.service';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
@@ -40,6 +39,7 @@ import {
     CreatePostInputDto,
 } from './dto/input-dto/create/posts.input-dto';
 import { PostsService } from '../application/posts.service';
+import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
 
 @Controller('blogs')
 export class BlogsController {

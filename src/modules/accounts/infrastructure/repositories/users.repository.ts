@@ -20,7 +20,7 @@ export class UsersRepository {
         const user = await this.findById(id);
 
         if (!user) {
-            throw new NotFoundDomainException('User is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
 
         return user;
@@ -32,7 +32,7 @@ export class UsersRepository {
             deletedAt: null,
         });
         if (!user) {
-            throw new NotFoundDomainException('User is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
         return user;
     }
@@ -63,7 +63,7 @@ export class UsersRepository {
             .and([{ deletedAt: null }])
             .or([{ login: loginOrEmail }, { email: loginOrEmail }]);
         if (!user) {
-            throw new NotFoundDomainException('User is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
         return user;
     }
@@ -84,7 +84,7 @@ export class UsersRepository {
             'passwordRecovery.recoveryCode': code,
         });
         if (!user) {
-            throw new NotFoundDomainException(
+            throw NotFoundDomainException.create(
                 'No user found for this recovery code',
             );
         }

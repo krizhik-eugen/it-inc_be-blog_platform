@@ -87,7 +87,7 @@ export class AuthService {
             await this.usersRepository.findUserByConfirmationCode(code);
 
         if (!foundUser) {
-            throw new BadRequestDomainException(
+            throw BadRequestDomainException.create(
                 'No user found for this confirmation code',
                 'code',
             );
@@ -114,7 +114,7 @@ export class AuthService {
                 message = `User with this ${fieldName} was in the system and has been deleted`;
             }
 
-            throw new BadRequestDomainException(message, fieldName);
+            throw BadRequestDomainException.create(message, fieldName);
         }
 
         const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
@@ -142,7 +142,7 @@ export class AuthService {
             await this.usersRepository.findByLoginOrEmailNonDeleted(email);
 
         if (!foundUser) {
-            throw new BadRequestDomainException(
+            throw BadRequestDomainException.create(
                 'No user found for this email',
                 'email',
             );

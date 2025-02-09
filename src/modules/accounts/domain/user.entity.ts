@@ -201,7 +201,7 @@ export class User {
      */
     setConfirmationCode(code: string) {
         if (this.emailConfirmation.isConfirmed) {
-            throw new BadRequestDomainException(
+            throw BadRequestDomainException.create(
                 'The user has already been confirmed',
                 'email',
             );
@@ -229,14 +229,14 @@ export class User {
      */
     confirmUserEmail(code: string) {
         if (this.emailConfirmation.isConfirmed) {
-            throw new BadRequestDomainException(
+            throw BadRequestDomainException.create(
                 'The user has already been confirmed',
                 'code',
             );
         }
 
         if (this.emailConfirmation.confirmationCode !== code) {
-            throw new BadRequestDomainException('Invalid code', 'code');
+            throw BadRequestDomainException.create('Invalid code', 'code');
         }
 
         if (!this.emailConfirmation.expirationDate) {
@@ -246,7 +246,7 @@ export class User {
         }
 
         if (new Date() > this.emailConfirmation.expirationDate) {
-            throw new BadRequestDomainException('Code expired', 'code');
+            throw BadRequestDomainException.create('Code expired', 'code');
         }
 
         this.emailConfirmation.isConfirmed = true;
@@ -282,7 +282,7 @@ export class User {
      */
     changePassword(code: string, passwordHash: string) {
         if (this.passwordRecovery.recoveryCode !== code) {
-            throw new BadRequestDomainException('Invalid code', 'code');
+            throw BadRequestDomainException.create('Invalid code', 'code');
         }
 
         if (!this.passwordRecovery.expirationDate) {
@@ -292,7 +292,7 @@ export class User {
         }
 
         if (Date.now() > this.passwordRecovery.expirationDate.getTime()) {
-            throw new BadRequestDomainException(
+            throw BadRequestDomainException.create(
                 'Confirmation code expired',
                 'recoveryCode',
             );
@@ -310,7 +310,7 @@ export class User {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new NotFoundDomainException('Entity is already deleted');
+            throw NotFoundDomainException.create('Entity is already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }

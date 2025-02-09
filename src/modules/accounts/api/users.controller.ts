@@ -10,7 +10,7 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
-import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
+import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { UsersService } from '../application/users.service';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';

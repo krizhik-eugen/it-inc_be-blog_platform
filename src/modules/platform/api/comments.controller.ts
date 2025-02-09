@@ -5,9 +5,9 @@ import {
     ApiOperation,
     ApiParam,
 } from '@nestjs/swagger';
-import { ObjectIdValidationPipe } from '../../../core/pipes/objectId-validation-pipe';
 import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
 import { CommentViewDto } from './dto/view-dto/comments.view-dto';
+import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
 
 @Controller('comments')
 export class CommentsController {

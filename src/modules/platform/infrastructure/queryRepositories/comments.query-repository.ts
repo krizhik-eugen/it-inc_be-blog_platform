@@ -27,7 +27,7 @@ export class CommentsQueryRepository {
         }).exec();
 
         if (!comment) {
-            throw new NotFoundDomainException('comment not found');
+            throw NotFoundDomainException.create('Comment is not found');
         }
 
         //TODO: get likes and my status
@@ -46,7 +46,7 @@ export class CommentsQueryRepository {
         });
 
         if (!post) {
-            throw new NotFoundDomainException('post not found');
+            throw NotFoundDomainException.create('Post not found');
         }
 
         const findQuery: FilterQuery<Comment> = {

@@ -128,7 +128,7 @@ export class Comment {
      */
     update(dto: UpdateCommentDomainDto) {
         if (dto.userId !== this.commentatorInfo.userId) {
-            throw new ForbiddenDomainException(
+            throw ForbiddenDomainException.create(
                 'You are not an owner of this comment',
             );
         }
@@ -142,7 +142,7 @@ export class Comment {
      */
     makeDeleted() {
         if (this.deletedAt) {
-            throw new NotFoundDomainException('Entity already deleted');
+            throw NotFoundDomainException.create('Entity already deleted');
         }
         this.deletedAt = new Date().toISOString();
     }

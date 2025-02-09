@@ -1,34 +1,50 @@
-import { ErrorResponse } from '../../setup/pipes.setup';
-import {
-    BadRequestException,
-    ForbiddenException,
-    NotFoundException,
-    UnauthorizedException,
-} from '@nestjs/common';
+import { DomainExceptionCode } from './domain-exception-codes';
 
-type TMessage = ErrorResponse['message'];
-type TField = ErrorResponse['field'];
+export class ErrorExtension {
+    constructor(
+        public message: string,
+        public key: string | null = null,
+    ) {}
+}
 
-export class BadRequestDomainException extends BadRequestException {
-    constructor(message: TMessage, field: TField = null) {
-        super({ message, field });
+export class DomainException extends Error {
+    constructor(
+        public message: string,
+        public code: DomainExceptionCode,
+        public extensions: ErrorExtension[],
+    ) {
+        super(message);
     }
 }
 
-export class NotFoundDomainException extends NotFoundException {
-    constructor(message: TMessage, field: TField = null) {
-        super({ message, field });
-    }
+function ConcreteDomainExceptionFactory(
+    commonMessage: string,
+    code: DomainExceptionCode,
+) {
+    return class extends DomainException {
+        constructor(extensions: ErrorExtension[]) {
+            super(commonMessage, code, extensions);
+        }
+
+        static create(message?: string, key?: string) {
+            return new this(message ? [new ErrorExtension(message, key)] : []);
+        }
+    };
 }
 
-export class ForbiddenDomainException extends ForbiddenException {
-    constructor(message: TMessage, field: TField = null) {
-        super({ message, field });
-    }
-}
-
-export class UnauthorizedDomainException extends UnauthorizedException {
-    constructor(message: TMessage, field: TField = null) {
-        super({ message, field });
-    }
-}
+export const NotFoundDomainException = ConcreteDomainExceptionFactory(
+    'Not Found',
+    DomainExceptionCode.NotFound,
+);
+export const BadRequestDomainException = ConcreteDomainExceptionFactory(
+    'Bed Request',
+    DomainExceptionCode.BadRequest,
+);
+export const ForbiddenDomainException = ConcreteDomainExceptionFactory(
+    'Forbidden',
+    DomainExceptionCode.Forbidden,
+);
+export const UnauthorizedDomainException = ConcreteDomainExceptionFactory(
+    'Unauthorized',
+    DomainExceptionCode.Unauthorized,
+);
