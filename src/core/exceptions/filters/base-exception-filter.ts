@@ -1,13 +1,13 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { DomainException, ErrorExtension } from '../domain-exceptions';
+import { DomainException, ErrorsMessages } from '../domain-exceptions';
 import { DomainExceptionCode } from '../domain-exception-codes';
 
 export type HttpResponseBody = {
     timestamp: string;
     path: string | null;
     message: string;
-    extensions: ErrorExtension[];
+    errorsMessages: ErrorsMessages[];
     code: DomainExceptionCode | null;
 };
 
@@ -20,7 +20,9 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
 
     catch(exception: any, host: ArgumentsHost): any {
         const ctx = host.switchToHttp();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const response = ctx.getResponse();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const request = ctx.getRequest();
 
         this.onCatch(exception, response, request);
@@ -30,11 +32,12 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
         return {
             timestamp: new Date().toISOString(),
             path: url,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             message: (exception as any).message || 'Internal server error',
             code: exception instanceof DomainException ? exception.code : null,
-            extensions:
+            errorsMessages:
                 exception instanceof DomainException
-                    ? exception.extensions
+                    ? exception.errorsMessages
                     : [],
         };
     }

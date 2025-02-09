@@ -5,7 +5,7 @@ import { BaseExceptionFilter } from './base-exception-filter';
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
     onCatch(exception: unknown, response: Response, request: Request): void {
-        const status =
+        const status: HttpStatus =
             exception instanceof HttpException
                 ? exception.getStatus()
                 : HttpStatus.INTERNAL_SERVER_ERROR;

@@ -1,4 +1,5 @@
 import { getConnectionToken } from '@nestjs/mongoose';
+import { HttpServer } from '@nestjs/common';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { Connection } from 'mongoose';
 import { AppModule } from '../../src/app.module';
@@ -9,7 +10,6 @@ import { EmailService } from '../../src/modules/notifications/email.service';
 import { EmailServiceMock } from '../mock/email-service.mock';
 
 export const initSettings = async (
-    //передаем callback, который получает ModuleBuilder, если хотим изменить настройку тестового модуля
     addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,
 ) => {
     const testingModuleBuilder: TestingModuleBuilder = Test.createTestingModule(
@@ -33,7 +33,7 @@ export const initSettings = async (
     await app.init();
 
     const databaseConnection = app.get<Connection>(getConnectionToken());
-    const httpServer = app.getHttpServer();
+    const httpServer = app.getHttpServer() as HttpServer;
     const userTestManger = new UsersTestManager(app);
 
     await deleteAllData(app);

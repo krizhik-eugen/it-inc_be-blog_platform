@@ -8,6 +8,7 @@ export const errorFormatter = (
     errors: ValidationError[],
     errorMessage?: any,
 ): ErrorResponse[] => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const errorsForResponse = errorMessage || [];
 
     for (const error of errors) {
@@ -17,6 +18,7 @@ export const errorFormatter = (
             const constrainKeys = Object.keys(error.constraints);
 
             for (const key of constrainKeys) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
                 errorsForResponse.push({
                     message: error.constraints[key]
                         ? `${error.constraints[key]}; Received value: ${error?.value}`
@@ -27,6 +29,7 @@ export const errorFormatter = (
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return errorsForResponse;
 };
 
@@ -39,7 +42,7 @@ export function pipesSetup(app: INestApplication) {
             exceptionFactory: (errors) => {
                 const formattedErrors = errorFormatter(errors);
 
-                throw BadRequestDomainException.create(formattedErrors);
+                throw new BadRequestDomainException(formattedErrors);
             },
         }),
     );
