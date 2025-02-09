@@ -2,8 +2,22 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDomainDto } from './dto/create/create-blog.domain.dto';
 import { UpdateBlogDomainDto } from './dto/update/update-blog.domain.dto';
-import { blogValidationRules } from './validation-rules';
 import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+
+export const blogConstraints = {
+    name: {
+        maxLength: 15,
+    },
+    description: {
+        maxLength: 500,
+    },
+    websiteUrl: {
+        pattern:
+            /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/,
+        errorMessagePattern: 'Website URL should be a valid URL',
+        maxLength: 100,
+    },
+};
 
 /**
  * Blog Entity Schema
@@ -19,7 +33,7 @@ export class Blog {
     @Prop({
         type: String,
         required: true,
-        maxlength: blogValidationRules.name.maxLength,
+        maxlength: blogConstraints.name.maxLength,
     })
     name: string;
 
@@ -31,7 +45,7 @@ export class Blog {
     @Prop({
         type: String,
         required: true,
-        maxlength: blogValidationRules.description.maxLength,
+        maxlength: blogConstraints.description.maxLength,
     })
     description: string;
 
@@ -43,11 +57,11 @@ export class Blog {
     @Prop({
         type: String,
         required: true,
-        maxlength: blogValidationRules.websiteUrl.maxLength,
+        maxlength: blogConstraints.websiteUrl.maxLength,
         validate: {
             validator: (value: string) =>
-                blogValidationRules.websiteUrl.pattern.test(value),
-            message: blogValidationRules.websiteUrl.errorMessagePattern,
+                blogConstraints.websiteUrl.pattern.test(value),
+            message: blogConstraints.websiteUrl.errorMessagePattern,
         },
     })
     websiteUrl: string;

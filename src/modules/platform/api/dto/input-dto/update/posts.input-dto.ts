@@ -2,28 +2,28 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
 import { IsObjectId } from '../../../../../../core/decorators/validation/is-object-id';
-import { postValidationRules } from '../../../../domain/validation-rules';
+import { postConstraints } from '../../../../domain/post.entity';
 import { UpdatePostDto } from '../../../../dto/update/update-post.dto';
 
 export class UpdatePostInputDto implements UpdatePostDto {
     @ApiPropertyOptional({
-        maxLength: postValidationRules.title.maxLength,
+        maxLength: postConstraints.title.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.title.maxLength)
+    @IsStringWithTrim(1, postConstraints.title.maxLength)
     @IsOptional()
     title: string;
 
     @ApiPropertyOptional({
-        maxLength: postValidationRules.shortDescription.maxLength,
+        maxLength: postConstraints.shortDescription.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.shortDescription.maxLength)
+    @IsStringWithTrim(1, postConstraints.shortDescription.maxLength)
     @IsOptional()
     shortDescription: string;
 
     @ApiPropertyOptional({
-        maxLength: postValidationRules.content.maxLength,
+        maxLength: postConstraints.content.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.content.maxLength)
+    @IsStringWithTrim(1, postConstraints.content.maxLength)
     @IsOptional()
     content: string;
 

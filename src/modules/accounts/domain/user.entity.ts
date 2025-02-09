@@ -2,12 +2,26 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { add } from 'date-fns';
 import { CreateUserDomainDto } from './dto/create/create-user.domain.dto';
-import { userEmailValidation, userLoginValidation } from './validation-rules';
 import { CONFIRMATION_CODE_EXPIRATION_TIME } from '../../../constants';
 import {
     BadRequestDomainException,
     NotFoundDomainException,
 } from '../../../core/exceptions/domain-exceptions';
+
+export const userLoginConstraints = {
+    minLength: 3,
+    maxLength: 10,
+    errorMessage: 'Login must be between 3 and 10 symbols',
+    pattern: /^[a-zA-Z0-9_-]*$/,
+    errorMessagePattern:
+        'Login should contain only latin letters, numbers, - and _',
+};
+
+export const userEmailConstraints = {
+    pattern: /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/,
+    errorMessagePattern:
+        'Email should be a valid email address, example: example@example.com',
+};
 
 /**
  * User Entity Schema
@@ -24,12 +38,12 @@ export class User {
         type: String,
         required: true,
         unique: true,
-        minlength: userLoginValidation.minLength,
-        maxlength: userLoginValidation.maxLength,
+        minlength: userLoginConstraints.minLength,
+        maxlength: userLoginConstraints.maxLength,
         validate: {
             validator: (value: string) =>
-                userLoginValidation.pattern.test(value),
-            message: userLoginValidation.errorMessagePattern,
+                userLoginConstraints.pattern.test(value),
+            message: userLoginConstraints.errorMessagePattern,
         },
     })
     login: string;
@@ -53,8 +67,8 @@ export class User {
         unique: true,
         validate: {
             validator: (value: string) =>
-                userEmailValidation.pattern.test(value),
-            message: userEmailValidation.errorMessagePattern,
+                userEmailConstraints.pattern.test(value),
+            message: userEmailConstraints.errorMessagePattern,
         },
     })
     email: string;

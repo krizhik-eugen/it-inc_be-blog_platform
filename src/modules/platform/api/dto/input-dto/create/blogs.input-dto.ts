@@ -1,30 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateBlogDto } from '../../../../dto/create/create-blog.dto';
-import { blogValidationRules } from '../../../../domain/validation-rules';
+import { blogConstraints } from '../../../../domain/blog.entity';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
 import { Matches } from 'class-validator';
 
 export class CreateBlogInputDto implements CreateBlogDto {
     @ApiProperty({
-        maxLength: blogValidationRules.name.maxLength,
+        maxLength: blogConstraints.name.maxLength,
         required: true,
     })
-    @IsStringWithTrim(1, blogValidationRules.name.maxLength)
+    @IsStringWithTrim(1, blogConstraints.name.maxLength)
     name: string;
 
     @ApiProperty({
-        maxLength: blogValidationRules.description.maxLength,
+        maxLength: blogConstraints.description.maxLength,
         required: true,
     })
-    @IsStringWithTrim(1, blogValidationRules.description.maxLength)
+    @IsStringWithTrim(1, blogConstraints.description.maxLength)
     description: string;
 
     @ApiProperty({
-        maxLength: blogValidationRules.websiteUrl.maxLength,
-        pattern: String(blogValidationRules.websiteUrl.pattern),
+        maxLength: blogConstraints.websiteUrl.maxLength,
+        pattern: String(blogConstraints.websiteUrl.pattern),
         required: true,
     })
-    @Matches(blogValidationRules.websiteUrl.pattern)
-    @IsStringWithTrim(1, blogValidationRules.websiteUrl.maxLength)
+    @Matches(blogConstraints.websiteUrl.pattern)
+    @IsStringWithTrim(1, blogConstraints.websiteUrl.maxLength)
     websiteUrl: string;
 }

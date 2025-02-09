@@ -1,24 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
 import { IsObjectId } from '../../../../../../core/decorators/validation/is-object-id';
-import { postValidationRules } from '../../../../domain/validation-rules';
+import { postConstraints } from '../../../../domain/post.entity';
 import { CreateBlogPostDto } from '../../../../dto/create/create-post.dto';
 
 export class CreateBlogPostInputDto implements CreateBlogPostDto {
     @ApiProperty({
-        maxLength: postValidationRules.title.maxLength,
+        maxLength: postConstraints.title.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.title.maxLength)
+    @IsStringWithTrim(1, postConstraints.title.maxLength)
     title: string;
 
-    @ApiProperty({ maxLength: postValidationRules.shortDescription.maxLength })
-    @IsStringWithTrim(1, postValidationRules.shortDescription.maxLength)
+    @ApiProperty({ maxLength: postConstraints.shortDescription.maxLength })
+    @IsStringWithTrim(1, postConstraints.shortDescription.maxLength)
     shortDescription: string;
 
     @ApiProperty({
-        maxLength: postValidationRules.content.maxLength,
+        maxLength: postConstraints.content.maxLength,
     })
-    @IsStringWithTrim(1, postValidationRules.content.maxLength)
+    @IsStringWithTrim(1, postConstraints.content.maxLength)
     content: string;
 }
 

@@ -3,20 +3,20 @@ import { IsEmail, IsString, Matches } from 'class-validator';
 import { CreateUserDto } from '../../../dto/create/create-user.dto';
 import { IsStringWithTrim } from '../../../../../core/decorators/validation/is-string-with-trim';
 import {
-    userEmailValidation,
-    userLoginValidation,
-} from '../../../domain/validation-rules';
+    userEmailConstraints,
+    userLoginConstraints,
+} from '../../../domain/user.entity';
 
 export class CreateUserInputDto implements CreateUserDto {
     @ApiProperty({
-        maxLength: userLoginValidation.maxLength,
-        minLength: userLoginValidation.minLength,
-        pattern: String(userLoginValidation.pattern),
+        maxLength: userLoginConstraints.maxLength,
+        minLength: userLoginConstraints.minLength,
+        pattern: String(userLoginConstraints.pattern),
         description: 'Must be unique',
     })
     @IsStringWithTrim(
-        userLoginValidation.minLength,
-        userLoginValidation.maxLength,
+        userLoginConstraints.minLength,
+        userLoginConstraints.maxLength,
     )
     login: string;
 
@@ -26,12 +26,12 @@ export class CreateUserInputDto implements CreateUserDto {
     password: string;
 
     @ApiProperty({
-        pattern: String(userEmailValidation.pattern),
+        pattern: String(userEmailConstraints.pattern),
         example: 'john@example.com',
         description: 'Must be unique',
     })
     @IsEmail()
-    @Matches(userEmailValidation.pattern)
+    @Matches(userEmailConstraints.pattern)
     @IsStringWithTrim()
     email: string;
 }

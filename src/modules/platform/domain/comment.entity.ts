@@ -1,12 +1,20 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { commentValidationRules } from './validation-rules';
 import { CreateCommentDomainDto } from './dto/create/create-comment.domain.dto';
 import { UpdateCommentDomainDto } from './dto/update/update-comment.domain.dto';
 import {
     ForbiddenDomainException,
     NotFoundDomainException,
 } from '../../../core/exceptions/domain-exceptions';
+
+export const commentConstraints = {
+    content: {
+        minLength: 20,
+        maxLength: 300,
+        errorMessageMinLength:
+            'Comment content must be between 20 and 300 characters',
+    },
+};
 
 /**
  * Comment Entity Schema
@@ -33,8 +41,8 @@ export class Comment {
     @Prop({
         type: String,
         required: true,
-        minlength: commentValidationRules.content.minLength,
-        maxlength: commentValidationRules.content.maxLength,
+        minlength: commentConstraints.content.minLength,
+        maxlength: commentConstraints.content.maxLength,
     })
     content: string;
 

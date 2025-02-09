@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateCommentDto } from '../../../../dto/create/create-comment.dto';
-import { commentValidationRules } from '../../../../domain/validation-rules';
+import { commentConstraints } from '../../../../domain/comment.entity';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
 
 export class CreateCommentInputDto implements CreateCommentDto {
     @ApiProperty({
-        minLength: commentValidationRules.content.minLength,
-        maxLength: commentValidationRules.content.maxLength,
+        minLength: commentConstraints.content.minLength,
+        maxLength: commentConstraints.content.maxLength,
     })
     @IsStringWithTrim(
-        commentValidationRules.content.minLength,
-        commentValidationRules.content.maxLength,
+        commentConstraints.content.minLength,
+        commentConstraints.content.maxLength,
     )
     content: string;
 }

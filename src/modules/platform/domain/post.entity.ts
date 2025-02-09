@@ -1,9 +1,20 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { postValidationRules } from './validation-rules';
 import { CreatePostDomainDto } from './dto/create/create-post.domain.dto';
 import { UpdatePostDomainDto } from './dto/update/update-post.domain.dto';
 import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+
+export const postConstraints = {
+    title: {
+        maxLength: 30,
+    },
+    shortDescription: {
+        maxLength: 100,
+    },
+    content: {
+        maxLength: 1000,
+    },
+};
 
 /**
  * Post Entity Schema
@@ -41,7 +52,7 @@ export class Post {
     @Prop({
         type: String,
         required: true,
-        maxlength: postValidationRules.title.maxLength,
+        maxlength: postConstraints.title.maxLength,
     })
     title: string;
 
@@ -53,7 +64,7 @@ export class Post {
     @Prop({
         type: String,
         required: true,
-        maxlength: postValidationRules.content.maxLength,
+        maxlength: postConstraints.content.maxLength,
     })
     content: string;
 
@@ -65,7 +76,7 @@ export class Post {
     @Prop({
         type: String,
         required: true,
-        maxlength: postValidationRules.shortDescription.maxLength,
+        maxlength: postConstraints.shortDescription.maxLength,
     })
     shortDescription: string;
 
