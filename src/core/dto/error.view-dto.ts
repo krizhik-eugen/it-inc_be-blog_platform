@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ErrorResponse } from './error.dto';
+import { ErrorResponse } from '../exceptions/filters/domain-exceptions-filter';
 
 export class ErrorViewDto extends ErrorResponse {
     @ApiProperty({

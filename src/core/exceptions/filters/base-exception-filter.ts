@@ -1,13 +1,13 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { DomainException, ErrorsMessages } from '../domain-exceptions';
+import { DomainException, ErrorExtension } from '../domain-exceptions';
 import { DomainExceptionCode } from '../domain-exception-codes';
 
 export type HttpResponseBody = {
     timestamp: string;
     path: string | null;
     message: string;
-    errorsMessages: ErrorsMessages[];
+    extensions: ErrorExtension[];
     code: DomainExceptionCode | null;
 };
 
@@ -35,9 +35,9 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             message: (exception as any).message || 'Internal server error',
             code: exception instanceof DomainException ? exception.code : null,
-            errorsMessages:
+            extensions:
                 exception instanceof DomainException
-                    ? exception.errorsMessages
+                    ? exception.extensions
                     : [],
         };
     }

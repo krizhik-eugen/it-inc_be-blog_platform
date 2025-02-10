@@ -1,13 +1,15 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ValidationError } from '@nestjs/common';
-import { BadRequestDomainException } from '../core/exceptions/domain-exceptions';
+import {
+    BadRequestDomainException,
+    ErrorExtension,
+} from '../core/exceptions/domain-exceptions';
 import { ObjectIdValidationTransformationPipe } from '../core/pipes/object-id-validation-transformation-pipe.service';
-import { ErrorResponse } from '../core/dto/error.dto';
 
 export const errorFormatter = (
     errors: ValidationError[],
     errorMessage?: any,
-): ErrorResponse[] => {
+): ErrorExtension[] => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const errorsForResponse = errorMessage || [];
 
@@ -23,7 +25,7 @@ export const errorFormatter = (
                     message: error.constraints[key]
                         ? `${error.constraints[key]}; Received value: ${error?.value}`
                         : '',
-                    field: error.property,
+                    key: error.property,
                 });
             }
         }

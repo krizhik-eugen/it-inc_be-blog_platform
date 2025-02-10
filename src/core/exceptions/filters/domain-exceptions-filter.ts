@@ -1,20 +1,24 @@
-//Ошибки класса DomainException (instanceof DomainException)
 import { Catch, HttpStatus } from '@nestjs/common';
 import { DomainException } from '../domain-exceptions';
 import { BaseExceptionFilter } from './base-exception-filter';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { DomainExceptionCode } from '../domain-exception-codes';
+
+export class ErrorResponse {
+    message: string;
+    field: string | null;
+}
+
+export type HttpErrorBody = {
+    errorsMessages: ErrorResponse[];
+};
 
 @Catch(DomainException)
 export class DomainExceptionsFilter extends BaseExceptionFilter {
-    onCatch(
-        exception: DomainException,
-        response: Response,
-        request: Request,
-    ): void {
+    onCatch(exception: DomainException, response: Response): void {
         response
             .status(this.calculateHttpCode(exception))
-            .json(this.getDefaultHttpBody(request.url, exception));
+            .json(this.getHttpErrorBody(exception));
     }
 
     calculateHttpCode(exception: DomainException) {
@@ -35,5 +39,18 @@ export class DomainExceptionsFilter extends BaseExceptionFilter {
                 return HttpStatus.I_AM_A_TEAPOT;
             }
         }
+    }
+
+    getHttpErrorBody(exception: unknown): HttpErrorBody {
+        const errorsMessages =
+            exception instanceof DomainException ? exception.extensions : [];
+        const mappedErrorsMessages = errorsMessages.map((error) => ({
+            message: error.message,
+            field: error.key,
+        }));
+
+        return {
+            errorsMessages: mappedErrorsMessages,
+        };
     }
 }

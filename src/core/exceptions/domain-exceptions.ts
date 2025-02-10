@@ -1,9 +1,9 @@
 import { DomainExceptionCode } from './domain-exception-codes';
 
-export class ErrorsMessages {
+export class ErrorExtension {
     constructor(
         public message: string,
-        public field: string | null = null,
+        public key: string | null = null,
     ) {}
 }
 
@@ -11,7 +11,7 @@ export class DomainException extends Error {
     constructor(
         public message: string,
         public code: DomainExceptionCode,
-        public errorsMessages: ErrorsMessages[],
+        public extensions: ErrorExtension[],
     ) {
         super(message);
     }
@@ -22,14 +22,12 @@ function ConcreteDomainExceptionFactory(
     code: DomainExceptionCode,
 ) {
     return class extends DomainException {
-        constructor(extensions: ErrorsMessages[]) {
+        constructor(extensions: ErrorExtension[]) {
             super(commonMessage, code, extensions);
         }
 
-        static create(message?: string, field?: string) {
-            return new this(
-                message ? [new ErrorsMessages(message, field)] : [],
-            );
+        static create(message?: string, key?: string) {
+            return new this(message ? [new ErrorExtension(message, key)] : []);
         }
     };
 }
@@ -39,7 +37,7 @@ export const NotFoundDomainException = ConcreteDomainExceptionFactory(
     DomainExceptionCode.NotFound,
 );
 export const BadRequestDomainException = ConcreteDomainExceptionFactory(
-    'Bad Request',
+    'Bed Request',
     DomainExceptionCode.BadRequest,
 );
 export const ForbiddenDomainException = ConcreteDomainExceptionFactory(
