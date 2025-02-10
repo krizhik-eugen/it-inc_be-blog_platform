@@ -3,7 +3,7 @@ import { DomainExceptionCode } from './domain-exception-codes';
 export class ErrorsMessages {
     constructor(
         public message: string,
-        public key: string | null = null,
+        public field: string | null = null,
     ) {}
 }
 

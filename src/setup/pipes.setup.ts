@@ -23,7 +23,7 @@ export const errorFormatter = (
                     message: error.constraints[key]
                         ? `${error.constraints[key]}; Received value: ${error?.value}`
                         : '',
-                    key: error.property,
+                    field: error.property,
                 });
             }
         }

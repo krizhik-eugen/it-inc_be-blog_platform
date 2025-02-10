@@ -1,4 +1,4 @@
 export class ErrorResponse {
     message: string;
-    key: string;
+    field: string;
 }
