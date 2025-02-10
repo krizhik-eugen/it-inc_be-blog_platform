@@ -26,8 +26,10 @@ function ConcreteDomainExceptionFactory(
             super(commonMessage, code, extensions);
         }
 
-        static create(message?: string, key?: string) {
-            return new this(message ? [new ErrorsMessages(message, key)] : []);
+        static create(message?: string, field?: string) {
+            return new this(
+                message ? [new ErrorsMessages(message, field)] : [],
+            );
         }
     };
 }
