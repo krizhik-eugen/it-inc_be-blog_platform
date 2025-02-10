@@ -10,6 +10,8 @@ async function bootstrap() {
     appSetup(app);
 
     await app.listen(port);
+
+    console.log(`Server is running on port ${port}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises

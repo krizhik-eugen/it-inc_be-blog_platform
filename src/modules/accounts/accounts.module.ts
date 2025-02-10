@@ -12,6 +12,8 @@ import { ACCESS_TOKEN_EXPIRATION_TIME } from '../../constants';
 import { LocalStrategy } from './guards/local/local.strategy';
 import { JwtStrategy } from './guards/bearer/jwt.strategy';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { AccountsConfig } from './accounts.config';
+
 
 @Module({
     imports: [
@@ -26,6 +28,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     ],
     controllers: [AuthController, UsersController],
     providers: [
+        AccountsConfig,
         AuthService,
         UsersService,
         UsersQueryRepository,
