@@ -1,8 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { add } from 'date-fns';
 import { CreateUserDomainDto } from './dto/create/create-user.domain.dto';
-import { CONFIRMATION_CODE_EXPIRATION_TIME } from '../../../constants';
 import {
     BadRequestDomainException,
     NotFoundDomainException,
@@ -176,22 +174,6 @@ export class User {
     }
 
     /**
-     * Factory method to create a confirmed User instance
-     * @param {CreateUserDto} dto - The data transfer object for user creation
-     * @returns {UserDocument} The created user document
-     */
-    static createConfirmedInstance(dto: CreateUserDomainDto): UserDocument {
-        const user = new this();
-
-        user.email = dto.email;
-        user.passwordHash = dto.passwordHash;
-        user.login = dto.login;
-        user.emailConfirmation.isConfirmed = true;
-
-        return user as UserDocument;
-    }
-
-    /**
      * Sets the confirmation code for the user's email address.
      *
      * @param {string} code - The confirmation code to be set.
@@ -199,7 +181,7 @@ export class User {
      * @throws {BadRequestDomainException} If the user's email has already been confirmed.
      * @throws {Error} If the confirmation code is not provided.
      */
-    setConfirmationCode(code: string) {
+    setConfirmationCode(code: string, expirationDate: Date) {
         if (this.emailConfirmation.isConfirmed) {
             throw BadRequestDomainException.create(
                 'The user has already been confirmed',
@@ -212,9 +194,7 @@ export class User {
         }
 
         this.emailConfirmation.confirmationCode = code;
-        this.emailConfirmation.expirationDate = add(new Date(), {
-            hours: CONFIRMATION_CODE_EXPIRATION_TIME,
-        });
+        this.emailConfirmation.expirationDate = expirationDate;
     }
 
     /**
@@ -259,15 +239,13 @@ export class User {
      *
      * @throws {Error} If the password recovery code is not provided.
      */
-    setPasswordRecoveryCode(code: string) {
+    setPasswordRecoveryCode(code: string, expirationDate: Date) {
         if (!code) {
             throw new Error('Code is not provided');
         }
 
         this.passwordRecovery.recoveryCode = code;
-        this.passwordRecovery.expirationDate = add(new Date(), {
-            hours: CONFIRMATION_CODE_EXPIRATION_TIME,
-        });
+        this.passwordRecovery.expirationDate = expirationDate;
     }
 
     /**

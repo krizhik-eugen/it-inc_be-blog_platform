@@ -11,7 +11,9 @@ import { User, UserModelType } from '../domain/user.entity';
 import { UpdatePasswordDto } from '../dto/create/update-password.dto';
 import { BadRequestDomainException } from '../../../core/exceptions/domain-exceptions';
 import { EmailService } from '../../notifications/email.service';
-import { SALT_ROUNDS } from '../../../constants';
+import { SALT_ROUNDS } from '../constants/constants';
+import { add } from 'date-fns';
+import { AccountsConfig } from '../config/accounts.config';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +22,7 @@ export class AuthService {
         private usersRepository: UsersRepository,
         private jwtService: JwtService,
         private emailService: EmailService,
+        private accountsConfig: AccountsConfig,
     ) {}
 
     async validateUser(
@@ -58,7 +61,11 @@ export class AuthService {
         if (foundUser) {
             const newRecoveryCode = randomUUID();
 
-            foundUser.setPasswordRecoveryCode(newRecoveryCode);
+            const expirationDate = add(new Date(), {
+                hours: this.accountsConfig.recoveryCodeExpirationTimeInHours,
+            });
+
+            foundUser.setPasswordRecoveryCode(newRecoveryCode, expirationDate);
 
             await this.usersRepository.save(foundUser);
 
@@ -127,7 +134,11 @@ export class AuthService {
 
         const confirmationCode = randomUUID();
 
-        newUser.setConfirmationCode(confirmationCode);
+        const expirationDate = add(new Date(), {
+            hours: this.accountsConfig.confirmationCodeExpirationTimeInHours,
+        });
+
+        newUser.setConfirmationCode(confirmationCode, expirationDate);
 
         await this.usersRepository.save(newUser);
 
@@ -150,7 +161,11 @@ export class AuthService {
 
         const confirmationCode = randomUUID();
 
-        foundUser.setConfirmationCode(confirmationCode);
+        const expirationDate = add(new Date(), {
+            hours: this.accountsConfig.confirmationCodeExpirationTimeInHours,
+        });
+
+        foundUser.setConfirmationCode(confirmationCode, expirationDate);
 
         await this.usersRepository.save(foundUser);
 

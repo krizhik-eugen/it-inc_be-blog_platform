@@ -1,23 +1,25 @@
 import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { EMAIL_SERVICE } from '../../constants';
 import { EmailService } from './email.service';
+import { EMAIL_SERVICE } from './constants';
+import { CoreConfig } from '../../core/config/core.config';
 
 @Module({
     imports: [
         MailerModule.forRootAsync({
-            useFactory: () => ({
+            useFactory: (coreConfig: CoreConfig) => ({
                 transport: {
                     service: EMAIL_SERVICE,
                     auth: {
-                        user: process.env.HOST_EMAIL_LOGIN,
-                        pass: process.env.HOST_EMAIL_PASSWORD,
+                        user: coreConfig.hostEmailLogin,
+                        pass: coreConfig.hostEmailPassword,
                     },
                 },
                 defaults: {
-                    from: `Blog Platform <${process.env.HOST_EMAIL_LOGIN}>`,
+                    from: `Blog Platform <${coreConfig.hostEmailLogin}>`,
                 },
             }),
+            inject: [CoreConfig],
         }),
     ],
     providers: [EmailService],

@@ -1,5 +1,6 @@
-import { configModule } from './config-module';
-import { Module } from '@nestjs/common';
+import { configModule } from './config-module'; // config has to be imported first to load env variables
+
+import { DynamicModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CoreModule } from './core/core.module';
@@ -7,25 +8,41 @@ import { AccountsModule } from './modules/accounts/accounts.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { TestingModule } from './modules/testing/testing.module';
 import { AppController } from './app.controller';
+import { CoreConfig } from './core/config/core.config';
 
 @Module({
     imports: [
-        configModule,
-        MongooseModule.forRoot(
-            process.env.MONGO_URL ?? 'mongodb://localhost', //TODO: move to app config
-        ),
+        MongooseModule.forRootAsync({
+            useFactory: (coreConfig: CoreConfig) => {
+                return {
+                    uri: coreConfig.mongoURL,
+                    dbName: coreConfig.mongoDBName,
+                };
+            },
+            inject: [CoreConfig],
+        }),
         ThrottlerModule.forRoot([
             {
                 ttl: 10000,
                 limit: 5,
             },
         ]),
-        AccountsModule,
-        TestingModule,
-        PlatformModule,
         CoreModule,
+        configModule,
+        AccountsModule,
+        PlatformModule,
     ],
     controllers: [AppController],
-    providers: [],
 })
-export class AppModule {}
+export class AppModule {
+    static async forRoot(coreConfig: CoreConfig): Promise<DynamicModule> {
+        const additionalModules: any[] = [];
+        if (coreConfig.includeTestingModule) {
+            additionalModules.push(TestingModule);
+        }
+        return {
+            module: AppModule,
+            imports: additionalModules, // Add dynamic modules here
+        };
+    }
+}
