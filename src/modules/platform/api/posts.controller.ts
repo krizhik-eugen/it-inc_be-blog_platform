@@ -10,17 +10,8 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import {
-    ApiBody,
-    ApiCreatedResponse,
-    ApiNoContentResponse,
-    ApiNotFoundResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiParam,
-} from '@nestjs/swagger';
 import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
-import { PostsService } from '../application/posts.service';
+import { UpdatePostCommand } from '../application/use-cases/posts/update-post.use-case';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
 import {
     PaginatedPostsViewDto,
@@ -32,29 +23,28 @@ import { PaginatedCommentsViewDto } from './dto/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
 import { GetCommentsQueryParams } from './dto/query-params-dto/get-comments-query-params.input-dto';
 import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
+import { DeletePostCommand } from '../application/use-cases/posts/delete-post.use-case';
+import {
+    CreatePostApi,
+    DeletePostApi,
+    GetAllPostCommentsApi,
+    GetAllPostsApi,
+    GetPostApi,
+    UpdatePostApi,
+} from './swagger/posts.decorators';
 
 @Controller('posts')
 export class PostsController {
     constructor(
         private postsQueryRepository: PostsQueryRepository,
-        private postsService: PostsService,
         private commentsQueryRepository: CommentsQueryRepository,
+        private commandBus: CommandBus,
     ) {}
 
     @Get(':postId/comments')
-    @ApiOperation({
-        summary: 'Returns comments for specified post',
-    })
-    @ApiOkResponse({
-        description: 'Success',
-        type: PaginatedCommentsViewDto,
-    })
-    @ApiNotFoundResponse({
-        description: 'If specified post not found',
-    })
-    @ApiParam({
-        name: 'postId',
-    })
+    @GetAllPostCommentsApi()
     async getAllPostComments(
         @Param('postId', ObjectIdValidationPipe) postId: string,
         @Query() query: GetCommentsQueryParams,
@@ -67,13 +57,7 @@ export class PostsController {
     }
 
     @Get()
-    @ApiOperation({
-        summary: 'Returns all posts',
-    })
-    @ApiOkResponse({
-        description: 'Success',
-        type: PaginatedPostsViewDto,
-    })
+    @GetAllPostsApi()
     async getAllPosts(
         @Query() query: GetPostsQueryParams,
     ): Promise<PaginatedPostsViewDto> {
@@ -81,19 +65,13 @@ export class PostsController {
     }
 
     @Post()
-    @ApiOperation({
-        summary: 'Creates a new post',
-    })
-    @ApiCreatedResponse({
-        description: 'Returns the newly created post',
-        type: PostViewDto,
-    })
-    @ApiBody({
-        type: CreatePostInputDto,
-        description: 'Data for constructing new Post entity',
-    })
+    @CreatePostApi()
     async createPost(@Body() body: CreatePostInputDto): Promise<PostViewDto> {
-        const newPostId = await this.postsService.createPost(body);
+        const newPostId = await this.commandBus.execute<
+            CreatePostCommand,
+            string
+        >(new CreatePostCommand(body));
+
         return await this.postsQueryRepository.getByIdOrNotFoundFail(
             newPostId,
             null,
@@ -101,19 +79,7 @@ export class PostsController {
     }
 
     @Get(':id')
-    @ApiOperation({
-        summary: 'Returns post by id',
-    })
-    @ApiOkResponse({
-        description: 'Success',
-        type: PostViewDto,
-    })
-    @ApiNotFoundResponse({
-        description: 'Not found',
-    })
-    @ApiParam({
-        name: 'id',
-    })
+    @GetPostApi()
     async getPost(
         @Param('id', ObjectIdValidationPipe) id: string,
     ): Promise<PostViewDto> {
@@ -121,51 +87,25 @@ export class PostsController {
     }
 
     @Put(':id')
-    @ApiOperation({
-        summary: 'Updates existing post by id with InputModel',
-    })
-    @ApiNoContentResponse({
-        description: 'No content',
-    })
-    @ApiNotFoundResponse({
-        description: 'Not found',
-    })
-    @ApiParam({
-        name: 'id',
-    })
-    @ApiBody({
-        type: UpdatePostInputDto,
-        description: 'Data for updating post',
-        required: false,
-    })
+    @UpdatePostApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(
         @Param('id', ObjectIdValidationPipe) id: string,
         @Body() body: UpdatePostInputDto,
     ): Promise<void> {
-        return await this.postsService.updatePost(id, body);
+        return await this.commandBus.execute<UpdatePostCommand, void>(
+            new UpdatePostCommand(id, body),
+        );
     }
 
-    //TODO: implement update like status
-
     @Delete(':id')
-    @ApiOperation({
-        summary: 'Deletes post by id',
-    })
-    @ApiNoContentResponse({
-        description: 'No content',
-    })
-    @ApiNotFoundResponse({
-        description: 'Not found',
-    })
-    @ApiParam({
-        name: 'id',
-        description: 'Post id',
-    })
+    @DeletePostApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deletePost(
         @Param('id', ObjectIdValidationPipe) id: string,
     ): Promise<void> {
-        return await this.postsService.deletePost(id);
+        return await this.commandBus.execute<DeletePostCommand, void>(
+            new DeletePostCommand(id),
+        );
     }
 }

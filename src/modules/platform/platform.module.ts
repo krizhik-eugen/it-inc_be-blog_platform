@@ -4,7 +4,7 @@ import { Blog, BlogSchema } from './domain/blog.entity';
 import { BlogsQueryRepository } from './infrastructure/queryRepositories/blogs.query-repository';
 import { BlogsRepository } from './infrastructure/repositories/blogs.repository';
 import { BlogsController } from './api/blogs.controller';
-import { PostsService } from './application/posts.service';
+import { UpdatePostUseCase } from './application/use-cases/posts/update-post.use-case';
 import { Post, PostSchema } from './domain/post.entity';
 import { PostsRepository } from './infrastructure/repositories/posts.repository';
 import { PostsQueryRepository } from './infrastructure/queryRepositories/posts.query-repository';
@@ -15,8 +15,15 @@ import { CommentsController } from './api/comments.controller';
 import { CreateBlogUseCase } from './application/use-cases/blogs/create-blog.use-case';
 import { UpdateBlogUseCase } from './application/use-cases/blogs/update-blog.use-case';
 import { DeleteBlogUseCase } from './application/use-cases/blogs/delete-blog.use-case';
+import { CreatePostUseCase } from './application/use-cases/posts/create-post.use-case';
 
-const useCases = [CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase];
+const useCases = [
+    CreateBlogUseCase,
+    UpdateBlogUseCase,
+    DeleteBlogUseCase,
+    CreatePostUseCase,
+    UpdatePostUseCase,
+];
 const repositories = [
     BlogsRepository,
     BlogsQueryRepository,
@@ -24,7 +31,6 @@ const repositories = [
     PostsQueryRepository,
     CommentsQueryRepository,
 ];
-const services = [PostsService];
 
 @Module({
     imports: [
@@ -35,7 +41,7 @@ const services = [PostsService];
         ]),
     ],
     controllers: [BlogsController, PostsController, CommentsController],
-    providers: [...services, ...repositories, ...useCases],
+    providers: [...repositories, ...useCases],
     exports: [MongooseModule],
 })
 export class PlatformModule {}
