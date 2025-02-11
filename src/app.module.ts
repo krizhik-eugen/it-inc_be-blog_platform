@@ -40,9 +40,9 @@ export class AppModule {
         if (coreConfig.includeTestingModule) {
             additionalModules.push(TestingModule);
         }
-        return {
+        return Promise.resolve({
             module: AppModule,
             imports: additionalModules, // Add dynamic modules here
-        };
+        });
     }
 }

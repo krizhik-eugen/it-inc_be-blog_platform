@@ -1,14 +1,20 @@
 import bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModelType } from '../domain/user.entity';
-import { CreateUserDto } from '../dto/create/create-user.dto';
-import { UsersRepository } from '../infrastructure/repositories/users.repository';
-import { SALT_ROUNDS } from '../constants/constants';
-import { AccountsConfig } from '../config/accounts.config';
+import { User, UserModelType } from '../../domain/user.entity';
+import { UsersRepository } from '../../infrastructure/repositories/users.repository';
+import { AccountsConfig } from '../../config/accounts.config';
+import { CreateUserDto } from '../../dto/create/create-user.dto';
+import { SALT_ROUNDS } from '../../constants/constants';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UsersService {
+export class CreateUserCommand {
+    constructor(public dto: CreateUserDto) {}
+}
+
+@CommandHandler(CreateUserCommand)
+export class CreateUserUseCase
+    implements ICommandHandler<CreateUserCommand, string>
+{
     constructor(
         @InjectModel(User.name)
         private UserModel: UserModelType,
@@ -16,7 +22,7 @@ export class UsersService {
         private accountsConfig: AccountsConfig,
     ) {}
 
-    async createUser(dto: CreateUserDto): Promise<string> {
+    async execute({ dto }: CreateUserCommand): Promise<string> {
         const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
 
         const user = this.UserModel.createInstance({
@@ -32,14 +38,5 @@ export class UsersService {
         await this.usersRepository.save(user);
 
         return user._id.toString();
-    }
-
-    async deleteUser(id: string): Promise<void> {
-        const user =
-            await this.usersRepository.findByIdNonDeletedOrNotFoundFail(id);
-
-        user.makeDeleted();
-
-        await this.usersRepository.save(user);
     }
 }

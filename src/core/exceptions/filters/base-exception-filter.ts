@@ -20,10 +20,8 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
 
     catch(exception: any, host: ArgumentsHost): any {
         const ctx = host.switchToHttp();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const response = ctx.getResponse();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const request = ctx.getRequest();
+        const response: Response = ctx.getResponse();
+        const request: Request = ctx.getRequest();
 
         this.onCatch(exception, response, request);
     }
@@ -32,8 +30,7 @@ export abstract class BaseExceptionFilter implements ExceptionFilter {
         return {
             timestamp: new Date().toISOString(),
             path: url,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            message: (exception as any).message || 'Internal server error',
+            message: (exception as Error).message || 'Internal server error',
             code: exception instanceof DomainException ? exception.code : null,
             extensions:
                 exception instanceof DomainException

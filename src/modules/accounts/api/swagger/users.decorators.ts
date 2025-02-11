@@ -15,7 +15,10 @@ import {
     PaginatedUsersViewDto,
     UserViewDto,
 } from '../dto/view-dto/users.view-dto';
-import { CreateUserInputDto } from '../dto/input-dto/users.input-dto';
+import {
+    CreateUserInputDto,
+    UpdateUserInputDto,
+} from '../dto/input-dto/users.input-dto';
 import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
 
 export const GetUsersApi = () => {
@@ -54,6 +57,30 @@ export const CreateUserApi = () => {
         }),
         ApiBody({
             type: CreateUserInputDto,
+            description: 'Data for constructing new user',
+        }),
+    );
+};
+
+export const UpdateUserApi = () => {
+    return applyDecorators(
+        ApiBasicAuth(),
+        ApiOperation({
+            summary: "Update user's email",
+        }),
+        ApiNoContentResponse({
+            description: 'No content',
+        }),
+        ApiBadRequestResponse({
+            type: HttpErrorViewDto,
+            description:
+                'If the inputModel has incorrect values <br/> <br/> <i>Note: If the error should be in the BLL, for example, "the email address is not unique", do not try to mix this error with input validation errors in the middleware, just return one element in the errors array</i>',
+        }),
+        ApiUnauthorizedResponse({
+            description: 'Unauthorized',
+        }),
+        ApiBody({
+            type: UpdateUserInputDto,
             description: 'Data for constructing new user',
         }),
     );

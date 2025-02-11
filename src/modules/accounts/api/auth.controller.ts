@@ -5,10 +5,11 @@ import {
     HttpCode,
     HttpStatus,
     Post,
+    Res,
     UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
-import { UsersService } from '../application/users.service';
 import { MeViewDto } from './dto/view-dto/users.view-dto';
 import { ExtractUserFromRequest } from '../guards/decorators/extract-user-from-request.decorator';
 import { UserContextDto } from '../guards/dto/user-context.dto';
@@ -31,6 +32,16 @@ import { RegistrationEmailResendingInputDto } from './dto/input-dto/registration
 import { PasswordRecoveryInputDto } from './dto/input-dto/password-recovery.input-dto';
 import { NewPasswordInputDto } from './dto/input-dto/new-password.input-dto';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { CommandBus } from '@nestjs/cqrs';
+import {
+    LoginUseCaseResponse,
+    LoginUserCommand,
+} from '../application/use-cases/login-user.use-case';
+import { RegisterUserCommand } from '../application/use-cases/register-user.use-case';
+import { RegistrationEmailResendingCommand } from '../application/use-cases/registration-email-resending.use-case';
+import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
+import { PasswordRecoveryConfirmationCommand } from '../application/use-cases/password-recovery-confirmation.use-case';
+import { RegistrationConfirmationCommand } from '../application/use-cases/registration-confirmation.use-case';
 
 @UseGuards(ThrottlerGuard)
 @Controller('auth')
@@ -38,7 +49,7 @@ export class AuthController {
     constructor(
         private authService: AuthService,
         private usersQueryRepository: UsersQueryRepository,
-        private usersService: UsersService,
+        private commandBus: CommandBus,
     ) {}
 
     @UseGuards(LocalAuthGuard)
@@ -46,10 +57,20 @@ export class AuthController {
     @LoginApi()
     @HttpCode(HttpStatus.OK)
     async login(
+        @Res({ passthrough: true }) response: Response,
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<SuccessLoginViewDto> {
-        const accessToken = await this.authService.login(user.id);
-        return accessToken;
+        const { accessToken, refreshToken } = await this.commandBus.execute<
+            LoginUserCommand,
+            LoginUseCaseResponse
+        >(new LoginUserCommand({ userId: user.id }));
+
+        response.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+
+        return { accessToken };
     }
 
     @Post('password-recovery')
@@ -58,7 +79,9 @@ export class AuthController {
     async passwordRecovery(
         @Body() body: PasswordRecoveryInputDto,
     ): Promise<void> {
-        await this.authService.passwordRecovery(body.email);
+        await this.commandBus.execute<PasswordRecoveryCommand, void>(
+            new PasswordRecoveryCommand({ email: body.email }),
+        );
     }
 
     @Post('new-password')
@@ -67,7 +90,10 @@ export class AuthController {
     async confirmPasswordRecovery(
         @Body() body: NewPasswordInputDto,
     ): Promise<void> {
-        await this.authService.confirmPasswordRecovery(body);
+        await this.commandBus.execute<
+            PasswordRecoveryConfirmationCommand,
+            void
+        >(new PasswordRecoveryConfirmationCommand(body));
     }
 
     @Post('registration-confirmation')
@@ -76,14 +102,22 @@ export class AuthController {
     async confirmRegistrationEmail(
         @Body() body: RegistrationConfirmationInputDto,
     ): Promise<void> {
-        await this.authService.confirmUserEmail(body.code);
+        await this.commandBus.execute<RegistrationConfirmationCommand, void>(
+            new RegistrationConfirmationCommand({ code: body.code }),
+        );
     }
 
     @Post('registration')
     @RegisterNewUserApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async registerNewUser(@Body() body: CreateUserInputDto): Promise<void> {
-        await this.authService.registerNewUser(body);
+        await this.commandBus.execute<RegisterUserCommand, void>(
+            new RegisterUserCommand({
+                email: body.email,
+                login: body.login,
+                password: body.password,
+            }),
+        );
     }
 
     @Post('registration-email-resending')
@@ -92,7 +126,9 @@ export class AuthController {
     async resendRegistrationCode(
         @Body() body: RegistrationEmailResendingInputDto,
     ): Promise<void> {
-        await this.authService.resendRegistrationCode(body.email);
+        await this.commandBus.execute<RegistrationEmailResendingCommand, void>(
+            new RegistrationEmailResendingCommand({ email: body.email }),
+        );
     }
 
     @UseGuards(JwtAuthGuard)

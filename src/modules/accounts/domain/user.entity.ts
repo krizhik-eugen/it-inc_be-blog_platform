@@ -5,6 +5,7 @@ import {
     BadRequestDomainException,
     NotFoundDomainException,
 } from '../../../core/exceptions/domain-exceptions';
+import { UpdateUserDomainDto } from './dto/update/update-user.domain.dto';
 
 export const userLoginConstraints = {
     minLength: 3,
@@ -177,6 +178,18 @@ export class User {
         user.login = dto.login;
 
         return user as UserDocument;
+    }
+
+    /**
+     * Updates the user instance with new data
+     * Resets email confirmation if email is updated
+     * @param {UpdateUserDto} dto - The data transfer object for user updates
+     */
+    update(dto: UpdateUserDomainDto) {
+        if (dto.email !== this.email) {
+            this.emailConfirmation.isConfirmed = false;
+        }
+        this.email = dto.email;
     }
 
     /**
