@@ -20,7 +20,6 @@ import {
     ApiParam,
 } from '@nestjs/swagger';
 import { BlogsQueryRepository } from '../infrastructure/queryRepositories/blogs.query-repository';
-import { BlogsService } from '../application/blogs.service';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
 import {
     PaginatedBlogsViewDto,
@@ -40,14 +39,18 @@ import {
 } from './dto/input-dto/create/posts.input-dto';
 import { PostsService } from '../application/posts.service';
 import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateBlogCommand } from '../application/use-cases/blogs/create-blog.use-case';
+import { UpdateBlogCommand } from '../application/use-cases/blogs/update-blog.use-case';
+import { DeleteBlogCommand } from '../application/use-cases/blogs/delete-blog.use-case';
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
-        private blogsService: BlogsService,
         private blogsQueryRepository: BlogsQueryRepository,
         private postsService: PostsService,
         private postsQueryRepository: PostsQueryRepository,
+        private commandBus: CommandBus,
     ) {}
 
     @Get()
@@ -77,7 +80,10 @@ export class BlogsController {
         description: 'Data for constructing new Blog entity',
     })
     async createBlog(@Body() body: CreateBlogInputDto): Promise<BlogViewDto> {
-        const newBlogId = await this.blogsService.createBlog(body);
+        const newBlogId = await this.commandBus.execute<
+            CreateBlogCommand,
+            string
+        >(new CreateBlogCommand(body));
         return await this.blogsQueryRepository.getByIdOrNotFoundFail(newBlogId);
     }
 
@@ -182,7 +188,9 @@ export class BlogsController {
         @Param('id', ObjectIdValidationPipe) id: string,
         @Body() body: UpdateBlogInputDto,
     ): Promise<void> {
-        return await this.blogsService.updateBlog(id, body);
+        return await this.commandBus.execute<UpdateBlogCommand, void>(
+            new UpdateBlogCommand(id, body),
+        );
     }
 
     @Delete(':id')
@@ -202,6 +210,8 @@ export class BlogsController {
     async deleteBlog(
         @Param('id', ObjectIdValidationPipe) id: string,
     ): Promise<void> {
-        return await this.blogsService.deleteBlog(id);
+        return await this.commandBus.execute<DeleteBlogCommand, void>({
+            blogId: id,
+        });
     }
 }
