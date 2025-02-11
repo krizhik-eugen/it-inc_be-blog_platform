@@ -14,7 +14,6 @@ class LikesInfoViewDto {
 }
 
 class CommentatorInfoViewDto {
-    //TODO: define if we need to move somewhere else
     @ApiProperty()
     userId: string;
     @ApiProperty()

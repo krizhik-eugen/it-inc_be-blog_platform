@@ -1,15 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 import { IsStringWithTrim } from '../../../../../core/decorators/validation/is-string-with-trim';
+import { userPasswordConstraints } from '../../../domain/user.entity';
 
 export class NewPasswordInputDto {
     @ApiProperty({
-        maxLength: 20,
-        minLength: 6,
+        maxLength: userPasswordConstraints.maxLength,
+        minLength: userPasswordConstraints.minLength,
         description: 'New password',
     })
     @IsString()
-    @IsStringWithTrim(6, 20)
+    @IsStringWithTrim(
+        userPasswordConstraints.minLength,
+        userPasswordConstraints.maxLength,
+    )
     newPassword: string;
 
     @ApiProperty({

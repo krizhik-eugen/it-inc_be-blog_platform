@@ -18,6 +18,8 @@ import { NotificationsModule } from '../notifications/notifications.module';
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
         JwtModule.registerAsync({
             useFactory: (accountConfig: AccountsConfig) => {
+                // console.log('accountConfig', accountConfig);
+
                 return {
                     secret: 'accountConfig.jwtSecret',
                     signOptions: {

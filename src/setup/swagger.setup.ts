@@ -1,7 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { CoreConfig } from '../core/config/core.config';
 
-export function swaggerSetup(app: INestApplication) {
+export function swaggerSetup(app: INestApplication, coreConfig: CoreConfig) {
+    if (!coreConfig.isSwaggerEnabled) return;
+
     const config = new DocumentBuilder()
         .setTitle('BLOG PLATFORM API')
         .addBearerAuth()

@@ -15,6 +15,12 @@ export const userLoginConstraints = {
         'Login should contain only latin letters, numbers, - and _',
 };
 
+export const userPasswordConstraints = {
+    minLength: 6,
+    maxLength: 20,
+    errorMessage: 'Password must be between 6 and 20 symbols',
+};
+
 export const userEmailConstraints = {
     pattern: /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/,
     errorMessagePattern:

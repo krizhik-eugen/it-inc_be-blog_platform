@@ -6,10 +6,14 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
+import { AccountsConfig } from '../../config/accounts.config';
 
 @Injectable()
 export class BasicAuthGuard implements CanActivate {
-    constructor(private reflector: Reflector) {}
+    constructor(
+        private reflector: Reflector,
+        private accountsConfig: AccountsConfig,
+    ) {}
 
     canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest<Request>();
@@ -26,8 +30,8 @@ export class BasicAuthGuard implements CanActivate {
         const [login, password] = credentials.split(':');
 
         if (
-            login === process.env.ADMIN_LOGIN &&
-            password === process.env.ADMIN_PASSWORD
+            login === this.accountsConfig.adminLogin &&
+            password === this.accountsConfig.adminPassword
         ) {
             return true;
         } else {

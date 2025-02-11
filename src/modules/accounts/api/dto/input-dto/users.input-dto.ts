@@ -5,6 +5,7 @@ import { IsStringWithTrim } from '../../../../../core/decorators/validation/is-s
 import {
     userEmailConstraints,
     userLoginConstraints,
+    userPasswordConstraints,
 } from '../../../domain/user.entity';
 
 export class CreateUserInputDto implements CreateUserDto {
@@ -20,9 +21,15 @@ export class CreateUserInputDto implements CreateUserDto {
     )
     login: string;
 
-    @ApiProperty({ maxLength: 20, minLength: 6 }) //TODO: move to constants
+    @ApiProperty({
+        maxLength: userPasswordConstraints.maxLength,
+        minLength: userPasswordConstraints.minLength,
+    }) //TODO: move to constants
     @IsString()
-    @IsStringWithTrim(6, 20)
+    @IsStringWithTrim(
+        userPasswordConstraints.minLength,
+        userPasswordConstraints.maxLength,
+    )
     password: string;
 
     @ApiProperty({

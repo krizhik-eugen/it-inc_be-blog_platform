@@ -4,28 +4,22 @@ import { appSetup } from './setup/app.setup';
 import { CoreConfig } from './core/config/core.config';
 
 async function bootstrap() {
-    // const dynamicAppModule = await initAppModule();
-    // // Create our Application based on the configured module
-    // const app = await NestFactory.create(dynamicAppModule);
+    /**
+     * Create the application context first, as the dynamic AppModule requires additional configuration before app creation.
+     */
+    const appContext = await NestFactory.createApplicationContext(AppModule);
+    const coreConfig = appContext.get<CoreConfig>(CoreConfig);
+    const DynamicAppModule = await AppModule.forRoot(coreConfig);
+    const app = await NestFactory.create(DynamicAppModule);
 
-    // const coreConfig = app.get<CoreConfig>(CoreConfig);
+    await appContext.close();
+    const port = coreConfig.port;
 
-    // // Setup the application
-    // appSetup(app, coreConfig);
+    appSetup(app, coreConfig);
 
-    // // Start the server
-    // await app.listen(coreConfig.PORT);
+    await app.listen(port);
 
-    const app = await NestFactory.create(AppModule);
-
-    // const appConfig = app.get<CoreConfig>('CoreConfig');
-    // const port = appConfig.port;
-
-    appSetup(app);
-
-    await app.listen(3001);
-
-    console.log(`Server is running on port ${3001}`);
+    console.log(`Server is running on port ${port}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
