@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns';
+import { AccountsConfig } from '../config';
 import { UsersRepository } from '../infrastructure/repositories/users.repository';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { UserDocument } from '../domain/user.entity';
 import { EmailService } from '../../notifications/email.service';
-import { AccountsConfig } from '../config/accounts.config';
 
 @Injectable()
 export class AuthService {

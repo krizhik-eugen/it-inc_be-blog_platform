@@ -8,7 +8,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { TestingModule } from './modules/testing/testing.module';
 import { AppController } from './app.controller';
-import { CoreConfig } from './core/config/core.config';
+import { CoreConfig } from './core/config';
 
 @Module({
     imports: [

@@ -1,10 +1,10 @@
+import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import {
     ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
-} from '../../constants/constants';
+} from '../../constants';
 
 export class LoginUseCaseResponse {
     accessToken: string;

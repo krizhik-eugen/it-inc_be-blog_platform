@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { CoreConfig } from '../core/config/core.config';
+import { CoreConfig } from '../core/config';
 
 export function swaggerSetup(app: INestApplication, coreConfig: CoreConfig) {
     if (!coreConfig.isSwaggerEnabled) return;

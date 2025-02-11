@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
-import { CoreConfig } from './config/core.config';
 import { CqrsModule } from '@nestjs/cqrs';
+import { CoreConfig } from './config';
 
 @Global()
 @Module({

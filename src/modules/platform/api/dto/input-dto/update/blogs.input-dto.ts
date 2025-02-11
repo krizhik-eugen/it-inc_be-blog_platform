@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, Matches } from 'class-validator';
 import { UpdateBlogDto } from '../../../../dto/update/update-blog.dto';
 import { blogConstraints } from '../../../../domain/blog.entity';
-import { IsOptional, Matches } from 'class-validator';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
 
 export class UpdateBlogInputDto implements UpdateBlogDto {

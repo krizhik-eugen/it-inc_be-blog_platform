@@ -11,6 +11,7 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
@@ -30,7 +31,6 @@ import {
     UpdateUserApi,
 } from './swagger/users.decorators';
 import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
-import { CommandBus } from '@nestjs/cqrs';
 import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';
 import { UpdateUserCommand } from '../application/use-cases/update-user.use-case';
 

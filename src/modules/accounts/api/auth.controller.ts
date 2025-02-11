@@ -8,6 +8,8 @@ import {
     Res,
     UseGuards,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { MeViewDto } from './dto/view-dto/users.view-dto';
@@ -15,7 +17,6 @@ import { ExtractUserFromRequest } from '../guards/decorators/extract-user-from-r
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { LocalAuthGuard } from '../guards/local/local-auth.guard';
 import { SuccessLoginViewDto } from './dto/view-dto/success-login.view.dto';
-import { AuthService } from '../application/auth.service';
 import { JwtAuthGuard } from '../guards/bearer/jwt-auth.guard';
 import {
     GetCurrentUserApi,
@@ -31,8 +32,6 @@ import { RegistrationConfirmationInputDto } from './dto/input-dto/registration-c
 import { RegistrationEmailResendingInputDto } from './dto/input-dto/registration-email-resending.input-dto';
 import { PasswordRecoveryInputDto } from './dto/input-dto/password-recovery.input-dto';
 import { NewPasswordInputDto } from './dto/input-dto/new-password.input-dto';
-import { ThrottlerGuard } from '@nestjs/throttler';
-import { CommandBus } from '@nestjs/cqrs';
 import {
     LoginUseCaseResponse,
     LoginUserCommand,
@@ -47,7 +46,6 @@ import { RegistrationConfirmationCommand } from '../application/use-cases/regist
 @Controller('auth')
 export class AuthController {
     constructor(
-        private authService: AuthService,
         private usersQueryRepository: UsersQueryRepository,
         private commandBus: CommandBus,
     ) {}

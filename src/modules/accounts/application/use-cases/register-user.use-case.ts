@@ -1,7 +1,7 @@
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersRepository } from '../../infrastructure/repositories/users.repository';
 import { CreateUserDto } from '../../dto/create/create-user.dto';
 import { BadRequestDomainException } from '../../../../core/exceptions/domain-exceptions';
-import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from './create-user.use-case';
 import { AuthService } from '../auth.service';
 

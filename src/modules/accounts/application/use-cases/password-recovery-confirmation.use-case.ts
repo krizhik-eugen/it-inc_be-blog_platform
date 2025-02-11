@@ -1,8 +1,8 @@
-import bcrypt from 'bcrypt';
-import { UsersRepository } from '../../infrastructure/repositories/users.repository';
-import { SALT_ROUNDS } from '../../constants/constants';
-import { UpdatePasswordDto } from '../../dto/update/update-password.dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import bcrypt from 'bcrypt';
+import { SALT_ROUNDS } from '../../constants';
+import { UsersRepository } from '../../infrastructure/repositories/users.repository';
+import { UpdatePasswordDto } from '../../dto/update/update-password.dto';
 
 export class PasswordRecoveryConfirmationCommand {
     constructor(public dto: UpdatePasswordDto) {}

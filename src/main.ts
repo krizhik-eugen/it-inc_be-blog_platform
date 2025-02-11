@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { appSetup } from './setup/app.setup';
 import { initAppModule } from './init-app-module';
-import { CoreConfig } from './core/config/core.config';
+import { CoreConfig } from './core/config';
 
 async function bootstrap() {
     const DynamicAppModule = await initAppModule();

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
-import { configValidationUtility } from '../../../core/config/config-validation.utility';
+import { configValidationUtility } from '../../../core/config';
 
 @Injectable()
 export class AccountsConfig {

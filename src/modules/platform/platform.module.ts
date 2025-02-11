@@ -14,6 +14,16 @@ import { CommentsQueryRepository } from './infrastructure/queryRepositories/comm
 import { Comment, CommentSchema } from './domain/comment.entity';
 import { CommentsController } from './api/comments.controller';
 
+const useCases = [];
+const repositories = [
+    BlogsRepository,
+    BlogsQueryRepository,
+    PostsRepository,
+    PostsQueryRepository,
+    CommentsQueryRepository,
+];
+const services = [BlogsService, PostsService];
+
 @Module({
     imports: [
         MongooseModule.forFeature([
@@ -23,15 +33,7 @@ import { CommentsController } from './api/comments.controller';
         ]),
     ],
     controllers: [BlogsController, PostsController, CommentsController],
-    providers: [
-        BlogsService,
-        BlogsRepository,
-        BlogsQueryRepository,
-        PostsService,
-        PostsRepository,
-        PostsQueryRepository,
-        CommentsQueryRepository,
-    ],
+    providers: [...services, ...repositories, ...useCases],
     exports: [MongooseModule],
 })
 export class PlatformModule {}

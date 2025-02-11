@@ -3,7 +3,7 @@ import { globalPrefixSetup } from './global-prefix.setup';
 import { pipesSetup } from './pipes.setup';
 import { swaggerSetup } from './swagger.setup';
 import { exceptionFilterSetup } from './exception-filter.setup';
-import { CoreConfig } from '../core/config/core.config';
+import { CoreConfig } from '../core/config';
 
 export function appSetup(app: INestApplication, coreConfig: CoreConfig) {
     globalPrefixSetup(app);

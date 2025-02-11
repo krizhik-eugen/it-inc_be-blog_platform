@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { SALT_ROUNDS } from '../../constants';
 import { User, UserModelType } from '../../domain/user.entity';
 import { UsersRepository } from '../../infrastructure/repositories/users.repository';
 import { AccountsConfig } from '../../config/accounts.config';
 import { CreateUserDto } from '../../dto/create/create-user.dto';
-import { SALT_ROUNDS } from '../../constants/constants';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 export class CreateUserCommand {
     constructor(public dto: CreateUserDto) {}

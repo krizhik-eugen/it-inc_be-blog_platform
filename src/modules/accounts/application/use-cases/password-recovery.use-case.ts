@@ -1,5 +1,5 @@
-import { UsersRepository } from '../../infrastructure/repositories/users.repository';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { UsersRepository } from '../../infrastructure/repositories/users.repository';
 import { AuthService } from '../auth.service';
 
 export class PasswordRecoveryCommand {

@@ -1,7 +1,7 @@
 import { Catch, HttpStatus } from '@nestjs/common';
-import { DomainException } from '../domain-exceptions';
-import { BaseExceptionFilter } from './base-exception-filter';
 import { Response } from 'express';
+import { BaseExceptionFilter } from './base-exception-filter';
+import { DomainException } from '../domain-exceptions';
 import { DomainExceptionCode } from '../domain-exception-codes';
 
 export class ErrorResponse {

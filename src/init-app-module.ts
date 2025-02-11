@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DynamicModule } from '@nestjs/common';
-import { CoreConfig } from './core/config/core.config';
+import { CoreConfig } from './core/config';
 
 export async function initAppModule(): Promise<DynamicModule> {
     /**

@@ -9,12 +9,12 @@ import {
     ApiTooManyRequestsResponse,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
 import { MeViewDto } from '../dto/view-dto/users.view-dto';
 import {
     CreateUserInputDto,
     LoginUserInputDto,
 } from '../dto/input-dto/users.input-dto';
-import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
 import { SuccessLoginViewDto } from '../dto/view-dto/success-login.view.dto';
 import { RegistrationConfirmationInputDto } from '../dto/input-dto/registration-confirmation.input-dto';
 import { RegistrationEmailResendingInputDto } from '../dto/input-dto/registration-email-resending.input-dto';
