@@ -25,18 +25,18 @@ export class CreateUserUseCase
     async execute({ dto }: CreateUserCommand): Promise<string> {
         const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
 
-        const user = this.UserModel.createInstance({
+        const newUser = this.UserModel.createInstance({
             email: dto.email,
             login: dto.login,
             passwordHash,
         });
 
         if (this.accountsConfig.isUserAutomaticallyConfirmed) {
-            user.emailConfirmation.isConfirmed = true;
+            newUser.emailConfirmation.isConfirmed = true;
         }
 
-        await this.usersRepository.save(user);
+        await this.usersRepository.save(newUser);
 
-        return user._id.toString();
+        return newUser._id.toString();
     }
 }

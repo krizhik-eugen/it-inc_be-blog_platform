@@ -16,6 +16,9 @@ import { CreateBlogUseCase } from './application/use-cases/blogs/create-blog.use
 import { UpdateBlogUseCase } from './application/use-cases/blogs/update-blog.use-case';
 import { DeleteBlogUseCase } from './application/use-cases/blogs/delete-blog.use-case';
 import { CreatePostUseCase } from './application/use-cases/posts/create-post.use-case';
+import { AccountsModule } from '../accounts/accounts.module';
+import { CommentsRepository } from './infrastructure/repositories/comments.repository';
+import { CreateCommentUseCase } from './application/use-cases/posts/create-post-comment.use-case';
 
 const useCases = [
     CreateBlogUseCase,
@@ -23,6 +26,7 @@ const useCases = [
     DeleteBlogUseCase,
     CreatePostUseCase,
     UpdatePostUseCase,
+    CreateCommentUseCase,
 ];
 const repositories = [
     BlogsRepository,
@@ -30,6 +34,7 @@ const repositories = [
     PostsRepository,
     PostsQueryRepository,
     CommentsQueryRepository,
+    CommentsRepository,
 ];
 
 @Module({
@@ -39,6 +44,7 @@ const repositories = [
             { name: Post.name, schema: PostSchema },
             { name: Comment.name, schema: CommentSchema },
         ]),
+        AccountsModule,
     ],
     controllers: [BlogsController, PostsController, CommentsController],
     providers: [...repositories, ...useCases],

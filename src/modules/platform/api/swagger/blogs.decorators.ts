@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+    ApiBasicAuth,
     ApiBody,
     ApiCreatedResponse,
     ApiNoContentResponse,
@@ -34,6 +35,7 @@ export const GetAllBlogsApi = () => {
 
 export const CreateBlogApi = () => {
     return applyDecorators(
+        ApiBasicAuth(),
         ApiOperation({
             summary: 'Creates a new blog',
         }),
@@ -68,6 +70,7 @@ export const GetAllBlogPostsApi = () => {
 
 export const CreateBlogPostApi = () => {
     return applyDecorators(
+        ApiBasicAuth(),
         ApiOperation({
             summary: 'Creates a new post for specified blog',
         }),
@@ -108,6 +111,7 @@ export const GetBlogApi = () => {
 
 export const UpdateBlogApi = () => {
     return applyDecorators(
+        ApiBasicAuth(),
         ApiOperation({
             summary: 'Updates existing blog by id with InputModel',
         }),
@@ -130,6 +134,7 @@ export const UpdateBlogApi = () => {
 
 export const DeleteBlogApi = () => {
     return applyDecorators(
+        ApiBasicAuth(),
         ApiOperation({
             summary: 'Deletes existing blog by id',
         }),

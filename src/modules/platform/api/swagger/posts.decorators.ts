@@ -1,5 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+    ApiBadRequestResponse,
+    ApiBasicAuth,
+    ApiBearerAuth,
     ApiBody,
     ApiCreatedResponse,
     ApiNoContentResponse,
@@ -7,6 +10,7 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
+    ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import {
@@ -14,8 +18,13 @@ import {
     PostViewDto,
 } from '../dto/view-dto/posts.view-dto';
 import { CreatePostInputDto } from '../dto/input-dto/create/posts.input-dto';
-import { PaginatedCommentsViewDto } from '../dto/view-dto/comments.view-dto';
+import {
+    CommentViewDto,
+    PaginatedCommentsViewDto,
+} from '../dto/view-dto/comments.view-dto';
 import { UpdatePostInputDto } from '../dto/input-dto/update/posts.input-dto';
+import { CreateCommentInputDto } from '../dto/input-dto/create/comments.input-dto';
+import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
 
 export const GetAllPostCommentsApi = () => {
     return applyDecorators(
@@ -35,6 +44,36 @@ export const GetAllPostCommentsApi = () => {
     );
 };
 
+export const CreateCommentApi = () => {
+    return applyDecorators(
+        ApiBearerAuth(),
+        ApiOperation({
+            summary: 'Creates a new comment for specified post',
+        }),
+        ApiCreatedResponse({
+            description: 'Returns the newly created comment',
+            type: CommentViewDto,
+        }),
+        ApiBadRequestResponse({
+            type: HttpErrorViewDto,
+            description: 'If the inputModel has incorrect values',
+        }),
+        ApiUnauthorizedResponse({
+            description: 'Unauthorized',
+        }),
+        ApiNotFoundResponse({
+            description: 'If specified post does not exist',
+        }),
+        ApiParam({
+            name: 'postId',
+        }),
+        ApiBody({
+            type: CreateCommentInputDto,
+            description: 'Data for constructing new Comment entity',
+        }),
+    );
+};
+
 export const GetAllPostsApi = () => {
     return applyDecorators(
         ApiOperation({
@@ -49,6 +88,7 @@ export const GetAllPostsApi = () => {
 
 export const CreatePostApi = () => {
     return applyDecorators(
+        ApiBasicAuth(),
         ApiOperation({
             summary: 'Creates a new post',
         }),
@@ -83,6 +123,7 @@ export const GetPostApi = () => {
 
 export const UpdatePostApi = () => {
     return applyDecorators(
+        ApiBasicAuth(),
         ApiOperation({
             summary: 'Updates existing post by id with InputModel',
         }),
@@ -105,6 +146,7 @@ export const UpdatePostApi = () => {
 
 export const DeletePostApi = () => {
     return applyDecorators(
+        ApiBasicAuth(),
         ApiOperation({
             summary: 'Deletes post by id',
         }),

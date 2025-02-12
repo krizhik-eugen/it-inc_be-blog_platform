@@ -18,7 +18,6 @@ export class CommentsQueryRepository {
 
     async getByIdOrNotFoundFail(
         id: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<CommentViewDto> {
         const comment = await this.CommentModel.findOne({
@@ -28,6 +27,10 @@ export class CommentsQueryRepository {
 
         if (!comment) {
             throw NotFoundDomainException.create('Comment is not found');
+        }
+
+        if (userId) {
+            //TODO: get like status
         }
 
         //TODO: get likes and my status

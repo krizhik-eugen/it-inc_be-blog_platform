@@ -9,6 +9,7 @@ import {
     Post,
     Put,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 
 import { BlogsQueryRepository } from '../infrastructure/queryRepositories/blogs.query-repository';
@@ -41,6 +42,7 @@ import {
     UpdateBlogApi,
 } from './swagger/blogs.decorators';
 import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
+import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -58,6 +60,7 @@ export class BlogsController {
         return await this.blogsQueryRepository.getAllBlogs(query);
     }
 
+    @UseGuards(BasicAuthGuard)
     @Post()
     @CreateBlogApi()
     async createBlog(@Body() body: CreateBlogInputDto): Promise<BlogViewDto> {
@@ -81,6 +84,7 @@ export class BlogsController {
         );
     }
 
+    @UseGuards(BasicAuthGuard)
     @Post(':blogId/posts')
     @CreateBlogPostApi()
     async createBlogPost(
@@ -111,6 +115,7 @@ export class BlogsController {
         return await this.blogsQueryRepository.getByIdOrNotFoundFail(id);
     }
 
+    @UseGuards(BasicAuthGuard)
     @Put(':id')
     @UpdateBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -123,6 +128,7 @@ export class BlogsController {
         );
     }
 
+    @UseGuards(BasicAuthGuard)
     @Delete(':id')
     @DeleteBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)

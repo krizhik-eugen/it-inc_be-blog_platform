@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../infrastructure/repositories/posts.repository';
+import { CommentsRepository } from '../../../infrastructure/repositories/comments.repository';
 
 export class DeletePostCommand {
     constructor(public postId: string) {}
@@ -9,7 +10,10 @@ export class DeletePostCommand {
 export class DeletePostUseCase
     implements ICommandHandler<DeletePostCommand, void>
 {
-    constructor(private postsRepository: PostsRepository) {}
+    constructor(
+        private postsRepository: PostsRepository,
+        private commentsRepository: CommentsRepository,
+    ) {}
 
     async execute({ postId }: DeletePostCommand): Promise<void> {
         const post =
@@ -18,5 +22,10 @@ export class DeletePostUseCase
         post.makeDeleted();
 
         await this.postsRepository.save(post);
+
+        //TODO: check if possible to do the following actions with commands
+        //Removing all comments for this post
+        await this.commentsRepository.deleteAllByPostId(postId);
+        //TODO: Handle likes removing
     }
 }

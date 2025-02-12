@@ -26,13 +26,13 @@ export class CreatePostUseCase
                 dto.blogId,
             );
 
-        const post = this.PostModel.createInstance({
+        const newPost = this.PostModel.createInstance({
             ...dto,
             blogName: blog.name,
         });
 
-        await this.postsRepository.save(post);
+        await this.postsRepository.save(newPost);
 
-        return post._id.toString();
+        return newPost._id.toString();
     }
 }

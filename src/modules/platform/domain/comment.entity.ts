@@ -43,6 +43,7 @@ export class Comment {
         required: true,
         minlength: commentConstraints.content.minLength,
         maxlength: commentConstraints.content.maxLength,
+        default: '',
     })
     content: string;
 
@@ -60,6 +61,10 @@ export class Comment {
         },
         required: true,
         _id: false,
+        default: {
+            userId: '',
+            userLogin: '',
+        },
     })
     commentatorInfo: {
         userId: string;

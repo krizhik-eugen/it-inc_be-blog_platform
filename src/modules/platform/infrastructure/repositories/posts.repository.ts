@@ -36,4 +36,18 @@ export class PostsRepository {
         }
         return post;
     }
+
+    async findAllByBlogIdNonDeleted(blogId: string): Promise<PostDocument[]> {
+        return this.PostModel.find({
+            blogId: blogId,
+            deletedAt: null,
+        });
+    }
+
+    async deleteAllByBlogId(blogId: string): Promise<void> {
+        await this.PostModel.updateMany(
+            { blogId: blogId, deletedAt: null },
+            { deletedAt: new Date().toISOString() },
+        );
+    }
 }

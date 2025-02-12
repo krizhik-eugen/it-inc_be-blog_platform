@@ -77,6 +77,6 @@ const strategies = [LocalStrategy, JwtStrategy];
         ...repositories,
         ...useCases,
     ],
-    exports: [UsersRepository, MongooseModule],
+    exports: [UsersRepository, MongooseModule, AccountsConfig],
 })
 export class AccountsModule {}
