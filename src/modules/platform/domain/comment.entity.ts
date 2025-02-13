@@ -140,6 +140,8 @@ export class Comment {
         this.content = dto.content;
     }
 
+    //TODO: add update for likes count
+
     /**
      * Marks the comment as deleted
      * Throws an error if already deleted

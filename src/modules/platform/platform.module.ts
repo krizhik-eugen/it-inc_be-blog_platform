@@ -19,6 +19,8 @@ import { CreatePostUseCase } from './application/use-cases/posts/create-post.use
 import { AccountsModule } from '../accounts/accounts.module';
 import { CommentsRepository } from './infrastructure/repositories/comments.repository';
 import { CreateCommentUseCase } from './application/use-cases/posts/create-post-comment.use-case';
+import { UpdateCommentUseCase } from './application/use-cases/comments/update-comment.use-case';
+import { DeleteCommentUseCase } from './application/use-cases/comments/delete-comment.use-case';
 
 const useCases = [
     CreateBlogUseCase,
@@ -27,6 +29,8 @@ const useCases = [
     CreatePostUseCase,
     UpdatePostUseCase,
     CreateCommentUseCase,
+    UpdateCommentUseCase,
+    DeleteCommentUseCase,
 ];
 const repositories = [
     BlogsRepository,
