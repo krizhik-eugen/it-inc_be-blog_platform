@@ -9,7 +9,6 @@ export class UpdateBlogInputDto implements UpdateBlogDto {
         maxLength: blogConstraints.name.maxLength,
     })
     @IsStringWithTrim(1, blogConstraints.name.maxLength)
-    @IsOptional()
     name: string;
 
     @ApiPropertyOptional({
