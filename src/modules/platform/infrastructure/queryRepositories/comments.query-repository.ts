@@ -2,11 +2,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { Comment, CommentModelType } from '../../domain/comment.entity';
-import { LikeStatus } from '../../types';
 import { Post, PostModelType } from '../../domain/post.entity';
 import { CommentViewDto } from '../../api/dto/view-dto/comments.view-dto';
 import { GetCommentsQueryParams } from '../../api/dto/query-params-dto/get-comments-query-params.input-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { Like, LikeModelType, LikeStatus } from '../../domain/like.entity';
+import { LikesQueryRepository } from './likes.query-repository';
 
 export class CommentsQueryRepository {
     constructor(
@@ -14,6 +15,7 @@ export class CommentsQueryRepository {
         private CommentModel: CommentModelType,
         @InjectModel(Post.name)
         private PostModel: PostModelType,
+        private likesQueryRepository: LikesQueryRepository,
     ) {}
 
     async getByIdOrNotFoundFail(
@@ -29,12 +31,17 @@ export class CommentsQueryRepository {
             throw NotFoundDomainException.create('Comment is not found');
         }
 
+        let likeStatus: LikeStatus = LikeStatus.None;
+
         if (userId) {
-            //TODO: get like status
+            likeStatus =
+                await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
+                    userId,
+                    id,
+                );
         }
 
-        //TODO: get likes and my status
-        return CommentViewDto.mapToView(comment, LikeStatus.None);
+        return CommentViewDto.mapToView(comment, likeStatus);
     }
 
     async getAllPostComments(
@@ -64,7 +71,7 @@ export class CommentsQueryRepository {
 
         const commentsCount = await this.CommentModel.countDocuments(findQuery);
 
-        //TODO: get likes and newest likes
+        //TODO: get likes
         const mappedComments = result.map((comment) =>
             CommentViewDto.mapToView(comment, LikeStatus.None),
         );

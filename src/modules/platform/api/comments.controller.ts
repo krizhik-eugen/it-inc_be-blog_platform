@@ -16,6 +16,7 @@ import {
     DeleteCommentApi,
     GetCommentApi,
     UpdateCommentApi,
+    UpdateCommentLikeStatusApi,
 } from './swagger/comments.decorators';
 import { JwtAuthGuard } from '../../accounts/guards/bearer/jwt-auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
@@ -23,7 +24,9 @@ import { DeleteCommentCommand } from '../application/use-cases/comments/delete-c
 import { ExtractUserFromRequest } from '../../accounts/guards/decorators/extract-user-from-request.decorator';
 import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
 import { UpdateCommentCommand } from '../application/use-cases/comments/update-comment.use-case';
-import { CreateCommentInputDto } from './dto/input-dto/create/comments.input-dto';
+import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
+import { UpdateCommentInputDto } from './dto/input-dto/update/comments.input-dto';
+import { UpdateCommentLikeStatusCommand } from '../application/use-cases/comments/update-comment-like-status.use-case';
 
 @Controller('comments')
 export class CommentsController {
@@ -31,6 +34,21 @@ export class CommentsController {
         private commentsQueryRepository: CommentsQueryRepository,
         private commandBus: CommandBus,
     ) {}
+
+    @UseGuards(JwtAuthGuard)
+    @Put(':commentId/like-status')
+    @UpdateCommentLikeStatusApi()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async updateCommentLikeStatus(
+        @Param('commentId', ObjectIdValidationPipe) commentId: string,
+        @Body() body: UpdateLikeInputDto,
+        @ExtractUserFromRequest() user: UserContextDto,
+    ): Promise<void> {
+        return await this.commandBus.execute<
+            UpdateCommentLikeStatusCommand,
+            void
+        >(new UpdateCommentLikeStatusCommand(commentId, body, user.id));
+    }
 
     @Get(':commentId')
     @GetCommentApi()
@@ -49,7 +67,7 @@ export class CommentsController {
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateComment(
         @Param('commentId', ObjectIdValidationPipe) commentId: string,
-        @Body() body: CreateCommentInputDto,
+        @Body() body: UpdateCommentInputDto,
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<void> {
         return await this.commandBus.execute<UpdateCommentCommand, void>(

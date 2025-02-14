@@ -14,6 +14,36 @@ import {
 import { CommentViewDto } from '../dto/view-dto/comments.view-dto';
 import { UpdateCommentInputDto } from '../dto/input-dto/update/comments.input-dto';
 import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
+import { UpdateLikeInputDto } from '../dto/input-dto/update/likes.input-dto';
+
+export const UpdateCommentLikeStatusApi = () => {
+    return applyDecorators(
+        ApiBearerAuth(),
+        ApiOperation({
+            summary: 'Makes like/dislike/reset operation',
+        }),
+        ApiNoContentResponse({
+            description: 'No content',
+        }),
+        ApiBadRequestResponse({
+            type: HttpErrorViewDto,
+            description: 'If the inputModel has incorrect values',
+        }),
+        ApiNotFoundResponse({
+            description: 'Not found',
+        }),
+        ApiUnauthorizedResponse({
+            description: 'Unauthorized',
+        }),
+        ApiParam({
+            name: 'commentId',
+        }),
+        ApiBody({
+            type: UpdateLikeInputDto,
+            description: 'Like model for make like/dislike/reset operation',
+        }),
+    );
+};
 
 export const GetCommentApi = () => {
     return applyDecorators(

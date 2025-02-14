@@ -21,6 +21,10 @@ import { CommentsRepository } from './infrastructure/repositories/comments.repos
 import { CreateCommentUseCase } from './application/use-cases/posts/create-post-comment.use-case';
 import { UpdateCommentUseCase } from './application/use-cases/comments/update-comment.use-case';
 import { DeleteCommentUseCase } from './application/use-cases/comments/delete-comment.use-case';
+import { UpdateCommentLikeStatusUseCase } from './application/use-cases/comments/update-comment-like-status.use-case';
+import { Like, LikeSchema } from './domain/like.entity';
+import { LikesRepository } from './infrastructure/repositories/likes.repository';
+import { LikesQueryRepository } from './infrastructure/queryRepositories/likes.query-repository';
 
 const useCases = [
     CreateBlogUseCase,
@@ -31,6 +35,7 @@ const useCases = [
     CreateCommentUseCase,
     UpdateCommentUseCase,
     DeleteCommentUseCase,
+    UpdateCommentLikeStatusUseCase,
 ];
 const repositories = [
     BlogsRepository,
@@ -39,6 +44,8 @@ const repositories = [
     PostsQueryRepository,
     CommentsQueryRepository,
     CommentsRepository,
+    LikesRepository,
+    LikesQueryRepository,
 ];
 
 @Module({
@@ -47,6 +54,7 @@ const repositories = [
             { name: Blog.name, schema: BlogSchema },
             { name: Post.name, schema: PostSchema },
             { name: Comment.name, schema: CommentSchema },
+            { name: Like.name, schema: LikeSchema },
         ]),
         AccountsModule,
     ],

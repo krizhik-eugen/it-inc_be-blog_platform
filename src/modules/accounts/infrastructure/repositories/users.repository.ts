@@ -10,6 +10,17 @@ export class UsersRepository {
     }
 
     async findById(id: string): Promise<UserDocument | null> {
+        return this.UserModel.findById(id);
+    }
+
+    async findByIds(ids: string[]): Promise<UserDocument[] | []> {
+        if (ids.length === 0) {
+            return [];
+        }
+        return this.UserModel.find({ _id: { $in: ids } });
+    }
+
+    async findByIdNonDeleted(id: string): Promise<UserDocument | null> {
         return this.UserModel.findOne({
             _id: id,
             deletedAt: null,

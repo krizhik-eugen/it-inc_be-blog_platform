@@ -44,11 +44,10 @@ export class Like {
      * @required
      */
     @Prop({
-        type: LikeStatus,
+        type: String,
         required: true,
-        default: LikeStatus.None,
     })
-    status: string;
+    status: LikeStatus;
 
     /**
      * Creation timestamp
@@ -76,6 +75,7 @@ export class Like {
 
         like.parentId = dto.parentId;
         like.userId = dto.userId;
+        like.status = dto.status;
 
         return like as LikeDocument;
     }

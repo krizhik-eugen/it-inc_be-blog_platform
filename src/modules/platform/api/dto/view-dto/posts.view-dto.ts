@@ -1,30 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PostDocument } from '../../../domain/post.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
-import { LikeStatus } from '../../../types';
+import { ExtendedLikesInfo, LikeViewDto } from './likes.view-dto';
+import { LikeStatus } from '../../../domain/like.entity';
 
-class LikeViewDto {
-    //TODO: move to likes
-    @ApiProperty()
-    addedAt: string;
-    @ApiProperty()
-    userId: string;
-    @ApiProperty()
-    login: string;
-}
-
-class ExtendedLikesInfo {
-    @ApiProperty()
-    likesCount: number;
-    @ApiProperty()
-    dislikesCount: number;
-    @ApiProperty({ default: LikeStatus.None })
-    myStatus: LikeStatus;
-    @ApiProperty({
-        type: [LikeViewDto],
-    })
-    newestLikes: LikeViewDto[];
-}
 export class PostViewDto {
     @ApiProperty()
     id: string;

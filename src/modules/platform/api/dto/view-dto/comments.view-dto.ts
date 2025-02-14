@@ -1,17 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CommentDocument } from '../../../domain/comment.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
-import { LikeStatus } from '../../../types';
-
-class LikesInfoViewDto {
-    //TODO: move to likes
-    @ApiProperty()
-    likesCount: number;
-    @ApiProperty()
-    dislikesCount: number;
-    @ApiProperty({ default: LikeStatus.None })
-    myStatus: LikeStatus;
-}
+import { LikeStatus } from '../../../domain/like.entity';
+import { LikesInfoViewDto } from './likes.view-dto';
 
 class CommentatorInfoViewDto {
     @ApiProperty()

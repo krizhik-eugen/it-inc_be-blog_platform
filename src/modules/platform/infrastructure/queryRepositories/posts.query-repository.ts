@@ -4,9 +4,9 @@ import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetPostsQueryParams } from '../../api/dto/query-params-dto/get-posts-query-params.input-dto';
 import { Post, PostModelType } from '../../domain/post.entity';
 import { PostViewDto } from '../../api/dto/view-dto/posts.view-dto';
-import { LikeStatus } from '../../types';
 import { Blog, BlogModelType } from '../../domain/blog.entity';
 import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { LikeStatus } from '../../domain/like.entity';
 
 export class PostsQueryRepository {
     constructor(

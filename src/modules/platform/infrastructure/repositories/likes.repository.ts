@@ -1,6 +1,12 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
-import { Like, LikeDocument, LikeModelType } from '../../domain/like.entity';
+import {
+    Like,
+    LikeDocument,
+    LikeModelType,
+    LikeStatus,
+} from '../../domain/like.entity';
+import { UpdateLikesCountDto } from '../../dto/update/update-likes-count.dto';
 
 export class LikesRepository {
     constructor(
@@ -17,6 +23,13 @@ export class LikesRepository {
             _id: id,
             deletedAt: null,
         });
+    }
+
+    async findByUserIdAndParentId(
+        userId: string,
+        parentId: string,
+    ): Promise<LikeDocument | null> {
+        return this.LikeModel.findOne({ userId, parentId, deletedAt: null });
     }
 
     async findByIdOrNotFoundFail(id: string): Promise<LikeDocument> {
@@ -38,6 +51,44 @@ export class LikesRepository {
             throw NotFoundDomainException.create('Like not found');
         }
         return like;
+    }
+
+    async getLikesAndDislikesCountByParentId(
+        parentId: string,
+    ): Promise<UpdateLikesCountDto> {
+        const result = await this.LikeModel.aggregate([
+            {
+                $match: { parentId },
+            },
+            {
+                $group: {
+                    _id: null,
+                    likesCount: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ['$status', LikeStatus.Like] },
+                                1,
+                                0,
+                            ],
+                        },
+                    },
+                    dislikesCount: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ['$status', LikeStatus.Dislike] },
+                                1,
+                                0,
+                            ],
+                        },
+                    },
+                },
+            },
+        ]);
+
+        return {
+            likesCount: (result[0] as UpdateLikesCountDto).likesCount,
+            dislikesCount: (result[0] as UpdateLikesCountDto).dislikesCount,
+        };
     }
 
     async deleteAllByParentId(parentId: string): Promise<void> {

@@ -6,6 +6,7 @@ import {
     ForbiddenDomainException,
     NotFoundDomainException,
 } from '../../../core/exceptions/domain-exceptions';
+import { UpdateLikesCountDomainDto } from './dto/update/update-likes-count.domain.dto';
 
 export const commentConstraints = {
     content: {
@@ -140,7 +141,14 @@ export class Comment {
         this.content = dto.content;
     }
 
-    //TODO: add update for likes count
+    /**
+     * Factory method to update a Comment instance with likes count
+     * @param {UpdateLikesCountDomainDto} dto - The data transfer object for comment creation
+     */
+    updateLikesCount(dto: UpdateLikesCountDomainDto) {
+        this.likesCount = dto.likesCount;
+        this.dislikesCount = dto.dislikesCount;
+    }
 
     /**
      * Marks the comment as deleted
