@@ -8,7 +8,6 @@ import {
     Res,
     UseGuards,
 } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';

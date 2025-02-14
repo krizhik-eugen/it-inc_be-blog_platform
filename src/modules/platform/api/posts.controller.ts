@@ -39,6 +39,7 @@ import {
     GetAllPostCommentsApi,
     GetAllPostsApi,
     GetPostApi,
+    UpdateCommentLikeStatusApi,
     UpdatePostApi,
 } from './swagger/posts.decorators';
 import { CreateCommentInputDto } from './dto/input-dto/create/comments.input-dto';
@@ -47,6 +48,8 @@ import { ExtractUserFromRequest } from '../../accounts/guards/decorators/extract
 import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
 import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
 import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
+import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
+import { UpdatePostLikeStatusCommand } from '../application/use-cases/posts/update-post-like-status.use-case';
 
 @Controller('posts')
 export class PostsController {
@@ -55,6 +58,20 @@ export class PostsController {
         private commentsQueryRepository: CommentsQueryRepository,
         private commandBus: CommandBus,
     ) {}
+
+    @UseGuards(JwtAuthGuard)
+    @Put(':postId/like-status')
+    @UpdateCommentLikeStatusApi()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async updateCommentLikeStatus(
+        @Param('postId', ObjectIdValidationPipe) postId: string,
+        @Body() body: UpdateLikeInputDto,
+        @ExtractUserFromRequest() user: UserContextDto,
+    ): Promise<void> {
+        return await this.commandBus.execute<UpdatePostLikeStatusCommand, void>(
+            new UpdatePostLikeStatusCommand(postId, body, user.id),
+        );
+    }
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId/comments')

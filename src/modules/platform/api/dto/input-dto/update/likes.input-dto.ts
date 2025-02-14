@@ -10,5 +10,5 @@ export class UpdateLikeInputDto implements UpdateLikeDto {
         enum: LikeStatus,
     })
     @IsEnum(LikeStatus)
-    status: LikeStatus;
+    likeStatus: LikeStatus;
 }

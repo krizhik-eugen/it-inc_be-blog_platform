@@ -3,6 +3,7 @@ import { HydratedDocument, Model } from 'mongoose';
 import { CreatePostDomainDto } from './dto/create/create-post.domain.dto';
 import { UpdatePostDomainDto } from './dto/update/update-post.domain.dto';
 import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+import { UpdateLikesCountDomainDto } from './dto/update/update-likes-count.domain.dto';
 
 export const postConstraints = {
     title: {
@@ -153,6 +154,14 @@ export class Post {
         }
     }
 
+    /**
+     * Factory method to update a Post instance with likes count
+     * @param {UpdateLikesCountDomainDto} dto - The data transfer object for post change likes count
+     */
+    updateLikesCount(dto: UpdateLikesCountDomainDto) {
+        this.likesCount = dto.likesCount;
+        this.dislikesCount = dto.dislikesCount;
+    }
     /**
      * Marks the post as deleted
      * Throws an error if already deleted

@@ -143,7 +143,7 @@ export class Comment {
 
     /**
      * Factory method to update a Comment instance with likes count
-     * @param {UpdateLikesCountDomainDto} dto - The data transfer object for comment creation
+     * @param {UpdateLikesCountDomainDto} dto - The data transfer object for comment change likes count
      */
     updateLikesCount(dto: UpdateLikesCountDomainDto) {
         this.likesCount = dto.likesCount;
