@@ -13,10 +13,7 @@ export class UsersRepository {
         return this.UserModel.findById(id);
     }
 
-    async findByIds(ids: string[]): Promise<UserDocument[] | []> {
-        if (ids.length === 0) {
-            return [];
-        }
+    async findByIds(ids: string[]): Promise<UserDocument[]> {
         return this.UserModel.find({ _id: { $in: ids } });
     }
 

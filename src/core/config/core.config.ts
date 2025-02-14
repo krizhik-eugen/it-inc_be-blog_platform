@@ -48,14 +48,14 @@ export class CoreConfig {
     @IsEmail()
     @IsNotEmpty({
         message:
-            'Set Env variable EMAIL_BLOG_PLATFORM, example: example@example.com',
+            'Set Env variable HOST_EMAIL_LOGIN, example: example@example.com',
     })
     hostEmailLogin: string = this.configService.get(
         'HOST_EMAIL_LOGIN',
     ) as string;
 
     @IsNotEmpty({
-        message: 'Set Env variable EMAIL_BLOG_PLATFORM_PASSWORD',
+        message: 'Set Env variable HOST_EMAIL_PASSWORD',
     })
     hostEmailPassword: string = this.configService.get(
         'HOST_EMAIL_PASSWORD',

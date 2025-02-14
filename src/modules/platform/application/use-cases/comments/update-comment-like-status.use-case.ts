@@ -38,6 +38,7 @@ export class UpdateCommentLikeStatusUseCase
             userId,
             commentId,
         );
+
         if (!like) {
             const newLike = this.LikeModel.createInstance({
                 userId,

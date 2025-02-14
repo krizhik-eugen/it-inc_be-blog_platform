@@ -6,7 +6,7 @@ import { Post, PostModelType } from '../../domain/post.entity';
 import { CommentViewDto } from '../../api/dto/view-dto/comments.view-dto';
 import { GetCommentsQueryParams } from '../../api/dto/query-params-dto/get-comments-query-params.input-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
-import { Like, LikeModelType, LikeStatus } from '../../domain/like.entity';
+import { LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
 
 export class CommentsQueryRepository {
@@ -47,7 +47,6 @@ export class CommentsQueryRepository {
     async getAllPostComments(
         query: GetCommentsQueryParams,
         postId: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<PaginatedViewDto<CommentViewDto[]>> {
         const post = await this.PostModel.findOne({
@@ -70,11 +69,23 @@ export class CommentsQueryRepository {
             .limit(query.pageSize);
 
         const commentsCount = await this.CommentModel.countDocuments(findQuery);
+        const commentsIds: string[] = [];
+        const mappedComments = result.map((comment) => {
+            commentsIds.push(comment._id.toString());
+            return CommentViewDto.mapToView(comment, LikeStatus.None);
+        });
 
-        //TODO: get likes
-        const mappedComments = result.map((comment) =>
-            CommentViewDto.mapToView(comment, LikeStatus.None),
-        );
+        if (userId) {
+            const likes = await this.likesQueryRepository.getLikesArray(
+                commentsIds,
+                userId,
+            );
+
+            mappedComments.forEach((comment) => {
+                const like = likes.find((like) => like.parentId === comment.id);
+                comment.likesInfo.myStatus = like?.status ?? LikeStatus.None;
+            });
+        }
 
         return PaginatedViewDto.mapToView({
             items: mappedComments,

@@ -43,6 +43,9 @@ import {
 } from './swagger/blogs.decorators';
 import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
 import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
+import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
+import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
+import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -71,16 +74,18 @@ export class BlogsController {
         return await this.blogsQueryRepository.getByIdOrNotFoundFail(newBlogId);
     }
 
+    @UseGuards(JwtOptionalAuthGuard)
     @Get(':blogId/posts')
     @GetAllBlogPostsApi()
     async getAllBlogPosts(
         @Param('blogId', ObjectIdValidationPipe) blogId: string,
         @Query() query: GetPostsQueryParams,
+        @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
         return await this.postsQueryRepository.getAllBlogPosts(
             query,
             blogId,
-            null,
+            user?.id,
         );
     }
 

@@ -24,6 +24,14 @@ export class LikesQueryRepository {
         return like ? like.status : LikeStatus.None;
     }
 
+    async getLikesArray(parentIdsArray: string[], userId: string) {
+        const foundLikes = await this.LikeModel.find({
+            parentId: { $in: parentIdsArray },
+            userId,
+        }).lean();
+        return foundLikes;
+    }
+
     async getLastThreeLikes(parentId: string) {
         const foundLikes = await this.LikeModel.find({
             parentId,

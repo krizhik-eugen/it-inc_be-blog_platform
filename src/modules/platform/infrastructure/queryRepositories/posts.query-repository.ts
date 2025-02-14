@@ -7,6 +7,7 @@ import { PostViewDto } from '../../api/dto/view-dto/posts.view-dto';
 import { Blog, BlogModelType } from '../../domain/blog.entity';
 import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
 import { LikeStatus } from '../../domain/like.entity';
+import { LikesQueryRepository } from './likes.query-repository';
 
 export class PostsQueryRepository {
     constructor(
@@ -14,11 +15,11 @@ export class PostsQueryRepository {
         private PostModel: PostModelType,
         @InjectModel(Blog.name)
         private BlogModel: BlogModelType,
+        private likesQueryRepository: LikesQueryRepository,
     ) {}
 
     async getByIdOrNotFoundFail(
         id: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<PostViewDto> {
         const post = await this.PostModel.findOne({
@@ -30,13 +31,24 @@ export class PostsQueryRepository {
             throw NotFoundDomainException.create('Post not found');
         }
 
-        //TODO: get likes and newest likes
-        return PostViewDto.mapToView(post, LikeStatus.None, []);
+        let likeStatus: LikeStatus = LikeStatus.None;
+
+        if (userId) {
+            likeStatus =
+                await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
+                    id,
+                    userId,
+                );
+        }
+
+        const newestLikes =
+            await this.likesQueryRepository.getLastThreeLikes(id);
+
+        return PostViewDto.mapToView(post, likeStatus, newestLikes);
     }
 
     async getAllPosts(
         query: GetPostsQueryParams,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<PaginatedViewDto<PostViewDto[]>> {
         const findQuery: FilterQuery<Post> = { deletedAt: null };
@@ -47,11 +59,29 @@ export class PostsQueryRepository {
             .limit(query.pageSize);
 
         const postsCount = await this.PostModel.countDocuments(findQuery);
+        const postsIds: string[] = [];
 
-        //TODO: get likes and newest likes
-        const mappedPosts = result.map((post) =>
-            PostViewDto.mapToView(post, LikeStatus.None, []),
-        );
+        const mappedPosts = result.map((post) => {
+            postsIds.push(post._id.toString());
+            return PostViewDto.mapToView(post, LikeStatus.None, []);
+        });
+
+        if (userId) {
+            const likes = await this.likesQueryRepository.getLikesArray(
+                postsIds,
+                userId,
+            );
+            mappedPosts.forEach((post) => {
+                const like = likes.find((like) => like.parentId === post.id);
+                post.extendedLikesInfo.myStatus =
+                    like?.status ?? LikeStatus.None;
+            });
+        }
+
+        for (const post of mappedPosts) {
+            post.extendedLikesInfo.newestLikes =
+                await this.likesQueryRepository.getLastThreeLikes(post.id);
+        }
 
         return PaginatedViewDto.mapToView({
             items: mappedPosts,
@@ -64,7 +94,6 @@ export class PostsQueryRepository {
     async getAllBlogPosts(
         query: GetPostsQueryParams,
         blogId: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         userId: string | null,
     ): Promise<PaginatedViewDto<PostViewDto[]>> {
         const blog = await this.BlogModel.findOne({
@@ -87,11 +116,29 @@ export class PostsQueryRepository {
             .limit(query.pageSize);
 
         const postsCount = await this.PostModel.countDocuments(findQuery);
+        const postsIds: string[] = [];
 
-        //TODO: get likes and newest likes
-        const mappedPosts = result.map((post) =>
-            PostViewDto.mapToView(post, LikeStatus.None, []),
-        );
+        const mappedPosts = result.map((post) => {
+            postsIds.push(post._id.toString());
+            return PostViewDto.mapToView(post, LikeStatus.None, []);
+        });
+
+        if (userId) {
+            const likes = await this.likesQueryRepository.getLikesArray(
+                postsIds,
+                userId,
+            );
+            mappedPosts.forEach((post) => {
+                const like = likes.find((like) => like.parentId === post.id);
+                post.extendedLikesInfo.myStatus =
+                    like?.status ?? LikeStatus.None;
+            });
+        }
+
+        for (const post of mappedPosts) {
+            post.extendedLikesInfo.newestLikes =
+                await this.likesQueryRepository.getLastThreeLikes(post.id);
+        }
 
         return PaginatedViewDto.mapToView({
             items: mappedPosts,

@@ -45,6 +45,8 @@ import { CreateCommentInputDto } from './dto/input-dto/create/comments.input-dto
 import { CreateCommentCommand } from '../application/use-cases/posts/create-post-comment.use-case';
 import { ExtractUserFromRequest } from '../../accounts/guards/decorators/extract-user-from-request.decorator';
 import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
+import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
+import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -54,16 +56,18 @@ export class PostsController {
         private commandBus: CommandBus,
     ) {}
 
+    @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId/comments')
     @GetAllPostCommentsApi()
     async getAllPostComments(
         @Param('postId', ObjectIdValidationPipe) postId: string,
         @Query() query: GetCommentsQueryParams,
+        @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedCommentsViewDto> {
         return await this.commentsQueryRepository.getAllPostComments(
             query,
             postId,
-            null,
+            user?.id,
         );
     }
 
@@ -86,12 +90,14 @@ export class PostsController {
         );
     }
 
+    @UseGuards(JwtOptionalAuthGuard)
     @Get()
     @GetAllPostsApi()
     async getAllPosts(
         @Query() query: GetPostsQueryParams,
+        @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return await this.postsQueryRepository.getAllPosts(query, null);
+        return await this.postsQueryRepository.getAllPosts(query, user?.id);
     }
 
     @UseGuards(BasicAuthGuard)
@@ -109,12 +115,17 @@ export class PostsController {
         );
     }
 
+    @UseGuards(JwtOptionalAuthGuard)
     @Get(':id')
     @GetPostApi()
     async getPost(
         @Param('id', ObjectIdValidationPipe) id: string,
+        @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PostViewDto> {
-        return await this.postsQueryRepository.getByIdOrNotFoundFail(id, null);
+        return await this.postsQueryRepository.getByIdOrNotFoundFail(
+            id,
+            user?.id,
+        );
     }
 
     @UseGuards(BasicAuthGuard)
