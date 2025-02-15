@@ -146,27 +146,27 @@ export class PostsController {
     }
 
     @UseGuards(BasicAuthGuard)
-    @Put(':id')
+    @Put(':postId')
     @UpdatePostApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('postId', ObjectIdValidationPipe) postId: string,
         @Body() body: UpdatePostInputDto,
     ): Promise<void> {
         return await this.commandBus.execute<UpdatePostCommand, void>(
-            new UpdatePostCommand(id, body),
+            new UpdatePostCommand(postId, body),
         );
     }
 
     @UseGuards(BasicAuthGuard)
-    @Delete(':id')
+    @Delete(':postId')
     @DeletePostApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deletePost(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('postId', ObjectIdValidationPipe) postId: string,
     ): Promise<void> {
         return await this.commandBus.execute<DeletePostCommand, void>(
-            new DeletePostCommand(id),
+            new DeletePostCommand(postId),
         );
     }
 }

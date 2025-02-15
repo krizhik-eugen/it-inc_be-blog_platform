@@ -112,36 +112,36 @@ export class BlogsController {
         );
     }
 
-    @Get(':id')
+    @Get(':blogId')
     @GetBlogApi()
     async getBlog(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('blogId', ObjectIdValidationPipe) blogId: string,
     ): Promise<BlogViewDto> {
-        return await this.blogsQueryRepository.getByIdOrNotFoundFail(id);
+        return await this.blogsQueryRepository.getByIdOrNotFoundFail(blogId);
     }
 
     @UseGuards(BasicAuthGuard)
-    @Put(':id')
+    @Put(':blogId')
     @UpdateBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateBlog(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('blogId', ObjectIdValidationPipe) blogId: string,
         @Body() body: UpdateBlogInputDto,
     ): Promise<void> {
         return await this.commandBus.execute<UpdateBlogCommand, void>(
-            new UpdateBlogCommand(id, body),
+            new UpdateBlogCommand(blogId, body),
         );
     }
 
     @UseGuards(BasicAuthGuard)
-    @Delete(':id')
+    @Delete(':blogId')
     @DeleteBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteBlog(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('blogId', ObjectIdValidationPipe) blogId: string,
     ): Promise<void> {
         return await this.commandBus.execute<DeleteBlogCommand, void>(
-            new DeleteBlogCommand(id),
+            new DeleteBlogCommand(blogId),
         );
     }
 }

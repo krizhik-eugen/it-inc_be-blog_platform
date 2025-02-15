@@ -60,26 +60,26 @@ export class UsersController {
         return await this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
     }
 
-    @Put(':id')
+    @Put(':userId')
     @UpdateUserApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateUser(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('userId', ObjectIdValidationPipe) userId: string,
         @Body() body: UpdateUserInputDto,
     ): Promise<void> {
         return await this.commandBus.execute<UpdateUserCommand, void>(
-            new UpdateUserCommand(id, body),
+            new UpdateUserCommand(userId, body),
         );
     }
 
-    @Delete(':id')
+    @Delete(':userId')
     @DeleteUserApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteUser(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('userId', ObjectIdValidationPipe) userId: string,
     ): Promise<void> {
         return await this.commandBus.execute<DeleteUserCommand, void>(
-            new DeleteUserCommand(id),
+            new DeleteUserCommand(userId),
         );
     }
 }

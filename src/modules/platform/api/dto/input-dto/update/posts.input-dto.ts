@@ -13,11 +13,10 @@ export class UpdatePostInputDto implements UpdatePostDto {
     @IsOptional()
     title: string;
 
-    @ApiPropertyOptional({
+    @ApiProperty({
         maxLength: postConstraints.shortDescription.maxLength,
     })
     @IsStringWithTrim(1, postConstraints.shortDescription.maxLength)
-    @IsOptional()
     shortDescription: string;
 
     @ApiPropertyOptional({
