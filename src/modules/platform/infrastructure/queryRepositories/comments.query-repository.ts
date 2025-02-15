@@ -19,11 +19,11 @@ export class CommentsQueryRepository {
     ) {}
 
     async getByIdOrNotFoundFail(
-        id: string,
+        commentId: string,
         userId: string | null,
     ): Promise<CommentViewDto> {
         const comment = await this.CommentModel.findOne({
-            _id: id,
+            _id: commentId,
             deletedAt: null,
         }).exec();
 
@@ -36,8 +36,8 @@ export class CommentsQueryRepository {
         if (userId) {
             likeStatus =
                 await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
+                    commentId,
                     userId,
-                    id,
                 );
         }
 
