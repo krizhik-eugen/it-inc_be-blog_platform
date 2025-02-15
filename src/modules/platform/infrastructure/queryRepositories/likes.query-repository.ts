@@ -12,8 +12,8 @@ export class LikesQueryRepository {
     ) {}
 
     async getLikeStatusByUserIdAndParentId(
-        userId: string,
         parentId: string,
+        userId: string,
     ): Promise<LikeStatus> {
         const like = await this.LikeModel.findOne({
             userId,

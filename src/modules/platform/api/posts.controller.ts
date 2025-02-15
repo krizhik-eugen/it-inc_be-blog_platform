@@ -133,14 +133,14 @@ export class PostsController {
     }
 
     @UseGuards(JwtOptionalAuthGuard)
-    @Get(':id')
+    @Get(':postId')
     @GetPostApi()
     async getPost(
-        @Param('id', ObjectIdValidationPipe) id: string,
+        @Param('postId', ObjectIdValidationPipe) postId: string,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PostViewDto> {
         return await this.postsQueryRepository.getByIdOrNotFoundFail(
-            id,
+            postId,
             user?.id,
         );
     }

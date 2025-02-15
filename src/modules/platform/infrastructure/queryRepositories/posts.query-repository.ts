@@ -19,11 +19,11 @@ export class PostsQueryRepository {
     ) {}
 
     async getByIdOrNotFoundFail(
-        id: string,
+        postId: string,
         userId: string | null,
     ): Promise<PostViewDto> {
         const post = await this.PostModel.findOne({
-            _id: id,
+            _id: postId,
             deletedAt: null,
         }).exec();
 
@@ -36,13 +36,13 @@ export class PostsQueryRepository {
         if (userId) {
             likeStatus =
                 await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
-                    id,
+                    postId,
                     userId,
                 );
         }
 
         const newestLikes =
-            await this.likesQueryRepository.getLastThreeLikes(id);
+            await this.likesQueryRepository.getLastThreeLikes(postId);
 
         return PostViewDto.mapToView(post, likeStatus, newestLikes);
     }
