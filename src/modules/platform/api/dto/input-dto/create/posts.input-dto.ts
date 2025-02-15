@@ -28,6 +28,5 @@ export class CreatePostInputDto
 {
     @ApiProperty()
     @IsObjectId()
-    @IsStringWithTrim()
     blogId: string;
 }

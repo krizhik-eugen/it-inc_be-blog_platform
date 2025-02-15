@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
 import { IsObjectId } from '../../../../../../core/decorators/validation/is-object-id';
@@ -27,9 +27,7 @@ export class UpdatePostInputDto implements UpdatePostDto {
     @IsOptional()
     content: string;
 
-    @ApiPropertyOptional()
+    @ApiProperty()
     @IsObjectId()
-    @IsStringWithTrim()
-    @IsOptional()
     blogId: string;
 }
