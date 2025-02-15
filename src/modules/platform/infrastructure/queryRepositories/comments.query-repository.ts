@@ -40,6 +40,7 @@ export class CommentsQueryRepository {
                     userId,
                 );
         }
+        console.log('comment', comment);
 
         return CommentViewDto.mapToView(comment, likeStatus);
     }
