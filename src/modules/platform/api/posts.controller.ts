@@ -81,11 +81,11 @@ export class PostsController {
         @Query() query: GetCommentsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedCommentsViewDto> {
-        return await this.commentsQueryRepository.getAllPostComments(
+        return await this.commentsQueryRepository.getAllPostComments({
             query,
             postId,
-            user?.id,
-        );
+            userId: user?.id,
+        });
     }
 
     @UseGuards(JwtAuthGuard)
@@ -101,10 +101,10 @@ export class PostsController {
             string
         >(new CreateCommentCommand(postId, user.id, body));
 
-        return await this.commentsQueryRepository.getByIdOrNotFoundFail(
-            newCommentId,
-            user.id,
-        );
+        return await this.commentsQueryRepository.getByIdOrNotFoundFail({
+            commentId: newCommentId,
+            userId: user.id,
+        });
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -114,7 +114,10 @@ export class PostsController {
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return await this.postsQueryRepository.getAllPosts(query, user?.id);
+        return await this.postsQueryRepository.getAllPosts({
+            query,
+            userId: user?.id,
+        });
     }
 
     @UseGuards(BasicAuthGuard)
@@ -126,10 +129,10 @@ export class PostsController {
             string
         >(new CreatePostCommand(body));
 
-        return await this.postsQueryRepository.getByIdOrNotFoundFail(
-            newPostId,
-            null,
-        );
+        return await this.postsQueryRepository.getByIdOrNotFoundFail({
+            postId: newPostId,
+            userId: null,
+        });
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -139,10 +142,10 @@ export class PostsController {
         @Param('postId', ObjectIdValidationPipe) postId: string,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PostViewDto> {
-        return await this.postsQueryRepository.getByIdOrNotFoundFail(
-            postId,
-            user?.id,
-        );
+        return await this.postsQueryRepository.getByIdOrNotFoundFail({
+            postId: postId,
+            userId: user?.id,
+        });
     }
 
     @UseGuards(BasicAuthGuard)

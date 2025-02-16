@@ -18,10 +18,13 @@ export class CommentsQueryRepository {
         private likesQueryRepository: LikesQueryRepository,
     ) {}
 
-    async getByIdOrNotFoundFail(
-        commentId: string,
-        userId: string | null,
-    ): Promise<CommentViewDto> {
+    async getByIdOrNotFoundFail({
+        commentId,
+        userId,
+    }: {
+        commentId: string;
+        userId: string | null;
+    }): Promise<CommentViewDto> {
         const comment = await this.CommentModel.findOne({
             _id: commentId,
             deletedAt: null,
@@ -36,8 +39,7 @@ export class CommentsQueryRepository {
         if (userId) {
             likeStatus =
                 await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
-                    commentId,
-                    userId,
+                    { parentId: commentId, userId },
                 );
         }
         console.log('comment', comment);
@@ -45,11 +47,15 @@ export class CommentsQueryRepository {
         return CommentViewDto.mapToView(comment, likeStatus);
     }
 
-    async getAllPostComments(
-        query: GetCommentsQueryParams,
-        postId: string,
-        userId: string | null,
-    ): Promise<PaginatedViewDto<CommentViewDto[]>> {
+    async getAllPostComments({
+        query,
+        postId,
+        userId,
+    }: {
+        query: GetCommentsQueryParams;
+        postId: string;
+        userId: string | null;
+    }): Promise<PaginatedViewDto<CommentViewDto[]>> {
         const post = await this.PostModel.findOne({
             _id: postId,
             deletedAt: null,
@@ -77,10 +83,10 @@ export class CommentsQueryRepository {
         });
 
         if (userId) {
-            const likes = await this.likesQueryRepository.getLikesArray(
-                commentsIds,
+            const likes = await this.likesQueryRepository.getLikesArray({
+                parentIdsArray: commentsIds,
                 userId,
-            );
+            });
 
             mappedComments.forEach((comment) => {
                 const like = likes.find((like) => like.parentId === comment.id);

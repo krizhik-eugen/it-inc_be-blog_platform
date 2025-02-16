@@ -90,7 +90,12 @@ export class AuthController {
         await this.commandBus.execute<
             PasswordRecoveryConfirmationCommand,
             void
-        >(new PasswordRecoveryConfirmationCommand(body));
+        >(
+            new PasswordRecoveryConfirmationCommand({
+                newPassword: body.newPassword,
+                recoveryCode: body.recoveryCode,
+            }),
+        );
     }
 
     @Post('registration-confirmation')

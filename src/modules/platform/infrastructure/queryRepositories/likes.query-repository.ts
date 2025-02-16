@@ -11,10 +11,13 @@ export class LikesQueryRepository {
         private usersRepository: UsersRepository,
     ) {}
 
-    async getLikeStatusByUserIdAndParentId(
-        parentId: string,
-        userId: string,
-    ): Promise<LikeStatus> {
+    async getLikeStatusByUserIdAndParentId({
+        parentId,
+        userId,
+    }: {
+        parentId: string;
+        userId: string;
+    }): Promise<LikeStatus> {
         const like = await this.LikeModel.findOne({
             userId,
             parentId,
@@ -24,7 +27,13 @@ export class LikesQueryRepository {
         return like ? like.status : LikeStatus.None;
     }
 
-    async getLikesArray(parentIdsArray: string[], userId: string) {
+    async getLikesArray({
+        parentIdsArray,
+        userId,
+    }: {
+        parentIdsArray: string[];
+        userId: string;
+    }) {
         const foundLikes = await this.LikeModel.find({
             parentId: { $in: parentIdsArray },
             userId,

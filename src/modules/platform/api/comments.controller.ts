@@ -86,9 +86,9 @@ export class CommentsController {
         @Param('commentId', ObjectIdValidationPipe) commentId: string,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<CommentViewDto> {
-        return await this.commentsQueryRepository.getByIdOrNotFoundFail(
+        return await this.commentsQueryRepository.getByIdOrNotFoundFail({
             commentId,
-            user?.id,
-        );
+            userId: user?.id,
+        });
     }
 }

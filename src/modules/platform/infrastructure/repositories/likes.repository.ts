@@ -25,10 +25,13 @@ export class LikesRepository {
         });
     }
 
-    async findByUserIdAndParentId(
-        userId: string,
-        parentId: string,
-    ): Promise<LikeDocument | null> {
+    async findByUserIdAndParentId({
+        userId,
+        parentId,
+    }: {
+        userId: string;
+        parentId: string;
+    }): Promise<LikeDocument | null> {
         return this.LikeModel.findOne({ userId, parentId, deletedAt: null });
     }
 

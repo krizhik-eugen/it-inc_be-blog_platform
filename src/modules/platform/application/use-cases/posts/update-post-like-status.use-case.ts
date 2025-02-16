@@ -32,10 +32,10 @@ export class UpdatePostLikeStatusUseCase
         const post =
             await this.postsRepository.findByIdNonDeletedOrNotFoundFail(postId);
 
-        const like = await this.likesRepository.findByUserIdAndParentId(
+        const like = await this.likesRepository.findByUserIdAndParentId({
             userId,
-            postId,
-        );
+            parentId: postId,
+        });
 
         if (!like) {
             const newLike = this.LikeModel.createInstance({

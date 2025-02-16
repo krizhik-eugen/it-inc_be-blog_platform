@@ -34,10 +34,10 @@ export class UpdateCommentLikeStatusUseCase
                 commentId,
             );
 
-        const like = await this.likesRepository.findByUserIdAndParentId(
+        const like = await this.likesRepository.findByUserIdAndParentId({
             userId,
-            commentId,
-        );
+            parentId: commentId,
+        });
 
         if (!like) {
             const newLike = this.LikeModel.createInstance({

@@ -82,11 +82,11 @@ export class BlogsController {
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return await this.postsQueryRepository.getAllBlogPosts(
+        return await this.postsQueryRepository.getAllBlogPosts({
             query,
             blogId,
-            user?.id,
-        );
+            userId: user?.id,
+        });
     }
 
     @UseGuards(BasicAuthGuard)
@@ -106,10 +106,10 @@ export class BlogsController {
             }),
         );
 
-        return await this.postsQueryRepository.getByIdOrNotFoundFail(
-            newPostId,
-            null,
-        );
+        return await this.postsQueryRepository.getByIdOrNotFoundFail({
+            postId: newPostId,
+            userId: null,
+        });
     }
 
     @Get(':blogId')

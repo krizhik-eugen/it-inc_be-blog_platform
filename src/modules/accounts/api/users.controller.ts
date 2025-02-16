@@ -56,7 +56,13 @@ export class UsersController {
         const newUserId = await this.commandBus.execute<
             CreateUserCommand,
             string
-        >(new CreateUserCommand(body));
+        >(
+            new CreateUserCommand({
+                email: body.email,
+                login: body.login,
+                password: body.password,
+            }),
+        );
         return await this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
     }
 
@@ -68,7 +74,9 @@ export class UsersController {
         @Body() body: UpdateUserInputDto,
     ): Promise<void> {
         return await this.commandBus.execute<UpdateUserCommand, void>(
-            new UpdateUserCommand(userId, body),
+            new UpdateUserCommand(userId, {
+                email: body.email,
+            }),
         );
     }
 

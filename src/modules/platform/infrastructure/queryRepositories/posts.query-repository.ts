@@ -18,10 +18,13 @@ export class PostsQueryRepository {
         private likesQueryRepository: LikesQueryRepository,
     ) {}
 
-    async getByIdOrNotFoundFail(
-        postId: string,
-        userId: string | null,
-    ): Promise<PostViewDto> {
+    async getByIdOrNotFoundFail({
+        postId,
+        userId,
+    }: {
+        postId: string;
+        userId: string | null;
+    }): Promise<PostViewDto> {
         const post = await this.PostModel.findOne({
             _id: postId,
             deletedAt: null,
@@ -36,8 +39,7 @@ export class PostsQueryRepository {
         if (userId) {
             likeStatus =
                 await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
-                    postId,
-                    userId,
+                    { parentId: postId, userId },
                 );
         }
 
@@ -47,10 +49,13 @@ export class PostsQueryRepository {
         return PostViewDto.mapToView(post, likeStatus, newestLikes);
     }
 
-    async getAllPosts(
-        query: GetPostsQueryParams,
-        userId: string | null,
-    ): Promise<PaginatedViewDto<PostViewDto[]>> {
+    async getAllPosts({
+        query,
+        userId,
+    }: {
+        query: GetPostsQueryParams;
+        userId: string | null;
+    }): Promise<PaginatedViewDto<PostViewDto[]>> {
         const findQuery: FilterQuery<Post> = { deletedAt: null };
 
         const result = await this.PostModel.find(findQuery)
@@ -67,10 +72,10 @@ export class PostsQueryRepository {
         });
 
         if (userId) {
-            const likes = await this.likesQueryRepository.getLikesArray(
-                postsIds,
+            const likes = await this.likesQueryRepository.getLikesArray({
+                parentIdsArray: postsIds,
                 userId,
-            );
+            });
             mappedPosts.forEach((post) => {
                 const like = likes.find((like) => like.parentId === post.id);
                 post.extendedLikesInfo.myStatus =
@@ -91,11 +96,15 @@ export class PostsQueryRepository {
         });
     }
 
-    async getAllBlogPosts(
-        query: GetPostsQueryParams,
-        blogId: string,
-        userId: string | null,
-    ): Promise<PaginatedViewDto<PostViewDto[]>> {
+    async getAllBlogPosts({
+        query,
+        blogId,
+        userId,
+    }: {
+        query: GetPostsQueryParams;
+        blogId: string;
+        userId: string | null;
+    }): Promise<PaginatedViewDto<PostViewDto[]>> {
         const blog = await this.BlogModel.findOne({
             _id: blogId,
             deletedAt: null,
@@ -124,10 +133,10 @@ export class PostsQueryRepository {
         });
 
         if (userId) {
-            const likes = await this.likesQueryRepository.getLikesArray(
-                postsIds,
+            const likes = await this.likesQueryRepository.getLikesArray({
+                parentIdsArray: postsIds,
                 userId,
-            );
+            });
             mappedPosts.forEach((post) => {
                 const like = likes.find((like) => like.parentId === post.id);
                 post.extendedLikesInfo.myStatus =
