@@ -5,16 +5,18 @@ import { AccountsConfig } from '../config';
 import { UsersRepository } from '../infrastructure/repositories/users.repository';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { UserDocument } from '../domain/user.entity';
-import { EmailService } from '../../notifications/email.service';
 import { CryptoService } from './crypto.service';
+import { EventBus } from '@nestjs/cqrs';
+import { UserRegisteredEvent } from '../domain/events/user-registered.event';
+import { UserPasswordRecoveryEvent } from '../domain/events/user-password-recovery.event';
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersRepository: UsersRepository,
-        private emailService: EmailService,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,
+        private eventBus: EventBus,
     ) {}
 
     async validateUser(
@@ -51,10 +53,8 @@ export class AuthService {
         user.setConfirmationCode(confirmationCode, expirationDate);
         await this.usersRepository.save(user);
 
-        //TODO: check implementation with events
-        await this.emailService.sendEmailConfirmationMessage(
-            user.email,
-            confirmationCode,
+        await this.eventBus.publish(
+            new UserRegisteredEvent(user.email, confirmationCode),
         );
     }
 
@@ -68,12 +68,10 @@ export class AuthService {
         });
 
         user.setPasswordRecoveryCode(newRecoveryCode, expirationDate);
-
         await this.usersRepository.save(user);
 
-        await this.emailService.sendEmailPasswordRecoveryMessage(
-            user.email,
-            newRecoveryCode,
+        await this.eventBus.publish(
+            new UserPasswordRecoveryEvent(user.email, newRecoveryCode),
         );
     }
 }
