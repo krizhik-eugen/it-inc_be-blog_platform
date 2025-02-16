@@ -1,14 +1,20 @@
-import { INestApplication } from '@nestjs/common';
+import { DynamicModule, INestApplication } from '@nestjs/common';
+import { CoreConfig } from '../core/config';
 import { globalPrefixSetup } from './global-prefix.setup';
 import { pipesSetup } from './pipes.setup';
 import { swaggerSetup } from './swagger.setup';
 import { exceptionFilterSetup } from './exception-filter.setup';
-import { CoreConfig } from '../core/config';
+import { validationConstraintSetup } from './validation-constraint.setup';
 
-export function appSetup(app: INestApplication, coreConfig: CoreConfig) {
+export function appSetup(
+    app: INestApplication,
+    coreConfig: CoreConfig,
+    DynamicAppModule: DynamicModule,
+) {
     globalPrefixSetup(app);
     pipesSetup(app);
     swaggerSetup(app, coreConfig);
+    validationConstraintSetup(app, DynamicAppModule);
     exceptionFilterSetup(app, coreConfig);
     app.enableCors();
 }

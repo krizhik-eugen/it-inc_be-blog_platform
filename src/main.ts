@@ -9,7 +9,7 @@ async function bootstrap() {
 
     const coreConfig = app.get<CoreConfig>(CoreConfig);
 
-    appSetup(app, coreConfig);
+    appSetup(app, coreConfig, DynamicAppModule);
 
     const port = coreConfig.port;
 

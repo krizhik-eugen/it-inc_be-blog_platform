@@ -4,6 +4,7 @@ import { IsStringWithTrim } from '../../../../../../core/decorators/validation/i
 import { IsObjectId } from '../../../../../../core/decorators/validation/is-object-id';
 import { postConstraints } from '../../../../domain/post.entity';
 import { UpdatePostDto } from '../../../../dto/update/update-post.dto';
+import { BlogIsExistent } from '../../../validation/blog-is-existent.decorator';
 
 export class UpdatePostInputDto implements UpdatePostDto {
     @ApiPropertyOptional({
@@ -28,5 +29,6 @@ export class UpdatePostInputDto implements UpdatePostDto {
 
     @ApiProperty()
     @IsObjectId()
+    @BlogIsExistent()
     blogId: string;
 }
