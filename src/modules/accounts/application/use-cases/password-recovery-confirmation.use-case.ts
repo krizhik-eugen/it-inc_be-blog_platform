@@ -1,8 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import bcrypt from 'bcrypt';
-import { SALT_ROUNDS } from '../../constants';
 import { UsersRepository } from '../../infrastructure/repositories/users.repository';
 import { UpdatePasswordDto } from '../../dto/update/update-password.dto';
+import { CryptoService } from '../crypto.service';
 
 export class PasswordRecoveryConfirmationCommand {
     constructor(public dto: UpdatePasswordDto) {}
@@ -12,7 +11,10 @@ export class PasswordRecoveryConfirmationCommand {
 export class PasswordRecoveryConfirmationUseCase
     implements ICommandHandler<PasswordRecoveryConfirmationCommand, void>
 {
-    constructor(private usersRepository: UsersRepository) {}
+    constructor(
+        private usersRepository: UsersRepository,
+        private cryptoService: CryptoService,
+    ) {}
 
     async execute({ dto }: PasswordRecoveryConfirmationCommand): Promise<void> {
         const foundUser =
@@ -20,7 +22,9 @@ export class PasswordRecoveryConfirmationUseCase
                 dto.recoveryCode,
             );
 
-        const newPasswordHash = await bcrypt.hash(dto.newPassword, SALT_ROUNDS);
+        const newPasswordHash = await this.cryptoService.createPasswordHash(
+            dto.newPassword,
+        );
 
         foundUser.changePassword(dto.recoveryCode, newPasswordHash);
 

@@ -1,11 +1,10 @@
-import bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SALT_ROUNDS } from '../../constants';
 import { User, UserModelType } from '../../domain/user.entity';
 import { UsersRepository } from '../../infrastructure/repositories/users.repository';
 import { AccountsConfig } from '../../config/accounts.config';
 import { CreateUserDto } from '../../dto/create/create-user.dto';
+import { CryptoService } from '../crypto.service';
 
 export class CreateUserCommand {
     constructor(public dto: CreateUserDto) {}
@@ -20,10 +19,13 @@ export class CreateUserUseCase
         private UserModel: UserModelType,
         private usersRepository: UsersRepository,
         private accountsConfig: AccountsConfig,
+        private cryptoService: CryptoService,
     ) {}
 
     async execute({ dto }: CreateUserCommand): Promise<string> {
-        const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
+        const passwordHash = await this.cryptoService.createPasswordHash(
+            dto.password,
+        );
 
         const newUser = this.UserModel.createInstance({
             email: dto.email,

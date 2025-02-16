@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns';
 import { AccountsConfig } from '../config';
@@ -7,6 +6,7 @@ import { UsersRepository } from '../infrastructure/repositories/users.repository
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { UserDocument } from '../domain/user.entity';
 import { EmailService } from '../../notifications/email.service';
+import { CryptoService } from './crypto.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +14,7 @@ export class AuthService {
         private usersRepository: UsersRepository,
         private emailService: EmailService,
         private accountsConfig: AccountsConfig,
+        private cryptoService: CryptoService,
     ) {}
 
     async validateUser(
@@ -27,10 +28,10 @@ export class AuthService {
             return null;
         }
 
-        const isValidPassword = await bcrypt.compare(
+        const isValidPassword = await this.cryptoService.comparePasswords({
             password,
-            user.passwordHash,
-        );
+            hash: user.passwordHash,
+        });
 
         if (!isValidPassword) {
             return null;

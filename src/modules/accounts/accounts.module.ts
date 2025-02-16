@@ -24,6 +24,7 @@ import { RegistrationEmailResendingUseCase } from './application/use-cases/regis
 import { PasswordRecoveryUseCase } from './application/use-cases/password-recovery.use-case';
 import { PasswordRecoveryConfirmationUseCase } from './application/use-cases/password-recovery-confirmation.use-case';
 import { RegistrationConfirmationUseCase } from './application/use-cases/registration-confirmation.use-case';
+import { CryptoService } from './application/crypto.service';
 
 const useCases = [
     RegistrationConfirmationUseCase,
@@ -76,6 +77,7 @@ const strategies = [LocalStrategy, JwtStrategy];
         ...strategies,
         ...repositories,
         ...useCases,
+        CryptoService,
     ],
     exports: [UsersRepository, MongooseModule, AccountsConfig],
 })
