@@ -27,7 +27,6 @@ export class CreateUserInputDto implements CreateUserDto {
         maxLength: userPasswordConstraints.maxLength,
         minLength: userPasswordConstraints.minLength,
     })
-    @IsString()
     @IsStringWithTrim(
         userPasswordConstraints.minLength,
         userPasswordConstraints.maxLength,
@@ -59,7 +58,12 @@ export class UpdateUserInputDto implements UpdateUserDto {
 
 export class LoginUserInputDto {
     @ApiProperty()
+    @IsStringWithTrim()
     loginOrEmail: string;
     @ApiProperty()
+    @IsStringWithTrim(
+        userPasswordConstraints.minLength,
+        userPasswordConstraints.maxLength,
+    )
     password: string;
 }
