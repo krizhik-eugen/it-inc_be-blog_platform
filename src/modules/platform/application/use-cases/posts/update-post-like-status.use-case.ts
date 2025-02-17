@@ -1,63 +1,34 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { UpdateLikeDto } from '../../../dto/update/update-like.dto';
 import { PostsRepository } from '../../../infrastructure/repositories/posts.repository';
 import { LikesRepository } from '../../../infrastructure/repositories/likes.repository';
 import { Like, LikeModelType } from '../../../domain/like.entity';
+import { PostDocument } from '../../../domain/post.entity';
+import {
+    UpdateLikeStatusBaseCommand,
+    UpdateLikeStatusBaseUseCase,
+} from '../base/update-like-status.base-use-case';
 
-export class UpdatePostLikeStatusCommand {
-    constructor(
-        public postId: string,
-        public dto: UpdateLikeDto,
-        public userId: string,
-    ) {}
-}
+export class UpdatePostLikeStatusCommand extends UpdateLikeStatusBaseCommand {}
 
 @CommandHandler(UpdatePostLikeStatusCommand)
 export class UpdatePostLikeStatusUseCase
+    extends UpdateLikeStatusBaseUseCase<PostDocument>
     implements ICommandHandler<UpdatePostLikeStatusCommand, void>
 {
     constructor(
         @InjectModel(Like.name)
-        private LikeModel: LikeModelType,
+        LikeModel: LikeModelType,
+        likesRepository: LikesRepository,
         private postsRepository: PostsRepository,
-        private likesRepository: LikesRepository,
-    ) {}
+    ) {
+        super(LikeModel, likesRepository);
+    }
 
-    async execute({
-        postId,
-        dto,
-        userId,
-    }: UpdatePostLikeStatusCommand): Promise<void> {
-        const post =
-            await this.postsRepository.findByIdNonDeletedOrNotFoundFail(postId);
-
-        const like = await this.likesRepository.findByUserIdAndParentId({
-            userId,
-            parentId: postId,
-        });
-
-        if (!like) {
-            const newLike = this.LikeModel.createInstance({
-                userId,
-                parentId: postId,
-                status: dto.likeStatus,
-            });
-            await this.likesRepository.save(newLike);
-        } else {
-            like.update({
-                status: dto.likeStatus,
-            });
-            await this.likesRepository.save(like);
-        }
-
-        const likesAndDislikesCount =
-            await this.likesRepository.getLikesAndDislikesCountByParentId(
-                postId,
-            );
-
-        post.updateLikesCount(likesAndDislikesCount);
-
-        await this.postsRepository.save(post);
+    async getParentById(postId: string): Promise<PostDocument> {
+        return this.postsRepository.findByIdOrNotFoundFail(postId);
+    }
+    async saveParent(post: PostDocument): Promise<PostDocument> {
+        return this.postsRepository.save(post);
     }
 }

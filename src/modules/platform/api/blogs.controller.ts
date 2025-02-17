@@ -11,8 +11,6 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
-
-import { BlogsQueryRepository } from '../infrastructure/queryRepositories/blogs.query-repository';
 import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
 import {
     PaginatedBlogsViewDto,
@@ -28,7 +26,7 @@ import {
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
 import { CreateBlogPostInputDto } from './dto/input-dto/create/posts.input-dto';
 import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/blogs/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/blogs/update-blog.use-case';
 import { DeleteBlogCommand } from '../application/use-cases/blogs/delete-blog.use-case';
@@ -46,13 +44,16 @@ import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
 import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
 import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
 import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
+import { GetBlogByIdQuery } from '../application/queries/blogs/get-blog-by-id.query-handler';
+import { GetBlogsQuery } from '../application/queries/blogs/get-blogs.query-handler';
+import { GetBlogPostsQuery } from '../application/queries/blogs/get-blog-posts.query-handler';
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
-        private blogsQueryRepository: BlogsQueryRepository,
         private postsQueryRepository: PostsQueryRepository,
         private commandBus: CommandBus,
+        private readonly queryBus: QueryBus,
     ) {}
 
     @Get()
@@ -60,7 +61,7 @@ export class BlogsController {
     async getAllBlogs(
         @Query() query: GetBlogsQueryParams,
     ): Promise<PaginatedBlogsViewDto> {
-        return await this.blogsQueryRepository.getAllBlogs(query);
+        return this.queryBus.execute(new GetBlogsQuery(query));
     }
 
     @UseGuards(BasicAuthGuard)
@@ -71,7 +72,7 @@ export class BlogsController {
             CreateBlogCommand,
             string
         >(new CreateBlogCommand(body));
-        return await this.blogsQueryRepository.getByIdOrNotFoundFail(newBlogId);
+        return this.queryBus.execute(new GetBlogByIdQuery(newBlogId));
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -82,11 +83,9 @@ export class BlogsController {
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return await this.postsQueryRepository.getAllBlogPosts({
-            query,
-            blogId,
-            userId: user?.id,
-        });
+        return this.queryBus.execute(
+            new GetBlogPostsQuery(query, blogId, user?.id),
+        );
     }
 
     @UseGuards(BasicAuthGuard)
@@ -106,7 +105,7 @@ export class BlogsController {
             }),
         );
 
-        return await this.postsQueryRepository.getByIdOrNotFoundFail({
+        return this.postsQueryRepository.getByIdOrNotFoundFail({
             postId: newPostId,
             userId: null,
         });
@@ -117,7 +116,7 @@ export class BlogsController {
     async getBlog(
         @Param('blogId', ObjectIdValidationPipe) blogId: string,
     ): Promise<BlogViewDto> {
-        return await this.blogsQueryRepository.getByIdOrNotFoundFail(blogId);
+        return this.queryBus.execute(new GetBlogByIdQuery(blogId));
     }
 
     @UseGuards(BasicAuthGuard)
@@ -128,7 +127,7 @@ export class BlogsController {
         @Param('blogId', ObjectIdValidationPipe) blogId: string,
         @Body() body: UpdateBlogInputDto,
     ): Promise<void> {
-        return await this.commandBus.execute<UpdateBlogCommand, void>(
+        return this.commandBus.execute<UpdateBlogCommand, void>(
             new UpdateBlogCommand(blogId, body),
         );
     }
@@ -140,7 +139,7 @@ export class BlogsController {
     async deleteBlog(
         @Param('blogId', ObjectIdValidationPipe) blogId: string,
     ): Promise<void> {
-        return await this.commandBus.execute<DeleteBlogCommand, void>(
+        return this.commandBus.execute<DeleteBlogCommand, void>(
             new DeleteBlogCommand(blogId),
         );
     }

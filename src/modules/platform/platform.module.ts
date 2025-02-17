@@ -28,6 +28,9 @@ import { LikesQueryRepository } from './infrastructure/queryRepositories/likes.q
 import { DeletePostUseCase } from './application/use-cases/posts/delete-post.use-case';
 import { UpdatePostLikeStatusUseCase } from './application/use-cases/posts/update-post-like-status.use-case';
 import { BlogIsExistentConstraint } from './api/validation/blog-is-existent.decorator';
+import { GetBlogByIdQueryHandler } from './application/queries/blogs/get-blog-by-id.query-handler';
+import { GetBlogsQueryHandler } from './application/queries/blogs/get-blogs.query-handler';
+import { GetBlogPostsQueryHandler } from './application/queries/blogs/get-blog-posts.query-handler';
 
 const useCases = [
     CreateBlogUseCase,
@@ -41,6 +44,11 @@ const useCases = [
     UpdateCommentLikeStatusUseCase,
     DeletePostUseCase,
     UpdatePostLikeStatusUseCase,
+];
+const queries = [
+    GetBlogByIdQueryHandler,
+    GetBlogsQueryHandler,
+    GetBlogPostsQueryHandler,
 ];
 const repositories = [
     BlogsRepository,
@@ -64,7 +72,12 @@ const repositories = [
         AccountsModule,
     ],
     controllers: [BlogsController, PostsController, CommentsController],
-    providers: [...repositories, ...useCases, BlogIsExistentConstraint],
+    providers: [
+        ...repositories,
+        ...useCases,
+        ...queries,
+        BlogIsExistentConstraint,
+    ],
     exports: [MongooseModule],
 })
 export class PlatformModule {}

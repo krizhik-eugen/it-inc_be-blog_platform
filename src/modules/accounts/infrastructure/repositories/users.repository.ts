@@ -6,7 +6,7 @@ export class UsersRepository {
     constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
     async save(user: UserDocument) {
-        return await user.save();
+        return user.save();
     }
 
     async findById(id: string): Promise<UserDocument | null> {

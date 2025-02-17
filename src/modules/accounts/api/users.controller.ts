@@ -47,7 +47,7 @@ export class UsersController {
     async getAllUsers(
         @Query() query: GetUsersQueryParams,
     ): Promise<PaginatedUsersViewDto> {
-        return await this.usersQueryRepository.getAllUsers(query);
+        return this.usersQueryRepository.getAllUsers(query);
     }
 
     @Post()
@@ -63,7 +63,7 @@ export class UsersController {
                 password: body.password,
             }),
         );
-        return await this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
+        return this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
     }
 
     @Put(':userId')
@@ -73,7 +73,7 @@ export class UsersController {
         @Param('userId', ObjectIdValidationPipe) userId: string,
         @Body() body: UpdateUserInputDto,
     ): Promise<void> {
-        return await this.commandBus.execute<UpdateUserCommand, void>(
+        return this.commandBus.execute<UpdateUserCommand, void>(
             new UpdateUserCommand(userId, {
                 email: body.email,
             }),
@@ -86,7 +86,7 @@ export class UsersController {
     async deleteUser(
         @Param('userId', ObjectIdValidationPipe) userId: string,
     ): Promise<void> {
-        return await this.commandBus.execute<DeleteUserCommand, void>(
+        return this.commandBus.execute<DeleteUserCommand, void>(
             new DeleteUserCommand(userId),
         );
     }

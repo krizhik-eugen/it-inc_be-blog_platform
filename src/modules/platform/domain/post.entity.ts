@@ -3,7 +3,7 @@ import { HydratedDocument, Model } from 'mongoose';
 import { CreatePostDomainDto } from './dto/create/create-post.domain.dto';
 import { UpdatePostDomainDto } from './dto/update/update-post.domain.dto';
 import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
-import { UpdateLikesCountDomainDto } from './dto/update/update-likes-count.domain.dto';
+import { ParentLikesEntity } from './parent-likes.entity';
 
 export const postConstraints = {
     title: {
@@ -22,7 +22,7 @@ export const postConstraints = {
  * This class represents the schema and behavior of a Post entity.
  */
 @Schema({ timestamps: true })
-export class Post {
+export class Post extends ParentLikesEntity {
     /**
      * Id of the blog that the post belongs to
      * @type {string}
@@ -82,30 +82,6 @@ export class Post {
     shortDescription: string;
 
     /**
-     * Likes count of the post
-     * @type {number}
-     * @required
-     */
-    @Prop({
-        type: Number,
-        required: true,
-        default: 0,
-    })
-    likesCount: number;
-
-    /**
-     * Dislikes count of the post
-     * @type {number}
-     * @required
-     */
-    @Prop({
-        type: Number,
-        required: true,
-        default: 0,
-    })
-    dislikesCount: number;
-
-    /**
      * Creation timestamp
      * Explicitly defined despite timestamps: true
      * properties without @Prop for typescript so that they are in the class instance (or in instance methods)
@@ -154,14 +130,6 @@ export class Post {
         }
     }
 
-    /**
-     * Factory method to update a Post instance with likes count
-     * @param {UpdateLikesCountDomainDto} dto - The data transfer object for post change likes count
-     */
-    updateLikesCount(dto: UpdateLikesCountDomainDto) {
-        this.likesCount = dto.likesCount;
-        this.dislikesCount = dto.dislikesCount;
-    }
     /**
      * Marks the post as deleted
      * Throws an error if already deleted

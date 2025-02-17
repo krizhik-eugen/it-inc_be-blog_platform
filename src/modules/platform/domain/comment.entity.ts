@@ -6,7 +6,7 @@ import {
     ForbiddenDomainException,
     NotFoundDomainException,
 } from '../../../core/exceptions/domain-exceptions';
-import { UpdateLikesCountDomainDto } from './dto/update/update-likes-count.domain.dto';
+import { ParentLikesEntity } from './parent-likes.entity';
 
 export const commentConstraints = {
     content: {
@@ -22,7 +22,7 @@ export const commentConstraints = {
  * This class represents the schema and behavior of a Comment entity.
  */
 @Schema({ timestamps: true })
-export class Comment {
+export class Comment extends ParentLikesEntity {
     /**
      * Id of the post that the comment belongs to
      * @type {string}
@@ -73,30 +73,6 @@ export class Comment {
     };
 
     /**
-     * Likes count of the comment
-     * @type {number}
-     * @required
-     */
-    @Prop({
-        type: Number,
-        required: true,
-        default: 0,
-    })
-    likesCount: number;
-
-    /**
-     * Dislikes count of the comment
-     * @type {number}
-     * @required
-     */
-    @Prop({
-        type: Number,
-        required: true,
-        default: 0,
-    })
-    dislikesCount: number;
-
-    /**
      * Creation timestamp
      * Explicitly defined despite timestamps: true
      * properties without @Prop for typescript so that they are in the class instance (or in instance methods)
@@ -139,15 +115,6 @@ export class Comment {
             );
         }
         this.content = dto.content;
-    }
-
-    /**
-     * Factory method to update a Comment instance with likes count
-     * @param {UpdateLikesCountDomainDto} dto - The data transfer object for comment change likes count
-     */
-    updateLikesCount(dto: UpdateLikesCountDomainDto) {
-        this.likesCount = dto.likesCount;
-        this.dislikesCount = dto.dislikesCount;
     }
 
     /**

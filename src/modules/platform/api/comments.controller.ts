@@ -46,10 +46,9 @@ export class CommentsController {
         @Body() body: UpdateLikeInputDto,
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<void> {
-        return await this.commandBus.execute<
-            UpdateCommentLikeStatusCommand,
-            void
-        >(new UpdateCommentLikeStatusCommand(commentId, body, user.id));
+        return this.commandBus.execute<UpdateCommentLikeStatusCommand, void>(
+            new UpdateCommentLikeStatusCommand(commentId, body, user.id),
+        );
     }
 
     @UseGuards(JwtAuthGuard)
@@ -61,7 +60,7 @@ export class CommentsController {
         @Body() body: UpdateCommentInputDto,
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<void> {
-        return await this.commandBus.execute<UpdateCommentCommand, void>(
+        return this.commandBus.execute<UpdateCommentCommand, void>(
             new UpdateCommentCommand(commentId, body, user.id),
         );
     }
@@ -74,7 +73,7 @@ export class CommentsController {
         @Param('commentId', ObjectIdValidationPipe) commentId: string,
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<void> {
-        return await this.commandBus.execute<DeleteCommentCommand, void>(
+        return this.commandBus.execute<DeleteCommentCommand, void>(
             new DeleteCommentCommand(commentId, user.id),
         );
     }
@@ -86,7 +85,7 @@ export class CommentsController {
         @Param('commentId', ObjectIdValidationPipe) commentId: string,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<CommentViewDto> {
-        return await this.commentsQueryRepository.getByIdOrNotFoundFail({
+        return this.commentsQueryRepository.getByIdOrNotFoundFail({
             commentId,
             userId: user?.id,
         });

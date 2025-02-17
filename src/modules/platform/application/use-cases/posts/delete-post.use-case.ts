@@ -23,7 +23,7 @@ export class DeletePostUseCase
 
         await this.postsRepository.save(post);
 
-        //TODO: check if possible to do the following actions with commands
+        //TODO: check if possible to do the following actions with events
         //Removing all comments for this post
         await this.commentsRepository.deleteAllByPostId(postId);
         //TODO: Handle likes removing

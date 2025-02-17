@@ -139,7 +139,7 @@ export class AuthController {
     async getCurrentUser(
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<MeViewDto> {
-        return await this.usersQueryRepository.getCurrentUserByIdOrNotFoundFail(
+        return this.usersQueryRepository.getCurrentUserByIdOrNotFoundFail(
             user.id,
         );
     }

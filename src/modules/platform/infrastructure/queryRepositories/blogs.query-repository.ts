@@ -12,9 +12,9 @@ export class BlogsQueryRepository {
         private BlogModel: BlogModelType,
     ) {}
 
-    async getByIdOrNotFoundFail(id: string): Promise<BlogViewDto> {
+    async getByIdOrNotFoundFail(blogId: string): Promise<BlogViewDto> {
         const blog = await this.BlogModel.findOne({
-            _id: id,
+            _id: blogId,
             deletedAt: null,
         }).exec();
 

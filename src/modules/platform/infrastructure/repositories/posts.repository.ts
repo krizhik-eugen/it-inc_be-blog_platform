@@ -6,7 +6,7 @@ export class PostsRepository {
     constructor(@InjectModel(Post.name) private PostModel: PostModelType) {}
 
     async save(post: PostDocument) {
-        return await post.save();
+        return post.save();
     }
 
     async findById(id: string): Promise<PostDocument | null> {

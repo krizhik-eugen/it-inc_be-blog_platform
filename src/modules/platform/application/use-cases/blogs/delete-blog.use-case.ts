@@ -25,7 +25,7 @@ export class DeleteBlogUseCase
 
         await this.blogsRepository.save(blog);
 
-        //TODO: check if possible to do the following actions with commands
+        //TODO: check if possible to do the following actions with events
         // Removing all posts for this blog and their comments
         const posts =
             await this.postsRepository.findAllByBlogIdNonDeleted(blogId);

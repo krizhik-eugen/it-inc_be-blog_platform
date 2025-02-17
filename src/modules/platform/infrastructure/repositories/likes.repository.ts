@@ -15,7 +15,7 @@ export class LikesRepository {
     ) {}
 
     async save(like: LikeDocument) {
-        return await like.save();
+        return like.save();
     }
 
     async findById(id: string): Promise<LikeDocument | null> {

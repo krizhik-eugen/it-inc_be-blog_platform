@@ -6,7 +6,7 @@ export class BlogsRepository {
     constructor(@InjectModel(Blog.name) private BlogModel: BlogModelType) {}
 
     async save(blog: BlogDocument) {
-        return await blog.save();
+        return blog.save();
     }
 
     async findById(id: string): Promise<BlogDocument | null> {

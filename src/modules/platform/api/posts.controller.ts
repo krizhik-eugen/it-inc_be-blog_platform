@@ -68,7 +68,7 @@ export class PostsController {
         @Body() body: UpdateLikeInputDto,
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<void> {
-        return await this.commandBus.execute<UpdatePostLikeStatusCommand, void>(
+        return this.commandBus.execute<UpdatePostLikeStatusCommand, void>(
             new UpdatePostLikeStatusCommand(postId, body, user.id),
         );
     }
@@ -81,7 +81,7 @@ export class PostsController {
         @Query() query: GetCommentsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedCommentsViewDto> {
-        return await this.commentsQueryRepository.getAllPostComments({
+        return this.commentsQueryRepository.getAllPostComments({
             query,
             postId,
             userId: user?.id,
@@ -101,7 +101,7 @@ export class PostsController {
             string
         >(new CreateCommentCommand(postId, user.id, body));
 
-        return await this.commentsQueryRepository.getByIdOrNotFoundFail({
+        return this.commentsQueryRepository.getByIdOrNotFoundFail({
             commentId: newCommentId,
             userId: user.id,
         });
@@ -114,7 +114,7 @@ export class PostsController {
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return await this.postsQueryRepository.getAllPosts({
+        return this.postsQueryRepository.getAllPosts({
             query,
             userId: user?.id,
         });
@@ -129,7 +129,7 @@ export class PostsController {
             string
         >(new CreatePostCommand(body));
 
-        return await this.postsQueryRepository.getByIdOrNotFoundFail({
+        return this.postsQueryRepository.getByIdOrNotFoundFail({
             postId: newPostId,
             userId: null,
         });
@@ -142,7 +142,7 @@ export class PostsController {
         @Param('postId', ObjectIdValidationPipe) postId: string,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PostViewDto> {
-        return await this.postsQueryRepository.getByIdOrNotFoundFail({
+        return this.postsQueryRepository.getByIdOrNotFoundFail({
             postId: postId,
             userId: user?.id,
         });
@@ -156,7 +156,7 @@ export class PostsController {
         @Param('postId', ObjectIdValidationPipe) postId: string,
         @Body() body: UpdatePostInputDto,
     ): Promise<void> {
-        return await this.commandBus.execute<UpdatePostCommand, void>(
+        return this.commandBus.execute<UpdatePostCommand, void>(
             new UpdatePostCommand(postId, body),
         );
     }
@@ -168,7 +168,7 @@ export class PostsController {
     async deletePost(
         @Param('postId', ObjectIdValidationPipe) postId: string,
     ): Promise<void> {
-        return await this.commandBus.execute<DeletePostCommand, void>(
+        return this.commandBus.execute<DeletePostCommand, void>(
             new DeletePostCommand(postId),
         );
     }
