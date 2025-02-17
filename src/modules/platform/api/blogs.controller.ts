@@ -18,7 +18,6 @@ import {
 } from './dto/view-dto/blogs.view-dto';
 import { CreateBlogInputDto } from './dto/input-dto/create/blogs.input-dto';
 import { UpdateBlogInputDto } from './dto/input-dto/update/blogs.input-dto';
-import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
 import {
     PaginatedPostsViewDto,
     PostViewDto,
@@ -47,13 +46,13 @@ import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
 import { GetBlogByIdQuery } from '../application/queries/blogs/get-blog-by-id.query-handler';
 import { GetBlogsQuery } from '../application/queries/blogs/get-blogs.query-handler';
 import { GetBlogPostsQuery } from '../application/queries/blogs/get-blog-posts.query-handler';
+import { GetPostByIdQuery } from '../application/queries/posts/get-post-by-id.query-handler';
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
-        private postsQueryRepository: PostsQueryRepository,
         private commandBus: CommandBus,
-        private readonly queryBus: QueryBus,
+        private queryBus: QueryBus,
     ) {}
 
     @Get()
@@ -104,11 +103,7 @@ export class BlogsController {
                 blogId,
             }),
         );
-
-        return this.postsQueryRepository.getByIdOrNotFoundFail({
-            postId: newPostId,
-            userId: null,
-        });
+        return this.queryBus.execute(new GetPostByIdQuery(newPostId, null));
     }
 
     @Get(':blogId')

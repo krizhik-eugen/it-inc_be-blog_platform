@@ -31,6 +31,10 @@ import { BlogIsExistentConstraint } from './api/validation/blog-is-existent.deco
 import { GetBlogByIdQueryHandler } from './application/queries/blogs/get-blog-by-id.query-handler';
 import { GetBlogsQueryHandler } from './application/queries/blogs/get-blogs.query-handler';
 import { GetBlogPostsQueryHandler } from './application/queries/blogs/get-blog-posts.query-handler';
+import { GetPostByIdQueryHandler } from './application/queries/posts/get-post-by-id.query-handler';
+import { GetPostsQueryHandler } from './application/queries/posts/get-posts.query-handler';
+import { GetCommentByIdQueryHandler } from './application/queries/comments/get-comment-by-id.query-handler';
+import { GetCommentsQueryHandler } from './application/queries/posts/get-post-comments.query-handler';
 
 const useCases = [
     CreateBlogUseCase,
@@ -49,6 +53,10 @@ const queries = [
     GetBlogByIdQueryHandler,
     GetBlogsQueryHandler,
     GetBlogPostsQueryHandler,
+    GetPostByIdQueryHandler,
+    GetPostsQueryHandler,
+    GetCommentByIdQueryHandler,
+    GetCommentsQueryHandler,
 ];
 const repositories = [
     BlogsRepository,

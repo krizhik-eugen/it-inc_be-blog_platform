@@ -3,7 +3,10 @@ import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { Comment, CommentModelType } from '../../domain/comment.entity';
 import { Post, PostModelType } from '../../domain/post.entity';
-import { CommentViewDto } from '../../api/dto/view-dto/comments.view-dto';
+import {
+    CommentViewDto,
+    PaginatedCommentsViewDto,
+} from '../../api/dto/view-dto/comments.view-dto';
 import { GetCommentsQueryParams } from '../../api/dto/query-params-dto/get-comments-query-params.input-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
 import { LikeStatus } from '../../domain/like.entity';
@@ -42,7 +45,6 @@ export class CommentsQueryRepository {
                     { parentId: commentId, userId },
                 );
         }
-        console.log('comment', comment);
 
         return CommentViewDto.mapToView(comment, likeStatus);
     }
@@ -55,7 +57,7 @@ export class CommentsQueryRepository {
         query: GetCommentsQueryParams;
         postId: string;
         userId: string | null;
-    }): Promise<PaginatedViewDto<CommentViewDto[]>> {
+    }): Promise<PaginatedCommentsViewDto> {
         const post = await this.PostModel.findOne({
             _id: postId,
             deletedAt: null,

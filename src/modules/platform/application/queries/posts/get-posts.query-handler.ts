@@ -3,29 +3,23 @@ import { GetPostsQueryParams } from '../../../api/dto/query-params-dto/get-posts
 import { PostsQueryRepository } from '../../../infrastructure/queryRepositories/posts.query-repository';
 import { PaginatedPostsViewDto } from '../../../api/dto/view-dto/posts.view-dto';
 
-export class GetBlogPostsQuery {
+export class GetPostsQuery {
     constructor(
         public query: GetPostsQueryParams,
-        public blogId: string,
         public userId: string | null,
     ) {}
 }
 
-@QueryHandler(GetBlogPostsQuery)
-export class GetBlogPostsQueryHandler
-    implements IQueryHandler<GetBlogPostsQuery, PaginatedPostsViewDto>
+@QueryHandler(GetPostsQuery)
+export class GetPostsQueryHandler
+    implements IQueryHandler<GetPostsQuery, PaginatedPostsViewDto>
 {
     constructor(private postsQueryRepository: PostsQueryRepository) {}
 
     async execute({
         query,
-        blogId,
         userId,
-    }: GetBlogPostsQuery): Promise<PaginatedPostsViewDto> {
-        return this.postsQueryRepository.getAllBlogPosts({
-            query,
-            blogId,
-            userId,
-        });
+    }: GetPostsQuery): Promise<PaginatedPostsViewDto> {
+        return this.postsQueryRepository.getAllPosts({ query, userId });
     }
 }

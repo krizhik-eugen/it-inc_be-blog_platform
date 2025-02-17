@@ -10,7 +10,7 @@ export class GetBlogByIdQuery {
 export class GetBlogByIdQueryHandler
     implements IQueryHandler<GetBlogByIdQuery, BlogViewDto>
 {
-    constructor(private readonly blogsQueryRepository: BlogsQueryRepository) {}
+    constructor(private blogsQueryRepository: BlogsQueryRepository) {}
 
     async execute({ blogId }: GetBlogByIdQuery): Promise<BlogViewDto> {
         return this.blogsQueryRepository.getByIdOrNotFoundFail(blogId);

@@ -11,7 +11,6 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
-import { PostsQueryRepository } from '../infrastructure/queryRepositories/posts.query-repository';
 import { UpdatePostCommand } from '../application/use-cases/posts/update-post.use-case';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
 import {
@@ -27,7 +26,7 @@ import {
 import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
 import { GetCommentsQueryParams } from './dto/query-params-dto/get-comments-query-params.input-dto';
 import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
 import { DeletePostCommand } from '../application/use-cases/posts/delete-post.use-case';
 import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
@@ -50,13 +49,16 @@ import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-
 import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
 import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
 import { UpdatePostLikeStatusCommand } from '../application/use-cases/posts/update-post-like-status.use-case';
+import { GetPostByIdQuery } from '../application/queries/posts/get-post-by-id.query-handler';
+import { GetPostsQuery } from '../application/queries/posts/get-posts.query-handler';
+import { GetCommentByIdQuery } from '../application/queries/comments/get-comment-by-id.query-handler';
+import { GetCommentsQuery } from '../application/queries/posts/get-post-comments.query-handler';
 
 @Controller('posts')
 export class PostsController {
     constructor(
-        private postsQueryRepository: PostsQueryRepository,
-        private commentsQueryRepository: CommentsQueryRepository,
         private commandBus: CommandBus,
+        private queryBus: QueryBus,
     ) {}
 
     @UseGuards(JwtAuthGuard)
@@ -81,11 +83,9 @@ export class PostsController {
         @Query() query: GetCommentsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedCommentsViewDto> {
-        return this.commentsQueryRepository.getAllPostComments({
-            query,
-            postId,
-            userId: user?.id,
-        });
+        return this.queryBus.execute(
+            new GetCommentsQuery(query, postId, user?.id),
+        );
     }
 
     @UseGuards(JwtAuthGuard)
@@ -101,10 +101,9 @@ export class PostsController {
             string
         >(new CreateCommentCommand(postId, user.id, body));
 
-        return this.commentsQueryRepository.getByIdOrNotFoundFail({
-            commentId: newCommentId,
-            userId: user.id,
-        });
+        return this.queryBus.execute(
+            new GetCommentByIdQuery(newCommentId, user.id),
+        );
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -114,10 +113,7 @@ export class PostsController {
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return this.postsQueryRepository.getAllPosts({
-            query,
-            userId: user?.id,
-        });
+        return this.queryBus.execute(new GetPostsQuery(query, user?.id));
     }
 
     @UseGuards(BasicAuthGuard)
@@ -129,10 +125,7 @@ export class PostsController {
             string
         >(new CreatePostCommand(body));
 
-        return this.postsQueryRepository.getByIdOrNotFoundFail({
-            postId: newPostId,
-            userId: null,
-        });
+        return this.queryBus.execute(new GetPostByIdQuery(newPostId, null));
     }
 
     @UseGuards(JwtOptionalAuthGuard)
@@ -142,10 +135,7 @@ export class PostsController {
         @Param('postId', ObjectIdValidationPipe) postId: string,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PostViewDto> {
-        return this.postsQueryRepository.getByIdOrNotFoundFail({
-            postId: postId,
-            userId: user?.id,
-        });
+        return this.queryBus.execute(new GetPostByIdQuery(postId, user?.id));
     }
 
     @UseGuards(BasicAuthGuard)

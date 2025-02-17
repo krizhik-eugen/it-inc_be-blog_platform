@@ -11,7 +11,7 @@ export class GetBlogsQuery {
 export class GetBlogsQueryHandler
     implements IQueryHandler<GetBlogsQuery, PaginatedBlogsViewDto>
 {
-    constructor(private readonly blogsQueryRepository: BlogsQueryRepository) {}
+    constructor(private blogsQueryRepository: BlogsQueryRepository) {}
 
     async execute({ query }: GetBlogsQuery): Promise<PaginatedBlogsViewDto> {
         return this.blogsQueryRepository.getAllBlogs(query);

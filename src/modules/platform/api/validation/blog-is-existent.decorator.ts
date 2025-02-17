@@ -17,7 +17,7 @@ import { BlogsRepository } from '../../infrastructure/repositories/blogs.reposit
 @ValidatorConstraint({ name: 'BlogIsExistent', async: true })
 @Injectable()
 export class BlogIsExistentConstraint implements ValidatorConstraintInterface {
-    constructor(private readonly blogsRepository: BlogsRepository) {}
+    constructor(private blogsRepository: BlogsRepository) {}
     async validate(value: string) {
         const foundBlog = await this.blogsRepository.findById(value);
         return Boolean(foundBlog);
