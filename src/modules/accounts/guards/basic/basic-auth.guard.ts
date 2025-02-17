@@ -4,16 +4,13 @@ import {
     Injectable,
     UnauthorizedException,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { AccountsConfig } from '../../config';
+import { UnauthorizedDomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class BasicAuthGuard implements CanActivate {
-    constructor(
-        private reflector: Reflector,
-        private accountsConfig: AccountsConfig,
-    ) {}
+    constructor(private accountsConfig: AccountsConfig) {}
 
     canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest<Request>();
@@ -35,7 +32,9 @@ export class BasicAuthGuard implements CanActivate {
         ) {
             return true;
         } else {
-            throw new UnauthorizedException();
+            throw UnauthorizedDomainException.create(
+                'Invalid admin credentials',
+            );
         }
     }
 }
