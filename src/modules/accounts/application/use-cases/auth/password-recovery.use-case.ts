@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../infrastructure/repositories/users.repository';
-import { AuthService } from '../auth.service';
+import { UsersRepository } from '../../../infrastructure';
+import { AuthService } from '../../auth.service';
 
 export class PasswordRecoveryCommand {
     constructor(public dto: { email: string }) {}

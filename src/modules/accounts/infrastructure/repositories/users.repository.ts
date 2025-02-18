@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument, UserModelType } from '../../domain/user.entity';
-import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 
 export class UsersRepository {
     constructor(@InjectModel(User.name) private UserModel: UserModelType) {}

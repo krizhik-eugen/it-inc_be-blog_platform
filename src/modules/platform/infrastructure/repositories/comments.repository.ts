@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 import {
     CommentDocument,
     CommentModelType,

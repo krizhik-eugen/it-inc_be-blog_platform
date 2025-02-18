@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BlogDocument } from '../../../domain/blog.entity';
-import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
+import { PaginatedViewDto } from '../../../../../core/dto';
 
 export class BlogViewDto {
     @ApiProperty()

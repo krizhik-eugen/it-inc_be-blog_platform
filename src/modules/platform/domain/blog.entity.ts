@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreateBlogDomainDto } from './dto/create/create-blog.domain.dto';
 import { UpdateBlogDomainDto } from './dto/update/update-blog.domain.dto';
-import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../core/exceptions';
 
 export const blogConstraints = {
     name: {

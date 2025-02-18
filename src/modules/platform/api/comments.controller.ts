@@ -10,7 +10,7 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { CommentViewDto } from './dto/view-dto/comments.view-dto';
-import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
+import { ObjectIdValidationPipe } from '../../../core/pipes';
 import {
     DeleteCommentApi,
     GetCommentApi,
@@ -20,14 +20,14 @@ import {
 import { JwtAuthGuard } from '../../accounts/guards/bearer/jwt-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DeleteCommentCommand } from '../application/use-cases/comments/delete-comment.use-case';
-import { ExtractUserFromRequest } from '../../accounts/guards/decorators/extract-user-from-request.decorator';
+import { ExtractUserFromRequest } from '../../accounts/guards/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
 import { UpdateCommentCommand } from '../application/use-cases/comments/update-comment.use-case';
 import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
 import { UpdateCommentInputDto } from './dto/input-dto/update/comments.input-dto';
 import { UpdateCommentLikeStatusCommand } from '../application/use-cases/comments/update-comment-like-status.use-case';
 import { JwtOptionalAuthGuard } from 'src/modules/accounts/guards/bearer/jwt-optional-auth.guard';
-import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
+import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/param/extract-user-if-exists-from-request.decorator';
 import { GetCommentByIdQuery } from '../application/queries/comments/get-comment-by-id.query-handler';
 
 @Controller('comments')

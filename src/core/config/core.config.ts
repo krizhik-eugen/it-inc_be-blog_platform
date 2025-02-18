@@ -20,6 +20,10 @@ export enum Environments {
 
 @Injectable()
 export class CoreConfig {
+    constructor(private configService: ConfigService) {
+        configValidationUtility.validateConfig(this);
+    }
+
     @IsNumber(
         {},
         {
@@ -76,8 +80,4 @@ export class CoreConfig {
     includeTestingModule: boolean = configValidationUtility.convertToBoolean(
         this.configService.get('INCLUDE_TESTING_MODULE') as string,
     ) as boolean;
-
-    constructor(private configService: ConfigService) {
-        configValidationUtility.validateConfig(this);
-    }
 }

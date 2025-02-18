@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../infrastructure/repositories/users.repository';
-import { BadRequestDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { UsersRepository } from '../../../infrastructure';
+import { BadRequestDomainException } from '../../../../../core/exceptions';
 
 export class RegistrationConfirmationCommand {
     constructor(public dto: { code: string }) {}

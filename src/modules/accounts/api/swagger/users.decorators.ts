@@ -11,15 +11,9 @@ import {
     ApiParam,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
-import {
-    PaginatedUsersViewDto,
-    UserViewDto,
-} from '../dto/view-dto/users.view-dto';
-import {
-    CreateUserInputDto,
-    UpdateUserInputDto,
-} from '../dto/input-dto/users.input-dto';
+import { HttpErrorViewDto } from '../../../../core/dto';
+import { PaginatedUsersViewDto, UserViewDto } from '../dto/view-dto';
+import { CreateUserInputDto, UpdateUserInputDto } from '../dto/input-dto';
 
 export const GetUsersApi = () => {
     return applyDecorators(

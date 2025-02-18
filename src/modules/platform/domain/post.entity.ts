@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { CreatePostDomainDto } from './dto/create/create-post.domain.dto';
 import { UpdatePostDomainDto } from './dto/update/update-post.domain.dto';
-import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../core/exceptions';
 import { ParentLikesEntity } from './parent-likes.entity';
 
 export const postConstraints = {

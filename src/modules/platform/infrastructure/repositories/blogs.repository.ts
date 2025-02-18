@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument, BlogModelType } from '../../domain/blog.entity';
-import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 
 export class BlogsRepository {
     constructor(@InjectModel(Blog.name) private BlogModel: BlogModelType) {}

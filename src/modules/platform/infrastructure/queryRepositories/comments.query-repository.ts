@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
-import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { PaginatedViewDto } from '../../../../core/dto';
 import { Comment, CommentModelType } from '../../domain/comment.entity';
 import { Post, PostModelType } from '../../domain/post.entity';
 import {
@@ -8,7 +8,7 @@ import {
     PaginatedCommentsViewDto,
 } from '../../api/dto/view-dto/comments.view-dto';
 import { GetCommentsQueryParams } from '../../api/dto/query-params-dto/get-comments-query-params.input-dto';
-import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 import { LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
 

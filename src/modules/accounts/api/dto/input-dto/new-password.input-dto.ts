@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { IsStringWithTrim } from '../../../../../core/decorators/validation/is-string-with-trim';
+import { IsStringWithTrim } from '../../../../../core/decorators/validation';
 import { userPasswordConstraints } from '../../../domain/user.entity';
 
 export class NewPasswordInputDto {

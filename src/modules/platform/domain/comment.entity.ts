@@ -5,7 +5,7 @@ import { UpdateCommentDomainDto } from './dto/update/update-comment.domain.dto';
 import {
     ForbiddenDomainException,
     NotFoundDomainException,
-} from '../../../core/exceptions/domain-exceptions';
+} from '../../../core/exceptions';
 import { ParentLikesEntity } from './parent-likes.entity';
 
 export const commentConstraints = {

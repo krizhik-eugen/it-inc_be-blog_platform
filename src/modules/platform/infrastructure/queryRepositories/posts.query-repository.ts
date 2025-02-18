@@ -1,11 +1,11 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
-import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { PaginatedViewDto } from '../../../../core/dto';
 import { GetPostsQueryParams } from '../../api/dto/query-params-dto/get-posts-query-params.input-dto';
 import { Post, PostModelType } from '../../domain/post.entity';
 import { PostViewDto } from '../../api/dto/view-dto/posts.view-dto';
 import { Blog, BlogModelType } from '../../domain/blog.entity';
-import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 import { LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
 

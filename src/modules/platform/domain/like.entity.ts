@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { NotFoundDomainException } from '../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../core/exceptions';
 import { CreateLikeDomainDto } from './dto/create/create-like.domain.dto';
 import { UpdateLikeDomainDto } from './dto/update/update-like.domain.dto';
 

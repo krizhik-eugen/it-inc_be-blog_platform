@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument, PostModelType } from '../../domain/post.entity';
-import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 
 export class PostsRepository {
     constructor(@InjectModel(Post.name) private PostModel: PostModelType) {}

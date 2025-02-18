@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentsRepository } from '../../../infrastructure/repositories/comments.repository';
-import { ForbiddenDomainException } from '../../../../../core/exceptions/domain-exceptions';
+import { ForbiddenDomainException } from '../../../../../core/exceptions';
 
 export class DeleteCommentCommand {
     constructor(

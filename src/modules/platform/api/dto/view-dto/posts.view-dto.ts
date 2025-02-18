@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PostDocument } from '../../../domain/post.entity';
-import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
+import { PaginatedViewDto } from '../../../../../core/dto';
 import { ExtendedLikesInfo, LikeViewDto } from './likes.view-dto';
 import { LikeStatus } from '../../../domain/like.entity';
 

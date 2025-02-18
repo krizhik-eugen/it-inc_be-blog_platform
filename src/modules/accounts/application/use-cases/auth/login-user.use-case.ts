@@ -4,7 +4,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import {
     ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
-} from '../../constants';
+} from '../../../constants';
 
 export class LoginUseCaseResponse {
     accessToken: string;

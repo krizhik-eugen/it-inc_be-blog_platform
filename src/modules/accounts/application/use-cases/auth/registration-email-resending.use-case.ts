@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../infrastructure/repositories/users.repository';
-import { BadRequestDomainException } from '../../../../core/exceptions/domain-exceptions';
-import { AuthService } from '../auth.service';
+import { UsersRepository } from '../../../infrastructure';
+import { BadRequestDomainException } from '../../../../../core/exceptions';
+import { AuthService } from '../../auth.service';
 
 export class RegistrationEmailResendingCommand {
     constructor(public dto: { email: string }) {}

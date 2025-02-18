@@ -1,7 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
-import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
-import { IsObjectId } from '../../../../../../core/decorators/validation/is-object-id';
+import {
+    IsObjectId,
+    IsStringWithTrim,
+} from '../../../../../../core/decorators/validation';
 import { postConstraints } from '../../../../domain/post.entity';
 import { UpdatePostDto } from '../../../../dto/update/update-post.dto';
 import { BlogIsExistent } from '../../../validation/blog-is-existent.decorator';

@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { BaseSortablePaginationParams } from '../../../../../core/dto/base.query-params.input-dto';
+import { BaseSortablePaginationParams } from '../../../../../core/dto';
 
 enum CommentsSortBy {
     CreatedAt = 'createdAt',

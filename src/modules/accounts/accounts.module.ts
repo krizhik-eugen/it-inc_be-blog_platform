@@ -8,26 +8,26 @@ import {
 } from './constants';
 import { UsersController } from './api/users.controller';
 import { User, UserSchema } from './domain/user.entity';
-import { UsersRepository } from './infrastructure/repositories/users.repository';
-import { UsersQueryRepository } from './infrastructure/queryRepositories/users.query-repository';
+import { UsersRepository } from './infrastructure';
+import { UsersQueryRepository } from './infrastructure';
 import { AuthController } from './api/auth.controller';
 import { AuthService } from './application/auth.service';
 import { LocalStrategy } from './guards/local/local.strategy';
 import { JwtStrategy } from './guards/bearer/jwt.strategy';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { CreateUserUseCase } from './application/use-cases/create-user.use-case';
-import { DeleteUserUseCase } from './application/use-cases/delete-user.use-case';
-import { UpdateUserUseCase } from './application/use-cases/update-user.use-case';
-import { LoginUserUseCase } from './application/use-cases/login-user.use-case';
-import { RegisterUserUseCase } from './application/use-cases/register-user.use-case';
-import { RegistrationEmailResendingUseCase } from './application/use-cases/registration-email-resending.use-case';
-import { PasswordRecoveryUseCase } from './application/use-cases/password-recovery.use-case';
-import { PasswordRecoveryConfirmationUseCase } from './application/use-cases/password-recovery-confirmation.use-case';
-import { RegistrationConfirmationUseCase } from './application/use-cases/registration-confirmation.use-case';
+import { CreateUserUseCase } from './application/use-cases/users';
+import { DeleteUserUseCase } from './application/use-cases/users';
+import { UpdateUserUseCase } from './application/use-cases/users';
+import { LoginUserUseCase } from './application/use-cases/auth';
+import { RegisterUserUseCase } from './application/use-cases/auth';
+import { RegistrationEmailResendingUseCase } from './application/use-cases/auth';
+import { PasswordRecoveryUseCase } from './application/use-cases/auth';
+import { PasswordRecoveryConfirmationUseCase } from './application/use-cases/auth';
+import { RegistrationConfirmationUseCase } from './application/use-cases/auth';
 import { CryptoService } from './application/crypto.service';
-import { GetCurrentUserQueryHandler } from './application/queries/auth/get-current-user.query-handler';
-import { GetUserByIdQueryHandler } from './application/queries/users/get-user-by-id.query-handler';
-import { GetUsersQueryHandler } from './application/queries/users/get-users.query-handler';
+import { GetUserByIdQueryHandler } from './application/queries/users';
+import { GetUsersQueryHandler } from './application/queries/users';
+import { GetCurrentUserQueryHandler } from './application/queries/auth';
 
 const useCases = [
     RegistrationConfirmationUseCase,

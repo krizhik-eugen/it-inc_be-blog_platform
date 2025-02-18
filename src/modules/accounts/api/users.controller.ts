@@ -12,28 +12,24 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
-import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
-import {
-    PaginatedUsersViewDto,
-    UserViewDto,
-} from './dto/view-dto/users.view-dto';
-import {
-    CreateUserInputDto,
-    UpdateUserInputDto,
-} from './dto/input-dto/users.input-dto';
+import { ObjectIdValidationPipe } from '../../../core/pipes';
+import { CreateUserInputDto, UpdateUserInputDto } from './dto/input-dto';
 import { BasicAuthGuard } from '../guards/basic/basic-auth.guard';
 import {
     CreateUserApi,
     DeleteUserApi,
     GetUsersApi,
     UpdateUserApi,
-} from './swagger/users.decorators';
-import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
-import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';
-import { UpdateUserCommand } from '../application/use-cases/update-user.use-case';
-import { GetUserByIdQuery } from '../application/queries/users/get-user-by-id.query-handler';
-import { GetUsersQuery } from '../application/queries/users/get-users.query-handler';
+} from './swagger';
+import { GetUserByIdQuery, GetUsersQuery } from '../application/queries/users';
+import { Public } from '../guards/decorators/public.decorator';
+import {
+    CreateUserCommand,
+    DeleteUserCommand,
+    UpdateUserCommand,
+} from '../application/use-cases/users';
+import { GetUsersQueryParams } from './dto/query-params-dto';
+import { PaginatedUsersViewDto, UserViewDto } from './dto/view-dto';
 
 @Controller('users')
 @UseGuards(BasicAuthGuard)
@@ -43,6 +39,7 @@ export class UsersController {
         private queryBus: QueryBus,
     ) {}
 
+    @Public()
     @Get()
     @GetUsersApi()
     async getAllUsers(

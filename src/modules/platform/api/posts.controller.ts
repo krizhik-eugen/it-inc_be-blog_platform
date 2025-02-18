@@ -11,6 +11,7 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdatePostCommand } from '../application/use-cases/posts/update-post.use-case';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
 import {
@@ -23,10 +24,8 @@ import {
     CommentViewDto,
     PaginatedCommentsViewDto,
 } from './dto/view-dto/comments.view-dto';
-import { CommentsQueryRepository } from '../infrastructure/queryRepositories/comments.query-repository';
 import { GetCommentsQueryParams } from './dto/query-params-dto/get-comments-query-params.input-dto';
-import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ObjectIdValidationPipe } from '../../../core/pipes';
 import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
 import { DeletePostCommand } from '../application/use-cases/posts/delete-post.use-case';
 import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
@@ -43,10 +42,10 @@ import {
 } from './swagger/posts.decorators';
 import { CreateCommentInputDto } from './dto/input-dto/create/comments.input-dto';
 import { CreateCommentCommand } from '../application/use-cases/posts/create-post-comment.use-case';
-import { ExtractUserFromRequest } from '../../accounts/guards/decorators/extract-user-from-request.decorator';
+import { ExtractUserFromRequest } from '../../accounts/guards/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
 import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
-import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
+import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/param/extract-user-if-exists-from-request.decorator';
 import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
 import { UpdatePostLikeStatusCommand } from '../application/use-cases/posts/update-post-like-status.use-case';
 import { GetPostByIdQuery } from '../application/queries/posts/get-post-by-id.query-handler';

@@ -4,7 +4,7 @@ import { CreateUserDomainDto } from './dto/create/create-user.domain.dto';
 import {
     BadRequestDomainException,
     NotFoundDomainException,
-} from '../../../core/exceptions/domain-exceptions';
+} from '../../../core/exceptions';
 import { UpdateUserDomainDto } from './dto/update/update-user.domain.dto';
 
 export const userLoginConstraints = {

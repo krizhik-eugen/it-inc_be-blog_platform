@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { MeViewDto } from '../../../api/dto/view-dto/users.view-dto';
-import { UsersQueryRepository } from '../../../infrastructure/queryRepositories/users.query-repository';
+import { MeViewDto } from '../../../api/dto/view-dto';
+import { UsersQueryRepository } from '../../../infrastructure';
 
 export class GetCurrentUserQuery {
     constructor(public userId: string) {}

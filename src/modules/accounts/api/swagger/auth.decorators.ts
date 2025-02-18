@@ -9,17 +9,16 @@ import {
     ApiTooManyRequestsResponse,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
-import { MeViewDto } from '../dto/view-dto/users.view-dto';
+import { HttpErrorViewDto } from '../../../../core/dto';
+import { MeViewDto, SuccessLoginViewDto } from '../dto/view-dto';
 import {
     CreateUserInputDto,
     LoginUserInputDto,
-} from '../dto/input-dto/users.input-dto';
-import { SuccessLoginViewDto } from '../dto/view-dto/success-login.view.dto';
-import { RegistrationConfirmationInputDto } from '../dto/input-dto/registration-confirmation.input-dto';
-import { RegistrationEmailResendingInputDto } from '../dto/input-dto/registration-email-resending.input-dto';
-import { PasswordRecoveryInputDto } from '../dto/input-dto/password-recovery.input-dto';
-import { NewPasswordInputDto } from '../dto/input-dto/new-password.input-dto';
+    RegistrationConfirmationInputDto,
+    RegistrationEmailResendingInputDto,
+    NewPasswordInputDto,
+    PasswordRecoveryInputDto,
+} from '../dto/input-dto';
 
 export const LoginApi = () => {
     return applyDecorators(

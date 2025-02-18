@@ -1,6 +1,6 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { isValidObjectId, Types } from 'mongoose';
-import { BadRequestDomainException } from '../exceptions/domain-exceptions';
+import { BadRequestDomainException } from '../exceptions';
 
 @Injectable()
 export class ObjectIdValidationTransformationPipe implements PipeTransform {

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Matches } from 'class-validator';
+import { IsEmail, Matches } from 'class-validator';
 import { CreateUserDto } from '../../../dto/create/create-user.dto';
 import { UpdateUserDto } from '../../../dto/update/update-user.dto';
-import { IsStringWithTrim } from '../../../../../core/decorators/validation/is-string-with-trim';
+import { IsStringWithTrim } from '../../../../../core/decorators/validation';
 
 import {
     userEmailConstraints,

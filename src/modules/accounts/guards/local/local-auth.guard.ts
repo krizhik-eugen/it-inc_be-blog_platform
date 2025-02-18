@@ -1,10 +1,10 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { LoginUserInputDto } from '../../api/dto/input-dto/users.input-dto';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { BadRequestDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { LoginUserInputDto } from '../../api/dto/input-dto';
+import { BadRequestDomainException } from '../../../../core/exceptions';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {

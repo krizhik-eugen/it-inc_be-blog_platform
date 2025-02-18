@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UpdateCommentDto } from '../../../../dto/update/update-comment.dto';
 import { commentConstraints } from '../../../../domain/comment.entity';
-import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
+import { IsStringWithTrim } from '../../../../../../core/decorators/validation';
 
 export class UpdateCommentInputDto implements UpdateCommentDto {
     @ApiProperty({

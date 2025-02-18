@@ -24,7 +24,7 @@ import {
 } from './dto/view-dto/posts.view-dto';
 import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
 import { CreateBlogPostInputDto } from './dto/input-dto/create/posts.input-dto';
-import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
+import { ObjectIdValidationPipe } from '../../../core/pipes';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/blogs/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/blogs/update-blog.use-case';
@@ -41,7 +41,7 @@ import {
 import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
 import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
 import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
-import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/extract-user-if-exists-from-request.decorator';
+import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/param/extract-user-if-exists-from-request.decorator';
 import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
 import { GetBlogByIdQuery } from '../application/queries/blogs/get-blog-by-id.query-handler';
 import { GetBlogsQuery } from '../application/queries/blogs/get-blogs.query-handler';

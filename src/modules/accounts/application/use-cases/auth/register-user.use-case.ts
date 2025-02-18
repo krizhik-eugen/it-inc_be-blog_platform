@@ -1,9 +1,9 @@
 import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../infrastructure/repositories/users.repository';
-import { CreateUserDto } from '../../dto/create/create-user.dto';
-import { BadRequestDomainException } from '../../../../core/exceptions/domain-exceptions';
-import { CreateUserCommand } from './create-user.use-case';
-import { AuthService } from '../auth.service';
+import { UsersRepository } from '../../../infrastructure';
+import { CreateUserDto } from '../../../dto/create/create-user.dto';
+import { BadRequestDomainException } from '../../../../../core/exceptions';
+import { CreateUserCommand } from '../users';
+import { AuthService } from '../../auth.service';
 
 export class RegisterUserCommand {
     constructor(public dto: CreateUserDto) {}

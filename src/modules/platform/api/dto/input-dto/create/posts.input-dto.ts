@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsStringWithTrim } from '../../../../../../core/decorators/validation/is-string-with-trim';
-import { IsObjectId } from '../../../../../../core/decorators/validation/is-object-id';
+import {
+    IsObjectId,
+    IsStringWithTrim,
+} from '../../../../../../core/decorators/validation';
 import { postConstraints } from '../../../../domain/post.entity';
 import { CreateBlogPostDto } from '../../../../dto/create/create-post.dto';
 import { BlogIsExistent } from '../../../validation/blog-is-existent.decorator';

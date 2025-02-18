@@ -9,12 +9,13 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
-import { MeViewDto } from './dto/view-dto/users.view-dto';
-import { ExtractUserFromRequest } from '../guards/decorators/extract-user-from-request.decorator';
+import { MeViewDto } from './dto/view-dto';
+import { ExtractUserFromRequest } from '../guards/decorators/param/extract-user-from-request.decorator';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { LocalAuthGuard } from '../guards/local/local-auth.guard';
-import { SuccessLoginViewDto } from './dto/view-dto/success-login.view.dto';
+import { SuccessLoginViewDto } from './dto/view-dto';
 import { JwtAuthGuard } from '../guards/bearer/jwt-auth.guard';
 import {
     GetCurrentUserApi,
@@ -24,23 +25,24 @@ import {
     RegisterNewUserApi,
     RegistrationConfirmationApi,
     RegistrationEmailResendingApi,
-} from './swagger/auth.decorators';
-import { CreateUserInputDto } from './dto/input-dto/users.input-dto';
-import { RegistrationConfirmationInputDto } from './dto/input-dto/registration-confirmation.input-dto';
-import { RegistrationEmailResendingInputDto } from './dto/input-dto/registration-email-resending.input-dto';
-import { PasswordRecoveryInputDto } from './dto/input-dto/password-recovery.input-dto';
-import { NewPasswordInputDto } from './dto/input-dto/new-password.input-dto';
+} from './swagger';
 import {
     LoginUseCaseResponse,
     LoginUserCommand,
-} from '../application/use-cases/login-user.use-case';
-import { RegisterUserCommand } from '../application/use-cases/register-user.use-case';
-import { RegistrationEmailResendingCommand } from '../application/use-cases/registration-email-resending.use-case';
-import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
-import { PasswordRecoveryConfirmationCommand } from '../application/use-cases/password-recovery-confirmation.use-case';
-import { RegistrationConfirmationCommand } from '../application/use-cases/registration-confirmation.use-case';
-import { GetCurrentUserQuery } from '../application/queries/auth/get-current-user.query-handler';
-import { ThrottlerGuard } from '@nestjs/throttler';
+    PasswordRecoveryCommand,
+    PasswordRecoveryConfirmationCommand,
+    RegisterUserCommand,
+    RegistrationConfirmationCommand,
+    RegistrationEmailResendingCommand,
+} from '../application/use-cases/auth';
+import { GetCurrentUserQuery } from '../application/queries/auth';
+import {
+    CreateUserInputDto,
+    NewPasswordInputDto,
+    PasswordRecoveryInputDto,
+    RegistrationConfirmationInputDto,
+    RegistrationEmailResendingInputDto,
+} from './dto/input-dto';
 
 @UseGuards(ThrottlerGuard) //Temporary switch off throttler
 @Controller('auth')

@@ -12,7 +12,6 @@ import {
     ApiParam,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-
 import {
     PaginatedPostsViewDto,
     PostViewDto,
@@ -24,7 +23,7 @@ import {
 } from '../dto/view-dto/comments.view-dto';
 import { UpdatePostInputDto } from '../dto/input-dto/update/posts.input-dto';
 import { CreateCommentInputDto } from '../dto/input-dto/create/comments.input-dto';
-import { HttpErrorViewDto } from '../../../../core/dto/error.view-dto';
+import { HttpErrorViewDto } from '../../../../core/dto';
 import { UpdateLikeInputDto } from '../dto/input-dto/update/likes.input-dto';
 
 export const UpdateCommentLikeStatusApi = () => {

@@ -1,10 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ValidationError } from '@nestjs/common';
-import {
-    BadRequestDomainException,
-    ErrorExtension,
-} from '../core/exceptions/domain-exceptions';
-import { ObjectIdValidationTransformationPipe } from '../core/pipes/object-id-validation-transformation-pipe.service';
+import { BadRequestDomainException, ErrorExtension } from '../core/exceptions';
+import { ObjectIdValidationTransformationPipe } from '../core/pipes';
 
 export const errorFormatter = (
     errors: ValidationError[],

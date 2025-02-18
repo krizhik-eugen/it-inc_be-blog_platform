@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsRepository } from '../../../infrastructure/repositories/posts.repository';
 import { CreateCommentDto } from '../../../dto/create/create-comment.dto';
 import { CommentsRepository } from 'src/modules/platform/infrastructure/repositories/comments.repository';
-import { UsersRepository } from '../../../../accounts/infrastructure/repositories/users.repository';
+import { UsersRepository } from '../../../../accounts/infrastructure';
 import { CommentModelType, Comment } from '../../../domain/comment.entity';
 
 export class CreateCommentCommand {

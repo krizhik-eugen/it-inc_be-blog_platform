@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns';
 import { AccountsConfig } from '../config';
-import { UsersRepository } from '../infrastructure/repositories/users.repository';
+import { UsersRepository } from '../infrastructure';
 import { UserContextDto } from '../guards/dto/user-context.dto';
 import { UserDocument } from '../domain/user.entity';
 import { CryptoService } from './crypto.service';
-import { EventBus } from '@nestjs/cqrs';
 import { UserRegisteredEvent } from '../domain/events/user-registered.event';
 import { UserPasswordRecoveryEvent } from '../domain/events/user-password-recovery.event';
 
