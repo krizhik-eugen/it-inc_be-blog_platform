@@ -8,9 +8,8 @@ import {
     Res,
     UseGuards,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
-import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { MeViewDto } from './dto/view-dto/users.view-dto';
 import { ExtractUserFromRequest } from '../guards/decorators/extract-user-from-request.decorator';
 import { UserContextDto } from '../guards/dto/user-context.dto';
@@ -40,13 +39,14 @@ import { RegistrationEmailResendingCommand } from '../application/use-cases/regi
 import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
 import { PasswordRecoveryConfirmationCommand } from '../application/use-cases/password-recovery-confirmation.use-case';
 import { RegistrationConfirmationCommand } from '../application/use-cases/registration-confirmation.use-case';
+import { GetCurrentUserQuery } from '../application/queries/auth/get-current-user.query-handler';
 
 // @UseGuards(ThrottlerGuard) //Temporary switch off throttler
 @Controller('auth')
 export class AuthController {
     constructor(
-        private usersQueryRepository: UsersQueryRepository,
         private commandBus: CommandBus,
+        private queryBus: QueryBus,
     ) {}
 
     @UseGuards(LocalAuthGuard)
@@ -139,8 +139,8 @@ export class AuthController {
     async getCurrentUser(
         @ExtractUserFromRequest() user: UserContextDto,
     ): Promise<MeViewDto> {
-        return this.usersQueryRepository.getCurrentUserByIdOrNotFoundFail(
-            user.id,
+        return this.queryBus.execute<GetCurrentUserQuery, MeViewDto>(
+            new GetCurrentUserQuery(user.id),
         );
     }
 }

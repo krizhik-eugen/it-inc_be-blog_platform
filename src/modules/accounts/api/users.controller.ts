@@ -11,9 +11,8 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ObjectIdValidationPipe } from '../../../core/pipes/object-id-validation-transformation-pipe.service';
-import { UsersQueryRepository } from '../infrastructure/queryRepositories/users.query-repository';
 import { GetUsersQueryParams } from './dto/query-params-dto/get-users-query-params.input-dto';
 import {
     PaginatedUsersViewDto,
@@ -33,13 +32,15 @@ import {
 import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
 import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';
 import { UpdateUserCommand } from '../application/use-cases/update-user.use-case';
+import { GetUserByIdQuery } from '../application/queries/users/get-user-by-id.query-handler';
+import { GetUsersQuery } from '../application/queries/users/get-users.query-handler';
 
 @Controller('users')
 @UseGuards(BasicAuthGuard)
 export class UsersController {
     constructor(
-        private usersQueryRepository: UsersQueryRepository,
         private commandBus: CommandBus,
+        private queryBus: QueryBus,
     ) {}
 
     @Get()
@@ -47,7 +48,9 @@ export class UsersController {
     async getAllUsers(
         @Query() query: GetUsersQueryParams,
     ): Promise<PaginatedUsersViewDto> {
-        return this.usersQueryRepository.getAllUsers(query);
+        return this.queryBus.execute<GetUsersQuery, PaginatedUsersViewDto>(
+            new GetUsersQuery(query),
+        );
     }
 
     @Post()
@@ -63,7 +66,9 @@ export class UsersController {
                 password: body.password,
             }),
         );
-        return this.usersQueryRepository.getByIdOrNotFoundFail(newUserId);
+        return this.queryBus.execute<GetUserByIdQuery, UserViewDto>(
+            new GetUserByIdQuery(newUserId),
+        );
     }
 
     @Put(':userId')

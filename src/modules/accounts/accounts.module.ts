@@ -25,6 +25,9 @@ import { PasswordRecoveryUseCase } from './application/use-cases/password-recove
 import { PasswordRecoveryConfirmationUseCase } from './application/use-cases/password-recovery-confirmation.use-case';
 import { RegistrationConfirmationUseCase } from './application/use-cases/registration-confirmation.use-case';
 import { CryptoService } from './application/crypto.service';
+import { GetCurrentUserQueryHandler } from './application/queries/auth/get-current-user.query-handler';
+import { GetUserByIdQueryHandler } from './application/queries/users/get-user-by-id.query-handler';
+import { GetUsersQueryHandler } from './application/queries/users/get-users.query-handler';
 
 const useCases = [
     RegistrationConfirmationUseCase,
@@ -36,6 +39,12 @@ const useCases = [
     CreateUserUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
+];
+
+const queries = [
+    GetCurrentUserQueryHandler,
+    GetUserByIdQueryHandler,
+    GetUsersQueryHandler,
 ];
 const repositories = [UsersQueryRepository, UsersRepository];
 const strategies = [LocalStrategy, JwtStrategy];
@@ -77,6 +86,7 @@ const strategies = [LocalStrategy, JwtStrategy];
         ...strategies,
         ...repositories,
         ...useCases,
+        ...queries,
         CryptoService,
     ],
     exports: [UsersRepository, MongooseModule, AccountsConfig],
