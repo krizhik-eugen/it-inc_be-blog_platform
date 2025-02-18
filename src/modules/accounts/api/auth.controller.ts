@@ -40,8 +40,9 @@ import { PasswordRecoveryCommand } from '../application/use-cases/password-recov
 import { PasswordRecoveryConfirmationCommand } from '../application/use-cases/password-recovery-confirmation.use-case';
 import { RegistrationConfirmationCommand } from '../application/use-cases/registration-confirmation.use-case';
 import { GetCurrentUserQuery } from '../application/queries/auth/get-current-user.query-handler';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
-// @UseGuards(ThrottlerGuard) //Temporary switch off throttler
+@UseGuards(ThrottlerGuard) //Temporary switch off throttler
 @Controller('auth')
 export class AuthController {
     constructor(
