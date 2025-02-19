@@ -4,6 +4,9 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User, UserModelType } from '../accounts/domain/user.entity';
 import { Blog, BlogModelType } from '../platform/domain/blog.entity';
 import { Post, PostModelType } from '../platform/domain/post.entity';
+import { Like, LikeModelType } from '../platform/domain/like.entity';
+import { Comment, CommentModelType } from '../platform/domain/comment.entity';
+import { Session, SessionModelType } from '../accounts/domain/session.entity';
 
 @Controller('testing')
 export class TestingController {
@@ -14,6 +17,12 @@ export class TestingController {
         private BlogModel: BlogModelType,
         @InjectModel(Post.name)
         private PostModel: PostModelType,
+        @InjectModel(Comment.name)
+        private CommentModel: CommentModelType,
+        @InjectModel(Session.name)
+        private SessionModel: SessionModelType,
+        @InjectModel(Like.name)
+        private LikeModel: LikeModelType,
     ) {}
 
     @Delete('all-data')
@@ -30,5 +39,8 @@ export class TestingController {
         await this.UserModel.deleteMany({});
         await this.BlogModel.deleteMany({});
         await this.PostModel.deleteMany({});
+        await this.CommentModel.deleteMany({});
+        await this.SessionModel.deleteMany({});
+        await this.LikeModel.deleteMany({});
     }
 }

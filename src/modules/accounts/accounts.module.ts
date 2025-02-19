@@ -28,12 +28,17 @@ import {
 } from './application/queries/users';
 import { AuthService } from './application/auth.service';
 import { CryptoService } from './application/crypto.service';
-import { UsersQueryRepository, UsersRepository } from './infrastructure';
-
+import {
+    UsersQueryRepository,
+    UsersRepository,
+    SessionsRepository,
+    SessionsQueryRepository,
+} from './infrastructure';
 import { User, UserSchema } from './domain/user.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthController } from './api/auth.controller';
 import { UsersController } from './api/users.controller';
+import { Session, SessionSchema } from './domain/session.entity';
 
 const useCases = [
     RegistrationConfirmationUseCase,
@@ -52,12 +57,20 @@ const queries = [
     GetUserByIdQueryHandler,
     GetUsersQueryHandler,
 ];
-const repositories = [UsersQueryRepository, UsersRepository];
+const repositories = [
+    UsersQueryRepository,
+    UsersRepository,
+    SessionsRepository,
+    SessionsQueryRepository,
+];
 const strategies = [LocalStrategy, JwtStrategy];
 
 @Module({
     imports: [
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+        MongooseModule.forFeature([
+            { name: User.name, schema: UserSchema },
+            { name: Session.name, schema: SessionSchema },
+        ]),
         JwtModule,
         NotificationsModule,
     ],
