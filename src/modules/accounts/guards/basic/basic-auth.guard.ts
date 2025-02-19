@@ -4,17 +4,30 @@ import {
     Injectable,
     UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { AccountsConfig } from '../../config';
 import { UnauthorizedDomainException } from '../../../../core/exceptions';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
 export class BasicAuthGuard implements CanActivate {
-    constructor(private accountsConfig: AccountsConfig) {}
+    constructor(
+        private reflector: Reflector,
+        private accountsConfig: AccountsConfig,
+    ) {}
 
     canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest<Request>();
         const authorizationHeader = request.headers.authorization;
+
+        const isPublic = this.reflector.getAllAndOverride<boolean>(
+            IS_PUBLIC_KEY,
+            [context.getHandler(), context.getClass()],
+        );
+        if (isPublic) {
+            return true;
+        }
 
         if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
             throw new UnauthorizedException();
