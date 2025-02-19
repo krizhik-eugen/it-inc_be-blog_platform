@@ -1,8 +1,8 @@
 import { ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { UpdateLikeDto } from '../../../dto/update/update-like.dto';
+import { UpdateLikeDto } from '../../../dto/update';
+import { LikesRepository } from '../../../infrastructure';
 import { Like, LikeModelType } from '../../../domain/like.entity';
-import { LikesRepository } from '../../../infrastructure/repositories/likes.repository';
 import { ParentLikesEntity } from '../../../domain/parent-likes.entity';
 
 export abstract class UpdateLikeStatusBaseCommand {

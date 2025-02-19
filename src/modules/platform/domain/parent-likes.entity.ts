@@ -1,5 +1,5 @@
 import { Prop } from '@nestjs/mongoose';
-import { UpdateLikesCountDomainDto } from './dto/update/update-likes-count.domain.dto';
+import { UpdateLikesCountDomainDto } from './dto/update';
 
 export abstract class ParentLikesEntity {
     /**

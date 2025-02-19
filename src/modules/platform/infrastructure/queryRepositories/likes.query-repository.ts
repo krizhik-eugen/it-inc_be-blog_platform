@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Like, LikeModelType, LikeStatus } from '../../domain/like.entity';
 import { UsersRepository } from '../../../accounts/infrastructure';
-import { LikeViewDto } from '../../api/dto/view-dto/likes.view-dto';
+import { LikeViewDto } from '../../api/dto/view-dto';
 import { UserDocument } from '../../../accounts/domain/user.entity';
 
 export class LikesQueryRepository {

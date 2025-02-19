@@ -13,23 +13,23 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ObjectIdValidationPipe } from '../../../core/pipes';
-import { CreateUserInputDto, UpdateUserInputDto } from './dto/input-dto';
-import { BasicAuthGuard } from '../guards/basic/basic-auth.guard';
+import { Public } from '../guards/decorators';
+import { BasicAuthGuard } from '../guards/basic';
 import {
     CreateUserApi,
     DeleteUserApi,
     GetUsersApi,
     UpdateUserApi,
 } from './swagger';
+import { CreateUserInputDto, UpdateUserInputDto } from './dto/input-dto';
+import { GetUsersQueryParams } from './dto/query-params-dto';
+import { PaginatedUsersViewDto, UserViewDto } from './dto/view-dto';
 import { GetUserByIdQuery, GetUsersQuery } from '../application/queries/users';
-import { Public } from '../guards/decorators/public.decorator';
 import {
     CreateUserCommand,
     DeleteUserCommand,
     UpdateUserCommand,
 } from '../application/use-cases/users';
-import { GetUsersQueryParams } from './dto/query-params-dto';
-import { PaginatedUsersViewDto, UserViewDto } from './dto/view-dto';
 
 @Controller('users')
 @UseGuards(BasicAuthGuard)

@@ -1,13 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
-import { PostsRepository } from '../../../infrastructure/repositories/posts.repository';
-import { LikesRepository } from '../../../infrastructure/repositories/likes.repository';
+import { LikesRepository, PostsRepository } from '../../../infrastructure';
 import { Like, LikeModelType } from '../../../domain/like.entity';
 import { PostDocument } from '../../../domain/post.entity';
 import {
     UpdateLikeStatusBaseCommand,
     UpdateLikeStatusBaseUseCase,
-} from '../base/update-like-status.base-use-case';
+} from '../base';
 
 export class UpdatePostLikeStatusCommand extends UpdateLikeStatusBaseCommand {}
 

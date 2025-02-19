@@ -1,6 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { EmailService } from '../email.service';
-import { UserPasswordRecoveryEvent } from '../../accounts/domain/events/user-password-recovery.event';
+import { UserPasswordRecoveryEvent } from '../../accounts/domain/events';
 
 // https://docs.nestjs.com/recipes/cqrs#events
 @EventsHandler(UserPasswordRecoveryEvent)

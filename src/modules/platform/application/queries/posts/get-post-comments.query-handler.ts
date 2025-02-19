@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetCommentsQueryParams } from '../../../api/dto/query-params-dto/get-comments-query-params.input-dto';
-import { CommentsQueryRepository } from '../../../infrastructure/queryRepositories/comments.query-repository';
-import { PaginatedCommentsViewDto } from '../../../api/dto/view-dto/comments.view-dto';
+import { GetCommentsQueryParams } from '../../../api/dto/query-params-dto';
+import { PaginatedCommentsViewDto } from '../../../api/dto/view-dto';
+import { CommentsQueryRepository } from '../../../infrastructure';
 
 export class GetCommentsQuery {
     constructor(

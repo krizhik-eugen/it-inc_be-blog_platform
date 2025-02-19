@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UsersRepository } from '../../../infrastructure';
-import { UpdateUserDto } from '../../../dto/update/update-user.dto';
+import { UpdateUserDto } from '../../../dto/update';
 
 export class UpdateUserCommand {
     constructor(

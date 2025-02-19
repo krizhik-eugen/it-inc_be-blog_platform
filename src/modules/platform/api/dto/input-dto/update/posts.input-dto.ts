@@ -4,9 +4,9 @@ import {
     IsObjectId,
     IsStringWithTrim,
 } from '../../../../../../core/decorators/validation';
+import { UpdatePostDto } from '../../../../dto/update';
+import { BlogIsExistent } from '../../../validation';
 import { postConstraints } from '../../../../domain/post.entity';
-import { UpdatePostDto } from '../../../../dto/update/update-post.dto';
-import { BlogIsExistent } from '../../../validation/blog-is-existent.decorator';
 
 export class UpdatePostInputDto implements UpdatePostDto {
     @ApiPropertyOptional({

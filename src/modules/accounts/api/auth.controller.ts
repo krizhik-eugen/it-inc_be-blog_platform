@@ -12,11 +12,10 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 import { MeViewDto } from './dto/view-dto';
-import { ExtractUserFromRequest } from '../guards/decorators/param/extract-user-from-request.decorator';
-import { UserContextDto } from '../guards/dto/user-context.dto';
-import { LocalAuthGuard } from '../guards/local/local-auth.guard';
-import { SuccessLoginViewDto } from './dto/view-dto';
-import { JwtAuthGuard } from '../guards/bearer/jwt-auth.guard';
+import { ExtractUserFromRequest } from '../guards/decorators';
+import { UserContextDto } from '../guards/dto';
+import { LocalAuthGuard } from '../guards/local';
+import { JwtAuthGuard } from '../guards/bearer';
 import {
     GetCurrentUserApi,
     LoginApi,
@@ -26,6 +25,14 @@ import {
     RegistrationConfirmationApi,
     RegistrationEmailResendingApi,
 } from './swagger';
+import { SuccessLoginViewDto } from './dto/view-dto';
+import {
+    CreateUserInputDto,
+    NewPasswordInputDto,
+    PasswordRecoveryInputDto,
+    RegistrationConfirmationInputDto,
+    RegistrationEmailResendingInputDto,
+} from './dto/input-dto';
 import {
     LoginUseCaseResponse,
     LoginUserCommand,
@@ -36,13 +43,6 @@ import {
     RegistrationEmailResendingCommand,
 } from '../application/use-cases/auth';
 import { GetCurrentUserQuery } from '../application/queries/auth';
-import {
-    CreateUserInputDto,
-    NewPasswordInputDto,
-    PasswordRecoveryInputDto,
-    RegistrationConfirmationInputDto,
-    RegistrationEmailResendingInputDto,
-} from './dto/input-dto';
 
 @UseGuards(ThrottlerGuard) //Temporary switch off throttler
 @Controller('auth')

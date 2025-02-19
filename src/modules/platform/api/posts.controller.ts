@@ -12,24 +12,10 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UpdatePostCommand } from '../application/use-cases/posts/update-post.use-case';
-import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
 import {
-    PaginatedPostsViewDto,
-    PostViewDto,
-} from './dto/view-dto/posts.view-dto';
-import { CreatePostInputDto } from './dto/input-dto/create/posts.input-dto';
-import { UpdatePostInputDto } from './dto/input-dto/update/posts.input-dto';
-import {
-    CommentViewDto,
-    PaginatedCommentsViewDto,
-} from './dto/view-dto/comments.view-dto';
-import { GetCommentsQueryParams } from './dto/query-params-dto/get-comments-query-params.input-dto';
-import { ObjectIdValidationPipe } from '../../../core/pipes';
-import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
-import { DeletePostCommand } from '../application/use-cases/posts/delete-post.use-case';
-import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
-import { JwtAuthGuard } from '../../accounts/guards/bearer/jwt-auth.guard';
+    JwtAuthGuard,
+    JwtOptionalAuthGuard,
+} from '../../../modules/accounts/guards/bearer';
 import {
     CreateCommentApi,
     CreatePostApi,
@@ -37,21 +23,44 @@ import {
     GetAllPostCommentsApi,
     GetAllPostsApi,
     GetPostApi,
-    UpdateCommentLikeStatusApi,
     UpdatePostApi,
-} from './swagger/posts.decorators';
-import { CreateCommentInputDto } from './dto/input-dto/create/comments.input-dto';
-import { CreateCommentCommand } from '../application/use-cases/posts/create-post-comment.use-case';
-import { ExtractUserFromRequest } from '../../accounts/guards/decorators/param/extract-user-from-request.decorator';
-import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
-import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
-import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/param/extract-user-if-exists-from-request.decorator';
-import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
-import { UpdatePostLikeStatusCommand } from '../application/use-cases/posts/update-post-like-status.use-case';
-import { GetPostByIdQuery } from '../application/queries/posts/get-post-by-id.query-handler';
-import { GetPostsQuery } from '../application/queries/posts/get-posts.query-handler';
-import { GetCommentByIdQuery } from '../application/queries/comments/get-comment-by-id.query-handler';
-import { GetCommentsQuery } from '../application/queries/posts/get-post-comments.query-handler';
+    UpdatePostCommentLikeStatusApi,
+} from './swagger';
+import { ObjectIdValidationPipe } from '../../../core/pipes';
+import { BasicAuthGuard } from '../../../modules/accounts/guards/basic';
+import {
+    ExtractUserFromRequest,
+    ExtractUserIfExistsFromRequest,
+} from '../../../modules/accounts/guards/decorators';
+import { UserContextDto } from '../../../modules/accounts/guards/dto';
+import {
+    GetCommentsQueryParams,
+    GetPostsQueryParams,
+} from './dto/query-params-dto';
+import {
+    CommentViewDto,
+    PaginatedCommentsViewDto,
+    PaginatedPostsViewDto,
+    PostViewDto,
+} from './dto/view-dto';
+import {
+    CreateCommentInputDto,
+    CreatePostInputDto,
+} from './dto/input-dto/create';
+import { UpdateLikeInputDto, UpdatePostInputDto } from './dto/input-dto/update';
+import {
+    CreateCommentCommand,
+    CreatePostCommand,
+    DeletePostCommand,
+    UpdatePostCommand,
+    UpdatePostLikeStatusCommand,
+} from '../application/use-cases/posts';
+import {
+    GetCommentsQuery,
+    GetPostByIdQuery,
+    GetPostsQuery,
+} from '../application/queries/posts';
+import { GetCommentByIdQuery } from '../application/queries/comments';
 
 @Controller('posts')
 export class PostsController {
@@ -62,7 +71,7 @@ export class PostsController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':postId/like-status')
-    @UpdateCommentLikeStatusApi()
+    @UpdatePostCommentLikeStatusApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateCommentLikeStatus(
         @Param('postId', ObjectIdValidationPipe) postId: string,
@@ -82,9 +91,10 @@ export class PostsController {
         @Query() query: GetCommentsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedCommentsViewDto> {
-        return this.queryBus.execute(
-            new GetCommentsQuery(query, postId, user?.id),
-        );
+        return this.queryBus.execute<
+            GetCommentsQuery,
+            PaginatedCommentsViewDto
+        >(new GetCommentsQuery(query, postId, user?.id));
     }
 
     @UseGuards(JwtAuthGuard)
@@ -100,7 +110,7 @@ export class PostsController {
             string
         >(new CreateCommentCommand(postId, user.id, body));
 
-        return this.queryBus.execute(
+        return this.queryBus.execute<GetCommentByIdQuery, CommentViewDto>(
             new GetCommentByIdQuery(newCommentId, user.id),
         );
     }
@@ -112,7 +122,9 @@ export class PostsController {
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return this.queryBus.execute(new GetPostsQuery(query, user?.id));
+        return this.queryBus.execute<GetPostsQuery, PaginatedPostsViewDto>(
+            new GetPostsQuery(query, user?.id),
+        );
     }
 
     @UseGuards(BasicAuthGuard)
@@ -124,7 +136,9 @@ export class PostsController {
             string
         >(new CreatePostCommand(body));
 
-        return this.queryBus.execute(new GetPostByIdQuery(newPostId, null));
+        return this.queryBus.execute<GetPostByIdQuery, PostViewDto>(
+            new GetPostByIdQuery(newPostId, null),
+        );
     }
 
     @UseGuards(JwtOptionalAuthGuard)

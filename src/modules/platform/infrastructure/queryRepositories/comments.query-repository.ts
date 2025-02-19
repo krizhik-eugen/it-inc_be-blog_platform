@@ -6,8 +6,8 @@ import { Post, PostModelType } from '../../domain/post.entity';
 import {
     CommentViewDto,
     PaginatedCommentsViewDto,
-} from '../../api/dto/view-dto/comments.view-dto';
-import { GetCommentsQueryParams } from '../../api/dto/query-params-dto/get-comments-query-params.input-dto';
+} from '../../api/dto/view-dto';
+import { GetCommentsQueryParams } from '../../api/dto/query-params-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';

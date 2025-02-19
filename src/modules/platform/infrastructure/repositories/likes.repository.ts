@@ -6,7 +6,7 @@ import {
     LikeModelType,
     LikeStatus,
 } from '../../domain/like.entity';
-import { UpdateLikesCountDto } from '../../dto/update/update-likes-count.dto';
+import { UpdateLikesCountDto } from '../../dto/update';
 
 export class LikesRepository {
     constructor(

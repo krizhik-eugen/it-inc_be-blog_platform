@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { CreateCommentDomainDto } from './dto/create/create-comment.domain.dto';
-import { UpdateCommentDomainDto } from './dto/update/update-comment.domain.dto';
+import { CreateCommentDomainDto } from './dto/create';
+import { UpdateCommentDomainDto } from './dto/update';
 import {
     ForbiddenDomainException,
     NotFoundDomainException,

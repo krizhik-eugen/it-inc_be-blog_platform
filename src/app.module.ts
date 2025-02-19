@@ -4,11 +4,11 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CoreModule } from './core/core.module';
+import { CoreConfig } from './core/config';
+import { AppController } from './app.controller';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { TestingModule } from './modules/testing/testing.module';
-import { AppController } from './app.controller';
-import { CoreConfig } from './core/config';
 
 @Module({
     imports: [

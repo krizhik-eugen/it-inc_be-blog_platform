@@ -12,14 +12,14 @@ import {
 import {
     BlogViewDto,
     PaginatedBlogsViewDto,
-} from '../dto/view-dto/blogs.view-dto';
-import { CreateBlogInputDto } from '../dto/input-dto/create/blogs.input-dto';
-import {
     PaginatedPostsViewDto,
     PostViewDto,
-} from '../dto/view-dto/posts.view-dto';
-import { CreatePostInputDto } from '../dto/input-dto/create/posts.input-dto';
-import { UpdateBlogInputDto } from '../dto/input-dto/update/blogs.input-dto';
+} from '../dto/view-dto';
+import {
+    CreateBlogInputDto,
+    CreatePostInputDto,
+} from '../dto/input-dto/create';
+import { UpdateBlogInputDto } from '../dto/input-dto/update';
 
 export const GetAllBlogsApi = () => {
     return applyDecorators(

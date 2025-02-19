@@ -1,10 +1,10 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 import { PaginatedViewDto } from '../../../../core/dto';
 import { MeViewDto, UserViewDto } from '../../api/dto/view-dto';
-import { User, UserModelType } from '../../domain/user.entity';
-import { NotFoundDomainException } from '../../../../core/exceptions';
 import { GetUsersQueryParams } from '../../api/dto/query-params-dto';
+import { User, UserModelType } from '../../domain/user.entity';
 
 export class UsersQueryRepository {
     constructor(

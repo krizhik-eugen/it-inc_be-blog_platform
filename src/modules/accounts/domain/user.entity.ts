@@ -1,11 +1,11 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { CreateUserDomainDto } from './dto/create/create-user.domain.dto';
 import {
     BadRequestDomainException,
     NotFoundDomainException,
 } from '../../../core/exceptions';
-import { UpdateUserDomainDto } from './dto/update/update-user.domain.dto';
+import { CreateUserDomainDto } from './dto/create';
+import { UpdateUserDomainDto } from './dto/update';
 
 export const userLoginConstraints = {
     minLength: 3,

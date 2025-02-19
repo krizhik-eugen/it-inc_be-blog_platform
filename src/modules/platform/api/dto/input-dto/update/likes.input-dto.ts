@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
+import { UpdateLikeDto } from '../../../../dto/update';
 import { LikeStatus } from '../../../../domain/like.entity';
-import { UpdateLikeDto } from '../../../../dto/update/update-like.dto';
 
 export class UpdateLikeInputDto implements UpdateLikeDto {
     @ApiProperty({

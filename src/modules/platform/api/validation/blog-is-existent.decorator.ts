@@ -5,7 +5,7 @@ import {
     ValidatorConstraint,
     ValidatorConstraintInterface,
 } from 'class-validator';
-import { BlogsRepository } from '../../infrastructure/repositories/blogs.repository';
+import { BlogsRepository } from '../../infrastructure';
 
 // Mandatory registration in ioc
 

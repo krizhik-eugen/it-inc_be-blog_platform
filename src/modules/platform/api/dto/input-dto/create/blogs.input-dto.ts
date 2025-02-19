@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Matches } from 'class-validator';
-import { CreateBlogDto } from '../../../../dto/create/create-blog.dto';
-import { blogConstraints } from '../../../../domain/blog.entity';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation';
+import { CreateBlogDto } from '../../../../dto/create';
+import { blogConstraints } from '../../../../domain/blog.entity';
 
 export class CreateBlogInputDto implements CreateBlogDto {
     @ApiProperty({

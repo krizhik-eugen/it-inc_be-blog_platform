@@ -3,12 +3,14 @@ import { EventBus } from '@nestjs/cqrs';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns';
 import { AccountsConfig } from '../config';
-import { UsersRepository } from '../infrastructure';
-import { UserContextDto } from '../guards/dto/user-context.dto';
-import { UserDocument } from '../domain/user.entity';
+import { UserContextDto } from '../guards/dto';
 import { CryptoService } from './crypto.service';
-import { UserRegisteredEvent } from '../domain/events/user-registered.event';
-import { UserPasswordRecoveryEvent } from '../domain/events/user-password-recovery.event';
+import { UsersRepository } from '../infrastructure';
+import { UserDocument } from '../domain/user.entity';
+import {
+    UserPasswordRecoveryEvent,
+    UserRegisteredEvent,
+} from '../domain/events';
 
 @Injectable()
 export class AuthService {

@@ -3,9 +3,9 @@ import {
     IsObjectId,
     IsStringWithTrim,
 } from '../../../../../../core/decorators/validation';
+import { BlogIsExistent } from '../../../validation';
+import { CreateBlogPostDto } from '../../../../dto/create';
 import { postConstraints } from '../../../../domain/post.entity';
-import { CreateBlogPostDto } from '../../../../dto/create/create-post.dto';
-import { BlogIsExistent } from '../../../validation/blog-is-existent.decorator';
 
 export class CreateBlogPostInputDto implements CreateBlogPostDto {
     @ApiProperty({

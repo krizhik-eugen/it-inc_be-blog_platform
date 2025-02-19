@@ -3,8 +3,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { CoreConfig } from '../../core/config';
 import { EMAIL_SERVICE } from './constants';
 import { EmailService } from './email.service';
-import { SendConfirmationEmailEventHandler } from './event-handlers/send-confirmation-email.event-handler';
-import { SendPasswordRecoveryEmailEventHandler } from './event-handlers/send-password-recovery-email.event-handler';
+import {
+    SendConfirmationEmailEventHandler,
+    SendPasswordRecoveryEmailEventHandler,
+} from './event-handlers';
 
 @Module({
     imports: [

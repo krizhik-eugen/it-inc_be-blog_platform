@@ -9,26 +9,34 @@ import {
     Put,
     UseGuards,
 } from '@nestjs/common';
-import { CommentViewDto } from './dto/view-dto/comments.view-dto';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CommentViewDto } from './dto/view-dto';
 import { ObjectIdValidationPipe } from '../../../core/pipes';
+import {
+    JwtAuthGuard,
+    JwtOptionalAuthGuard,
+} from '../../../modules/accounts/guards/bearer';
+import {
+    ExtractUserFromRequest,
+    ExtractUserIfExistsFromRequest,
+} from '../../../modules/accounts/guards/decorators';
 import {
     DeleteCommentApi,
     GetCommentApi,
     UpdateCommentApi,
     UpdateCommentLikeStatusApi,
-} from './swagger/comments.decorators';
-import { JwtAuthGuard } from '../../accounts/guards/bearer/jwt-auth.guard';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { DeleteCommentCommand } from '../application/use-cases/comments/delete-comment.use-case';
-import { ExtractUserFromRequest } from '../../accounts/guards/decorators/param/extract-user-from-request.decorator';
-import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
-import { UpdateCommentCommand } from '../application/use-cases/comments/update-comment.use-case';
-import { UpdateLikeInputDto } from './dto/input-dto/update/likes.input-dto';
-import { UpdateCommentInputDto } from './dto/input-dto/update/comments.input-dto';
-import { UpdateCommentLikeStatusCommand } from '../application/use-cases/comments/update-comment-like-status.use-case';
-import { JwtOptionalAuthGuard } from 'src/modules/accounts/guards/bearer/jwt-optional-auth.guard';
-import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/param/extract-user-if-exists-from-request.decorator';
-import { GetCommentByIdQuery } from '../application/queries/comments/get-comment-by-id.query-handler';
+} from './swagger';
+import {
+    UpdateCommentInputDto,
+    UpdateLikeInputDto,
+} from './dto/input-dto/update';
+import { UserContextDto } from '../../../modules/accounts/guards/dto';
+import {
+    DeleteCommentCommand,
+    UpdateCommentCommand,
+    UpdateCommentLikeStatusCommand,
+} from '../application/use-cases/comments';
+import { GetCommentByIdQuery } from '../application/queries/comments';
 
 @Controller('comments')
 export class CommentsController {
@@ -85,7 +93,7 @@ export class CommentsController {
         @Param('commentId', ObjectIdValidationPipe) commentId: string,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<CommentViewDto> {
-        return this.queryBus.execute(
+        return this.queryBus.execute<GetCommentByIdQuery, CommentViewDto>(
             new GetCommentByIdQuery(commentId, user?.id),
         );
     }

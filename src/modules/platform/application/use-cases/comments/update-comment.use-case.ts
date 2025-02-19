@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentsRepository } from '../../../infrastructure/repositories/comments.repository';
-import { UpdateCommentDto } from '../../../dto/update/update-comment.dto';
+import { CommentsRepository } from '../../../infrastructure';
+import { UpdateCommentDto } from '../../../dto/update';
 
 export class UpdateCommentCommand {
     constructor(

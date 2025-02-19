@@ -11,24 +11,12 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
-import { GetBlogsQueryParams } from './dto/query-params-dto/get-blogs-query-params.input-dto';
-import {
-    PaginatedBlogsViewDto,
-    BlogViewDto,
-} from './dto/view-dto/blogs.view-dto';
-import { CreateBlogInputDto } from './dto/input-dto/create/blogs.input-dto';
-import { UpdateBlogInputDto } from './dto/input-dto/update/blogs.input-dto';
-import {
-    PaginatedPostsViewDto,
-    PostViewDto,
-} from './dto/view-dto/posts.view-dto';
-import { GetPostsQueryParams } from './dto/query-params-dto/get-posts-query-params.input-dto';
-import { CreateBlogPostInputDto } from './dto/input-dto/create/posts.input-dto';
-import { ObjectIdValidationPipe } from '../../../core/pipes';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateBlogCommand } from '../application/use-cases/blogs/create-blog.use-case';
-import { UpdateBlogCommand } from '../application/use-cases/blogs/update-blog.use-case';
-import { DeleteBlogCommand } from '../application/use-cases/blogs/delete-blog.use-case';
+import { ObjectIdValidationPipe } from '../../../core/pipes';
+import { BasicAuthGuard } from '../../../modules/accounts/guards/basic';
+import { JwtOptionalAuthGuard } from '../../../modules/accounts/guards/bearer';
+import { ExtractUserIfExistsFromRequest } from '../../../modules/accounts/guards/decorators';
+import { UserContextDto } from '../../../modules/accounts/guards/dto';
 import {
     CreateBlogApi,
     CreateBlogPostApi,
@@ -37,16 +25,34 @@ import {
     GetAllBlogsApi,
     GetBlogApi,
     UpdateBlogApi,
-} from './swagger/blogs.decorators';
-import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case';
-import { BasicAuthGuard } from '../../accounts/guards/basic/basic-auth.guard';
-import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer/jwt-optional-auth.guard';
-import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators/param/extract-user-if-exists-from-request.decorator';
-import { UserContextDto } from '../../accounts/guards/dto/user-context.dto';
-import { GetBlogByIdQuery } from '../application/queries/blogs/get-blog-by-id.query-handler';
-import { GetBlogsQuery } from '../application/queries/blogs/get-blogs.query-handler';
-import { GetBlogPostsQuery } from '../application/queries/blogs/get-blog-posts.query-handler';
-import { GetPostByIdQuery } from '../application/queries/posts/get-post-by-id.query-handler';
+} from './swagger';
+import {
+    GetBlogsQueryParams,
+    GetPostsQueryParams,
+} from './dto/query-params-dto';
+import {
+    BlogViewDto,
+    PaginatedBlogsViewDto,
+    PaginatedPostsViewDto,
+    PostViewDto,
+} from './dto/view-dto';
+import {
+    CreateBlogInputDto,
+    CreateBlogPostInputDto,
+} from './dto/input-dto/create';
+import { UpdateBlogInputDto } from './dto/input-dto/update';
+import {
+    GetBlogByIdQuery,
+    GetBlogPostsQuery,
+    GetBlogsQuery,
+} from '../application/queries/blogs';
+import {
+    CreateBlogCommand,
+    DeleteBlogCommand,
+    UpdateBlogCommand,
+} from '../application/use-cases/blogs';
+import { CreatePostCommand } from '../application/use-cases/posts';
+import { GetPostByIdQuery } from '../application/queries/posts';
 
 @Controller('blogs')
 export class BlogsController {
@@ -82,7 +88,7 @@ export class BlogsController {
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostsViewDto> {
-        return this.queryBus.execute(
+        return this.queryBus.execute<GetBlogPostsQuery, PaginatedPostsViewDto>(
             new GetBlogPostsQuery(query, blogId, user?.id),
         );
     }
@@ -103,7 +109,9 @@ export class BlogsController {
                 blogId,
             }),
         );
-        return this.queryBus.execute(new GetPostByIdQuery(newPostId, null));
+        return this.queryBus.execute<GetPostByIdQuery, PostViewDto>(
+            new GetPostByIdQuery(newPostId, null),
+        );
     }
 
     @Get(':blogId')
@@ -111,7 +119,9 @@ export class BlogsController {
     async getBlog(
         @Param('blogId', ObjectIdValidationPipe) blogId: string,
     ): Promise<BlogViewDto> {
-        return this.queryBus.execute(new GetBlogByIdQuery(blogId));
+        return this.queryBus.execute<GetBlogByIdQuery, BlogViewDto>(
+            new GetBlogByIdQuery(blogId),
+        );
     }
 
     @UseGuards(BasicAuthGuard)

@@ -12,21 +12,23 @@ import {
     ApiParam,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { HttpErrorViewDto } from '../../../../core/dto';
 import {
     PaginatedPostsViewDto,
     PostViewDto,
-} from '../dto/view-dto/posts.view-dto';
-import { CreatePostInputDto } from '../dto/input-dto/create/posts.input-dto';
-import {
     CommentViewDto,
     PaginatedCommentsViewDto,
-} from '../dto/view-dto/comments.view-dto';
-import { UpdatePostInputDto } from '../dto/input-dto/update/posts.input-dto';
-import { CreateCommentInputDto } from '../dto/input-dto/create/comments.input-dto';
-import { HttpErrorViewDto } from '../../../../core/dto';
-import { UpdateLikeInputDto } from '../dto/input-dto/update/likes.input-dto';
+} from '../dto/view-dto';
+import {
+    CreatePostInputDto,
+    CreateCommentInputDto,
+} from '../dto/input-dto/create';
+import {
+    UpdateLikeInputDto,
+    UpdatePostInputDto,
+} from '../dto/input-dto/update';
 
-export const UpdateCommentLikeStatusApi = () => {
+export const UpdatePostCommentLikeStatusApi = () => {
     return applyDecorators(
         ApiBearerAuth(),
         ApiOperation({

@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { AccountsConfig } from '../../config';
 import { UnauthorizedDomainException } from '../../../../core/exceptions';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { AccountsConfig } from '../../config';
+import { IS_PUBLIC_KEY } from '../decorators';
 
 @Injectable()
 export class BasicAuthGuard implements CanActivate {

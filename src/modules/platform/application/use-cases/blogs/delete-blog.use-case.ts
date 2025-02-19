@@ -1,7 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsRepository } from '../../../infrastructure/repositories/blogs.repository';
-import { PostsRepository } from '../../../infrastructure/repositories/posts.repository';
-import { CommentsRepository } from '../../../infrastructure/repositories/comments.repository';
+import {
+    BlogsRepository,
+    CommentsRepository,
+    PostsRepository,
+} from '../../../infrastructure';
 
 export class DeleteBlogCommand {
     constructor(public blogId: string) {}

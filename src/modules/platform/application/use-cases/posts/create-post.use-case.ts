@@ -1,9 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Post, PostModelType } from '../../../domain/post.entity';
-import { CreatePostDto } from '../../../dto/create/create-post.dto';
-import { PostsRepository } from '../../../infrastructure/repositories/posts.repository';
-import { BlogsRepository } from '../../../infrastructure/repositories/blogs.repository';
+import { CreatePostDto } from '../../../dto/create';
+import { BlogsRepository, PostsRepository } from '../../../infrastructure';
 
 export class CreatePostCommand {
     constructor(public dto: CreatePostDto) {}

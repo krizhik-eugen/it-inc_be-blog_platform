@@ -6,28 +6,34 @@ import {
     ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
 } from './constants';
-import { UsersController } from './api/users.controller';
-import { User, UserSchema } from './domain/user.entity';
-import { UsersRepository } from './infrastructure';
-import { UsersQueryRepository } from './infrastructure';
-import { AuthController } from './api/auth.controller';
-import { AuthService } from './application/auth.service';
-import { LocalStrategy } from './guards/local/local.strategy';
-import { JwtStrategy } from './guards/bearer/jwt.strategy';
-import { NotificationsModule } from '../notifications/notifications.module';
-import { CreateUserUseCase } from './application/use-cases/users';
-import { DeleteUserUseCase } from './application/use-cases/users';
-import { UpdateUserUseCase } from './application/use-cases/users';
-import { LoginUserUseCase } from './application/use-cases/auth';
-import { RegisterUserUseCase } from './application/use-cases/auth';
-import { RegistrationEmailResendingUseCase } from './application/use-cases/auth';
-import { PasswordRecoveryUseCase } from './application/use-cases/auth';
-import { PasswordRecoveryConfirmationUseCase } from './application/use-cases/auth';
-import { RegistrationConfirmationUseCase } from './application/use-cases/auth';
-import { CryptoService } from './application/crypto.service';
-import { GetUserByIdQueryHandler } from './application/queries/users';
-import { GetUsersQueryHandler } from './application/queries/users';
+import { JwtStrategy } from './guards/bearer';
+import { LocalStrategy } from './guards/local';
+import {
+    LoginUserUseCase,
+    PasswordRecoveryConfirmationUseCase,
+    PasswordRecoveryUseCase,
+    RegisterUserUseCase,
+    RegistrationConfirmationUseCase,
+    RegistrationEmailResendingUseCase,
+} from './application/use-cases/auth';
+import {
+    CreateUserUseCase,
+    DeleteUserUseCase,
+    UpdateUserUseCase,
+} from './application/use-cases/users';
 import { GetCurrentUserQueryHandler } from './application/queries/auth';
+import {
+    GetUserByIdQueryHandler,
+    GetUsersQueryHandler,
+} from './application/queries/users';
+import { AuthService } from './application/auth.service';
+import { CryptoService } from './application/crypto.service';
+import { UsersQueryRepository, UsersRepository } from './infrastructure';
+
+import { User, UserSchema } from './domain/user.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { AuthController } from './api/auth.controller';
+import { UsersController } from './api/users.controller';
 
 const useCases = [
     RegistrationConfirmationUseCase,

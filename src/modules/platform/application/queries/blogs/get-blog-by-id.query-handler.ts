@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { BlogViewDto } from '../../../api/dto/view-dto/blogs.view-dto';
-import { BlogsQueryRepository } from '../../../infrastructure/queryRepositories/blogs.query-repository';
+import { BlogViewDto } from '../../../api/dto/view-dto';
+import { BlogsQueryRepository } from '../../../infrastructure';
 
 export class GetBlogByIdQuery {
     constructor(public blogId: string) {}
