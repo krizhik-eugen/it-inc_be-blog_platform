@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { AccountsConfig } from './config';
 import {
     ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
@@ -39,6 +39,8 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthController } from './api/auth.controller';
 import { UsersController } from './api/users.controller';
 import { Session, SessionSchema } from './domain/session.entity';
+import { GetSessionsQueryHandler } from './application/queries/security';
+import { TypedJwtService } from './application/typedJwtService';
 
 const useCases = [
     RegistrationConfirmationUseCase,
@@ -56,6 +58,7 @@ const queries = [
     GetCurrentUserQueryHandler,
     GetUserByIdQueryHandler,
     GetUsersQueryHandler,
+    GetSessionsQueryHandler,
 ];
 const repositories = [
     UsersQueryRepository,
@@ -80,8 +83,8 @@ const strategies = [LocalStrategy, JwtStrategy];
         AuthService,
         {
             provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
-            useFactory: (accountsConfig: AccountsConfig): JwtService => {
-                return new JwtService({
+            useFactory: (accountsConfig: AccountsConfig): TypedJwtService => {
+                return new TypedJwtService({
                     secret: accountsConfig.jwtSecret,
                     signOptions: {
                         expiresIn: accountsConfig.accessTokenExpirationTime,
@@ -92,8 +95,8 @@ const strategies = [LocalStrategy, JwtStrategy];
         },
         {
             provide: REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
-            useFactory: (accountsConfig: AccountsConfig): JwtService => {
-                return new JwtService({
+            useFactory: (accountsConfig: AccountsConfig): TypedJwtService => {
+                return new TypedJwtService({
                     secret: accountsConfig.jwtSecret,
                     signOptions: {
                         expiresIn: accountsConfig.refreshTokenExpirationTime,

@@ -1,4 +1,6 @@
 import { DynamicModule, INestApplication } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
+
 import { CoreConfig } from '../core/config';
 import { globalPrefixSetup } from './global-prefix.setup';
 import { pipesSetup } from './pipes.setup';
@@ -17,4 +19,5 @@ export function appSetup(
     validationConstraintSetup(app, DynamicAppModule);
     exceptionFilterSetup(app, coreConfig);
     app.enableCors();
+    app.use(cookieParser());
 }

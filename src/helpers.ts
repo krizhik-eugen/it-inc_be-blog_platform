@@ -1,3 +1,5 @@
+import { UAParser } from 'ua-parser-js';
+
 export const getEmailConfirmationTemplate = (confirmationCode: string) => `
     <!DOCTYPE html>
     <html lang="en">
@@ -102,3 +104,15 @@ export const getPasswordRecoveryTemplate = (recoveryCode: string) => `
     </body>
     </html>
 `;
+
+export const getDeviceTitle = (userAgent = '') => {
+    let deviceTitle = 'Unknown device';
+    const uaData = UAParser(userAgent);
+    if (uaData.device.vendor) {
+        deviceTitle = `${uaData.device.vendor} ` + `${uaData.device.model}`;
+    }
+    if (uaData.browser.name) {
+        deviceTitle += ` ${uaData.browser.name} ` + `${uaData.browser.version}`;
+    }
+    return deviceTitle;
+};
