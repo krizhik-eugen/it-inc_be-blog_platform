@@ -94,17 +94,14 @@ export class AuthController {
         @ExtractSessionDataFromRequest() session: SessionContextDto,
         @Req() request: Request,
     ): Promise<SuccessLoginViewDto> {
-        const userAgent = request.headers['user-agent'] || '';
         const ip = request.ip || '';
         const { accessToken, refreshToken } = await this.commandBus.execute<
             UpdateRefreshTokenCommand,
             UpdateRefreshTokenUseCaseResponse
         >(
             new UpdateRefreshTokenCommand({
-                userId: session.userId,
-                deviceId: session.deviceId,
+                ...session,
                 ip,
-                userAgent,
             }),
         );
 

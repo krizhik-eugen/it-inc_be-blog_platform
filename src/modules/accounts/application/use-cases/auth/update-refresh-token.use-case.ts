@@ -43,7 +43,7 @@ export class UpdateRefreshTokenUseCase
             await this.sessionRepository.findByDeviceIdNonDeletedOrNotFoundFail(
                 dto.deviceId,
             );
-
+  
         if (foundSession.iat !== dto.iat) {
             throw UnauthorizedDomainException.create('Session expired');
         }
