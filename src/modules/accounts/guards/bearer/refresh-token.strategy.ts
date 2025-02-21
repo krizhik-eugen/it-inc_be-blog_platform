@@ -23,10 +23,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
     }
 
     async validate(payload: TypedJwtPayload) {
-        if (!payload.userId || !payload.deviceId) {
-            throw new UnauthorizedException('Invalid refresh token payload');
-        }
-
         return Promise.resolve({
             userId: payload.userId,
             deviceId: payload.deviceId,

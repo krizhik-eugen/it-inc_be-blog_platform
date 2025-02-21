@@ -57,7 +57,7 @@ export class SessionsController {
     @DeleteSessionApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteSession(
-        @Param('deviceId', ObjectIdValidationPipe) deviceId: string,
+        @Param('deviceId') deviceId: string,
         @ExtractSessionDataFromRequest() session: SessionContextDto,
     ): Promise<void> {
         return this.commandBus.execute<DeleteSessionCommand, void>(

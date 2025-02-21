@@ -15,6 +15,17 @@ export class SessionsRepository {
         return session.save();
     }
 
+    async findByDeviceIdNonDeleted(
+        deviceId: string,
+    ): Promise<SessionDocument | null> {
+        const session = await this.SessionModel.findOne({
+            deviceId,
+            deletedAt: null,
+        });
+
+        return session;
+    }
+
     async findByDeviceIdNonDeletedOrNotFoundFail(
         deviceId: string,
     ): Promise<SessionDocument> {

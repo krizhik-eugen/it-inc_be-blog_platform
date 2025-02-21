@@ -13,9 +13,11 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
 
     async execute({ session }: LogoutUserCommand): Promise<void> {
         const foundSession =
-            await this.sessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
+            await this.sessionsRepository.findByDeviceIdNonDeleted(
                 session.deviceId,
             );
+
+        if (!foundSession) return;
 
         if (foundSession.iat !== session.iat) {
             throw UnauthorizedDomainException.create('Session expired');
