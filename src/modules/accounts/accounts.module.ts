@@ -10,11 +10,13 @@ import { JwtStrategy, RefreshTokenStrategy } from './guards/bearer';
 import { LocalStrategy } from './guards/local';
 import {
     LoginUserUseCase,
+    LogoutUserUseCase,
     PasswordRecoveryConfirmationUseCase,
     PasswordRecoveryUseCase,
     RegisterUserUseCase,
     RegistrationConfirmationUseCase,
     RegistrationEmailResendingUseCase,
+    UpdateRefreshTokenUseCase,
 } from './application/use-cases/auth';
 import {
     CreateUserUseCase,
@@ -59,6 +61,8 @@ const useCases = [
     DeleteUserUseCase,
     DeleteSessionUseCase,
     DeleteAllSessionsUseCase,
+    UpdateRefreshTokenUseCase,
+    LogoutUserUseCase,
 ] as Provider[];
 
 const queries = [
