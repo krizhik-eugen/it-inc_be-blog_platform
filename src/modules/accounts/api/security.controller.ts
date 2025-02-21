@@ -18,7 +18,6 @@ import {
     DeleteSessionApi,
     GetSessionsApi,
 } from './swagger';
-import { ObjectIdValidationPipe } from 'src/core/pipes/object-id-validation-transformation-pipe.service';
 import {
     DeleteAllSessionsCommand,
     DeleteSessionCommand,

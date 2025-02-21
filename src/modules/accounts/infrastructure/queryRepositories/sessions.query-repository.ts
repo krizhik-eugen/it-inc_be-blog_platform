@@ -9,7 +9,10 @@ export class SessionsQueryRepository {
     ) {}
 
     async getAllSessionsDevices(userId: string): Promise<SessionViewDto[]> {
-        const sessions = await this.SessionModel.find({ userId });
+        const sessions = await this.SessionModel.find({
+            userId,
+            deletedAt: null,
+        });
         return sessions.map((session) => SessionViewDto.mapToView(session));
     }
 }

@@ -40,9 +40,11 @@ export class UpdateRefreshTokenUseCase
         dto,
     }: UpdateRefreshTokenCommand): Promise<UpdateRefreshTokenUseCaseResponse> {
         const foundSession =
-            await this.sessionRepository.findByDeviceIdNonDeletedOrNotFoundFail(
-                dto.deviceId,
-            );
+            await this.sessionRepository.findByDeviceIdNonDeleted(dto.deviceId);
+
+        if (!foundSession) {
+            throw UnauthorizedDomainException.create('Session not found');
+        }
 
         if (foundSession.iat !== dto.iat) {
             throw UnauthorizedDomainException.create('Session expired');
