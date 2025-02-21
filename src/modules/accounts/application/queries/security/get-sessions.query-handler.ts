@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { SessionsQueryRepository } from '../../../infrastructure';
-import { SessionViewDto } from '../../../api/dto/view-dto/sessions.view-dto';
+import { SessionViewDto } from '../../../api/dto/view-dto';
 
 export class GetSessionsQuery {
     constructor(public userId: string) {}

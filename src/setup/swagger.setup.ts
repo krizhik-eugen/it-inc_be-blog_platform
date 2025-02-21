@@ -7,7 +7,16 @@ export function swaggerSetup(app: INestApplication, coreConfig: CoreConfig) {
 
     const config = new DocumentBuilder()
         .setTitle('BLOG PLATFORM API')
-        .addBearerAuth()
+        .addBearerAuth({
+            type: 'http',
+            description: 'Enter JWT Bearer token only',
+        })
+        .addCookieAuth('refreshToken', {
+            name: 'refreshToken',
+            type: 'apiKey',
+            in: 'cookie',
+        })
+        .addBasicAuth()
         .setVersion('1.0')
         .build();
 

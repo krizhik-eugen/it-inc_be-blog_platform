@@ -7,25 +7,29 @@ import {
     Post,
     Res,
     UseGuards,
-    Headers,
-    Ip,
+    Req,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { MeViewDto } from './dto/view-dto';
-import { ExtractUserFromRequest } from '../guards/decorators';
-import { UserContextDto } from '../guards/dto';
+import {
+    ExtractSessionDataFromRequest,
+    ExtractUserFromRequest,
+} from '../guards/decorators';
+import { SessionContextDto, UserContextDto } from '../guards/dto';
 import { LocalAuthGuard } from '../guards/local';
-import { JwtAuthGuard } from '../guards/bearer';
+import { JwtAuthGuard, RefreshTokenAuthGuard } from '../guards/bearer';
 import {
     GetCurrentUserApi,
     LoginApi,
+    LogoutApi,
     NewPasswordApi,
     PasswordRecoveryApi,
     RegisterNewUserApi,
     RegistrationConfirmationApi,
     RegistrationEmailResendingApi,
+    UpdateRefreshTokenApi,
 } from './swagger';
 import { SuccessLoginViewDto } from './dto/view-dto';
 import {
@@ -38,15 +42,18 @@ import {
 import {
     LoginUseCaseResponse,
     LoginUserCommand,
+    LogoutUserCommand,
     PasswordRecoveryCommand,
     PasswordRecoveryConfirmationCommand,
     RegisterUserCommand,
     RegistrationConfirmationCommand,
     RegistrationEmailResendingCommand,
+    UpdateRefreshTokenCommand,
+    UpdateRefreshTokenUseCaseResponse,
 } from '../application/use-cases/auth';
 import { GetCurrentUserQuery } from '../application/queries/auth';
 
-@UseGuards(ThrottlerGuard) //Temporary switch off throttler
+@UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class AuthController {
     constructor(
@@ -61,13 +68,45 @@ export class AuthController {
     async login(
         @Res({ passthrough: true }) response: Response,
         @ExtractUserFromRequest() user: UserContextDto,
-        @Ip() ip: string,
-        @Headers('user-agent') userAgent: string,
+        @Req() request: Request,
     ): Promise<SuccessLoginViewDto> {
+        const userAgent = request.headers['user-agent'] || '';
+        const ip = request.ip || '';
         const { accessToken, refreshToken } = await this.commandBus.execute<
             LoginUserCommand,
             LoginUseCaseResponse
         >(new LoginUserCommand({ userId: user.id, ip, userAgent }));
+
+        response.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+
+        return { accessToken };
+    }
+
+    @UseGuards(RefreshTokenAuthGuard)
+    @Post('refresh-token')
+    @UpdateRefreshTokenApi()
+    @HttpCode(HttpStatus.OK)
+    async updateRefreshToken(
+        @Res({ passthrough: true }) response: Response,
+        @ExtractSessionDataFromRequest() session: SessionContextDto,
+        @Req() request: Request,
+    ): Promise<SuccessLoginViewDto> {
+        const userAgent = request.headers['user-agent'] || '';
+        const ip = request.ip || '';
+        const { accessToken, refreshToken } = await this.commandBus.execute<
+            UpdateRefreshTokenCommand,
+            UpdateRefreshTokenUseCaseResponse
+        >(
+            new UpdateRefreshTokenCommand({
+                userId: session.userId,
+                deviceId: session.deviceId,
+                ip,
+                userAgent,
+            }),
+        );
 
         response.cookie('refreshToken', refreshToken, {
             httpOnly: true,
@@ -137,6 +176,18 @@ export class AuthController {
     ): Promise<void> {
         await this.commandBus.execute<RegistrationEmailResendingCommand, void>(
             new RegistrationEmailResendingCommand({ email: body.email }),
+        );
+    }
+
+    @UseGuards(RefreshTokenAuthGuard)
+    @Post('logout')
+    @LogoutApi()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async logout(
+        @ExtractSessionDataFromRequest() session: SessionContextDto,
+    ): Promise<void> {
+        await this.commandBus.execute<LogoutUserCommand, void>(
+            new LogoutUserCommand(session),
         );
     }
 

@@ -3,6 +3,7 @@ import {
     ApiBadRequestResponse,
     ApiBearerAuth,
     ApiBody,
+    ApiCookieAuth,
     ApiNoContentResponse,
     ApiOkResponse,
     ApiOperation,
@@ -38,6 +39,28 @@ export const LoginApi = () => {
             description: 'If the password or login or email is wrong',
         }),
         ApiBody({ type: LoginUserInputDto }),
+        ApiTooManyRequestsResponse({
+            description:
+                'More than 5 attempts from one IP-address during 10 seconds',
+        }),
+    );
+};
+
+export const UpdateRefreshTokenApi = () => {
+    return applyDecorators(
+        ApiOperation({
+            summary:
+                'Generate new pair of access and refresh tokens (in cookie client must send correct refreshToken which will be revoked after refreshing) Device LastActiveDate should be overwritten by issued Date of new refresh token',
+        }),
+        ApiOkResponse({
+            description:
+                'Returns JWT accessToken (expired after 10 seconds) in body and JWT refreshToken in cookie (http-only, secure) (expired after 20 seconds).',
+            type: SuccessLoginViewDto,
+        }),
+        ApiTooManyRequestsResponse({
+            description:
+                'More than 5 attempts from one IP-address during 10 seconds',
+        }),
     );
 };
 
@@ -150,6 +173,26 @@ export const RegistrationEmailResendingApi = () => {
     );
 };
 
+export const LogoutApi = () => {
+    return applyDecorators(
+        ApiCookieAuth(),
+        ApiOperation({
+            summary:
+                'In cookie client must send the correct refreshToken which will be revoked',
+        }),
+        ApiNoContentResponse({
+            description: 'No content',
+        }),
+        ApiUnauthorizedResponse({
+            description: 'Unauthorized',
+        }),
+        ApiTooManyRequestsResponse({
+            description:
+                'More than 5 attempts from one IP-address during 10 seconds',
+        }),
+    );
+};
+
 export const GetCurrentUserApi = () => {
     return applyDecorators(
         ApiBearerAuth(),
@@ -162,6 +205,10 @@ export const GetCurrentUserApi = () => {
         }),
         ApiUnauthorizedResponse({
             description: 'Unauthorized',
+        }),
+        ApiTooManyRequestsResponse({
+            description:
+                'More than 5 attempts from one IP-address during 10 seconds',
         }),
     );
 };

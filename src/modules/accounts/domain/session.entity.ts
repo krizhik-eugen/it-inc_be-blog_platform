@@ -1,9 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import {
-    BadRequestDomainException,
-    NotFoundDomainException,
-} from '../../../core/exceptions';
+import { NotFoundDomainException } from '../../../core/exceptions';
 import { CreateSessionDomainDto } from './dto/create';
 import { UpdateSessionDomainDto } from './dto/update';
 

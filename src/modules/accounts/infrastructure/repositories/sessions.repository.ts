@@ -15,10 +15,13 @@ export class SessionsRepository {
         return session.save();
     }
 
-    async findByDeviceIdOrNotFoundFail(
+    async findByDeviceIdNonDeletedOrNotFoundFail(
         deviceId: string,
     ): Promise<SessionDocument> {
-        const session = await this.SessionModel.findOne({ deviceId });
+        const session = await this.SessionModel.findOne({
+            deviceId,
+            deletedAt: null,
+        });
 
         if (!session) {
             throw NotFoundDomainException.create('Session is not found');
@@ -27,23 +30,23 @@ export class SessionsRepository {
         return session;
     }
 
-    async deleteByDeviceId(deviceId: string): Promise<number> {
-        const result = await this.SessionModel.deleteOne({ deviceId });
-        return result.deletedCount;
-    }
-
     async deleteAllSessionsExceptCurrent({
         userId,
         deviceId,
     }: {
         userId: string;
         deviceId: string;
-    }) {
-        const result = await this.SessionModel.deleteMany({
-            userId,
-            deviceId: { $ne: deviceId },
-        });
+    }): Promise<number> {
+        const result = await this.SessionModel.updateMany(
+            {
+                userId,
+                deviceId: { $ne: deviceId },
+            },
+            {
+                deletedAt: new Date().toISOString(),
+            },
+        );
 
-        return result.deletedCount;
+        return result.modifiedCount;
     }
 }

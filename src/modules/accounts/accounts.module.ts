@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { AccountsConfig } from './config';
@@ -6,7 +6,7 @@ import {
     ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
 } from './constants';
-import { JwtStrategy } from './guards/bearer';
+import { JwtStrategy, RefreshTokenStrategy } from './guards/bearer';
 import { LocalStrategy } from './guards/local';
 import {
     LoginUserUseCase,
@@ -41,6 +41,11 @@ import { UsersController } from './api/users.controller';
 import { Session, SessionSchema } from './domain/session.entity';
 import { GetSessionsQueryHandler } from './application/queries/security';
 import { TypedJwtService } from './application/typedJwtService';
+import { SessionsController } from './api/security.controller';
+import {
+    DeleteAllSessionsUseCase,
+    DeleteSessionUseCase,
+} from './application/use-cases/security';
 
 const useCases = [
     RegistrationConfirmationUseCase,
@@ -52,21 +57,27 @@ const useCases = [
     CreateUserUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
-];
+    DeleteSessionUseCase,
+    DeleteAllSessionsUseCase,
+] as Provider[];
 
 const queries = [
     GetCurrentUserQueryHandler,
     GetUserByIdQueryHandler,
     GetUsersQueryHandler,
     GetSessionsQueryHandler,
-];
+] as Provider[];
 const repositories = [
     UsersQueryRepository,
     UsersRepository,
     SessionsRepository,
     SessionsQueryRepository,
-];
-const strategies = [LocalStrategy, JwtStrategy];
+] as Provider[];
+const strategies = [
+    LocalStrategy,
+    JwtStrategy,
+    RefreshTokenStrategy,
+] as Provider[];
 
 @Module({
     imports: [
@@ -77,7 +88,7 @@ const strategies = [LocalStrategy, JwtStrategy];
         JwtModule,
         NotificationsModule,
     ],
-    controllers: [AuthController, UsersController],
+    controllers: [AuthController, UsersController, SessionsController],
     providers: [
         AccountsConfig,
         AuthService,

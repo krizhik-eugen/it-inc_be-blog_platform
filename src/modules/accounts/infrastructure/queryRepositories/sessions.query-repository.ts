@@ -1,7 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
-
 import { Session, SessionModelType } from '../../domain/session.entity';
-import { SessionViewDto } from '../../api/dto/view-dto/sessions.view-dto';
+import { SessionViewDto } from '../../api/dto/view-dto';
 
 export class SessionsQueryRepository {
     constructor(
