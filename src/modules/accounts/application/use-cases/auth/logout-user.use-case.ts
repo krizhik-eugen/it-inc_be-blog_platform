@@ -17,7 +17,9 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
                 session.deviceId,
             );
 
-        if (!foundSession) return;
+        if (!foundSession) {
+            throw UnauthorizedDomainException.create('Session not found');
+        }
 
         if (foundSession.iat !== session.iat) {
             throw UnauthorizedDomainException.create('Session expired');
