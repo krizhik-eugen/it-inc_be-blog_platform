@@ -48,7 +48,7 @@ export class SessionsController {
         @ExtractSessionDataFromRequest() session: SessionContextDto,
     ): Promise<void> {
         return this.commandBus.execute<DeleteAllSessionsCommand, void>(
-            new DeleteAllSessionsCommand(session.userId, session.deviceId),
+            new DeleteAllSessionsCommand(session),
         );
     }
 
