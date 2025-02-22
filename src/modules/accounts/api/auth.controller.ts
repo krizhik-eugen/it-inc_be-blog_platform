@@ -8,6 +8,7 @@ import {
     Res,
     UseGuards,
     Req,
+    Ip,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ThrottlerGuard } from '@nestjs/throttler';
@@ -69,9 +70,9 @@ export class AuthController {
         @Res({ passthrough: true }) response: Response,
         @ExtractUserFromRequest() user: UserContextDto,
         @Req() request: Request,
+        @Ip() ip: string,
     ): Promise<SuccessLoginViewDto> {
         const userAgent = request.headers['user-agent'] || '';
-        const ip = request.ip || '';
         const { accessToken, refreshToken } = await this.commandBus.execute<
             LoginUserCommand,
             LoginUseCaseResponse
@@ -92,9 +93,8 @@ export class AuthController {
     async updateRefreshToken(
         @Res({ passthrough: true }) response: Response,
         @ExtractSessionDataFromRequest() session: SessionContextDto,
-        @Req() request: Request,
+        @Ip() ip: string,
     ): Promise<SuccessLoginViewDto> {
-        const ip = request.ip || '';
         const { accessToken, refreshToken } = await this.commandBus.execute<
             UpdateRefreshTokenCommand,
             UpdateRefreshTokenUseCaseResponse
