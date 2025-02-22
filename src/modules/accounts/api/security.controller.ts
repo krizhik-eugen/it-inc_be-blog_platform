@@ -6,8 +6,10 @@ import {
     HttpCode,
     HttpStatus,
     UseGuards,
+    Res,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Response } from 'express';
 import { ExtractSessionDataFromRequest } from '../guards/decorators';
 import { SessionViewDto } from './dto/view-dto';
 import { GetSessionsQuery } from '../application/queries/security';
@@ -56,11 +58,16 @@ export class SessionsController {
     @DeleteSessionApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteSession(
+        @Res({ passthrough: true }) response: Response,
         @Param('deviceId') deviceId: string,
         @ExtractSessionDataFromRequest() session: SessionContextDto,
     ): Promise<void> {
-        return this.commandBus.execute<DeleteSessionCommand, void>(
+        await this.commandBus.execute<DeleteSessionCommand, void>(
             new DeleteSessionCommand(deviceId, session),
         );
+
+        if (deviceId === session.deviceId) {
+            response.clearCookie('refreshToken');
+        }
     }
 }
