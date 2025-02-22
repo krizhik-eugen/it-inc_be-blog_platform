@@ -181,11 +181,13 @@ export class AuthController {
     @LogoutApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async logout(
+        @Res({ passthrough: true }) response: Response,
         @ExtractSessionDataFromRequest() session: SessionContextDto,
     ): Promise<void> {
         await this.commandBus.execute<LogoutUserCommand, void>(
             new LogoutUserCommand(session),
         );
+        response.clearCookie('refreshToken');
     }
 
     @UseGuards(JwtAuthGuard)
