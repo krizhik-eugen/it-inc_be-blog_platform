@@ -41,10 +41,10 @@ export class RefreshTokenStrategy extends PassportStrategy(
             throw UnauthorizedDomainException.create('Refresh token expired');
         }
 
-        return Promise.resolve({
+        return {
             userId: payload.userId,
             deviceId: payload.deviceId,
             iat: payload.iat,
-        });
+        };
     }
 }

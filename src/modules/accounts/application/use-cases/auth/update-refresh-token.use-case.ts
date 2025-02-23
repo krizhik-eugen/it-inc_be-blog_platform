@@ -71,9 +71,9 @@ export class UpdateRefreshTokenUseCase
 
         await this.sessionRepository.save(foundSession);
 
-        return Promise.resolve({
+        return {
             accessToken: updatedAccessToken,
             refreshToken: updatedRefreshToken,
-        });
+        };
     }
 }

@@ -60,6 +60,6 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
 
         await this.sessionRepository.save(newSession);
 
-        return Promise.resolve({ accessToken, refreshToken });
+        return { accessToken, refreshToken };
     }
 }

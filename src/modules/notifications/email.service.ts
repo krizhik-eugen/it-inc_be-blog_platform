@@ -34,7 +34,6 @@ export class EmailService {
         const htmlTemplate = getEmailConfirmationTemplate(confirmationCode);
         const subject = 'Confirm your registration email';
         await this.sendEmail(email, subject, htmlTemplate);
-        return Promise.resolve();
     }
 
     async sendEmailPasswordRecoveryMessage(
@@ -44,6 +43,5 @@ export class EmailService {
         const htmlTemplate = getPasswordRecoveryTemplate(confirmationCode);
         const subject = 'Confirm your password recovery email';
         await this.sendEmail(email, subject, htmlTemplate);
-        return Promise.resolve();
     }
 }
