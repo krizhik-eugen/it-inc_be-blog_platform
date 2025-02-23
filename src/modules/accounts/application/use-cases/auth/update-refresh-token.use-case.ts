@@ -54,10 +54,9 @@ export class UpdateRefreshTokenUseCase
             id: dto.userId,
         });
 
-        const deviceId = randomUUID();
         const updatedRefreshToken = this.refreshTokenContext.sign({
             userId: dto.userId,
-            deviceId,
+            deviceId: dto.deviceId,
         });
 
         const decodedIssuedToken =
