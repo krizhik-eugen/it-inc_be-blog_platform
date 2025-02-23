@@ -46,6 +46,24 @@ export class CommentsRepository {
         return comment;
     }
 
+    async findAllByPostIdNonDeleted(
+        postId: string,
+    ): Promise<CommentDocument[]> {
+        return this.CommentModel.find({
+            postId: postId,
+            deletedAt: null,
+        });
+    }
+
+    async findAllByPostIdsNonDeleted(
+        postIds: string[],
+    ): Promise<CommentDocument[]> {
+        return this.CommentModel.find({
+            postId: { $in: postIds },
+            deletedAt: null,
+        });
+    }
+
     async deleteAllByPostId(postId: string): Promise<void> {
         await this.CommentModel.updateMany(
             { postId: postId, deletedAt: null },
