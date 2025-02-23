@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionsRepository } from '../../../infrastructure';
 import { SessionContextDto } from '../../../guards/dto/session-context.dto';
-import { ForbiddenDomainException } from 'src/core/exceptions';
+import { ForbiddenDomainException } from '../../../../../core/exceptions/domain-exceptions';
 
 export class DeleteSessionCommand {
     constructor(
