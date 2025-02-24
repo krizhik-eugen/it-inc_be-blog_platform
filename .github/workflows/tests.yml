@@ -15,27 +15,37 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
+        # Add health check for MongoDB
+        options: >-
+          --health-cmd mongosh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     strategy:
       matrix:
         node-version: [22.x]
+      # Add fail-fast strategy
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Create testing env file
-      run: |
-        mkdir -p ./src/envs
-        cat << EOF > ./src/envs/.env.testing.local
-        ADMIN_LOGIN=${{ secrets.ADMIN_LOGIN }}
-        ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
-        EOF
-        
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
+    # Add cache step for better performance
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+    - name: Cache yarn dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
     - name: Install dependencies
       run: yarn install --frozen-lockfile
     - name: Build
@@ -45,3 +55,5 @@ jobs:
         NODE_ENV: testing
         MONGO_URL: mongodb://127.0.0.1:27017/blog_platform_e2e_testing
       run: yarn test:e2e
+      # Add timeout for tests
+      timeout-minutes: 10
