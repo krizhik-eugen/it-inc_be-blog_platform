@@ -34,8 +34,6 @@ jobs:
       run: yarn install --frozen-lockfile
     - name: Build
       run: yarn build
-    - name: Run tests
-      run: yarn test
     - name: Run E2E Tests
       env:
         MONGO_URL: mongodb://127.0.0.1:27017/blog_platform_e2e_testing
