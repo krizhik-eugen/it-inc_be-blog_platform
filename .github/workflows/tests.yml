@@ -25,8 +25,8 @@ jobs:
     
     - name: Create testing env file
       run: |
-        mkdir -p ./envs
-        cat << EOF > ./envs/.env.testing.local
+        mkdir -p ./src/envs
+        cat << EOF > ./src/envs/.env.testing.local
         ADMIN_LOGIN=${{ secrets.ADMIN_LOGIN }}
         ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
         EOF
