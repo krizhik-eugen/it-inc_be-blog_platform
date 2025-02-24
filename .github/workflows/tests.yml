@@ -20,14 +20,17 @@ jobs:
       matrix:
         node-version: [22.x]
 
-    env:
-      NODE_ENV: testing
-      MONGO_URL: mongodb://127.0.0.1:27017/blog_platform_e2e_testing
-      ADMIN_LOGIN: ${{ secrets.ADMIN_LOGIN }}
-      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Create testing env file
+      run: |
+        mkdir -p ./envs
+        cat << EOF > ./envs/.env.testing.local
+        ADMIN_LOGIN=${{ secrets.ADMIN_LOGIN }}
+        ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+        EOF
+        
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -38,4 +41,7 @@ jobs:
     - name: Build
       run: yarn build
     - name: Run E2E Tests
+      env:
+        NODE_ENV: testing
+        MONGO_URL: mongodb://127.0.0.1:27017/blog_platform_e2e_testing
       run: yarn test:e2e
