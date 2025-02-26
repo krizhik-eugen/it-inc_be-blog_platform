@@ -12,23 +12,23 @@ jobs:
   check-commit-message:
     runs-on: ubuntu-latest
     outputs:
-      should-run: ${{ steps.check.outputs.should-run }}
+      should-skip: ${{ steps.check.outputs.should-skip }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - id: check
-        name: Check if commit message contains [e2e run]
+        name: Check if commit message contains [ci skip]
         run: |
-          if git log -1 --pretty=%B | grep -i -q "\[e2e run\]"; then
-            echo "should-run=true" >> $GITHUB_OUTPUT
+          if git log -1 --pretty=%B | grep -i -q "\[ci skip\]"; then
+            echo "should-skip=true" >> $GITHUB_OUTPUT
           else
-            echo "should-run=false" >> $GITHUB_OUTPUT
+            echo "should-skip=false" >> $GITHUB_OUTPUT
           fi
 
   build:
     needs: check-commit-message
-    if: needs.check-commit-message.outputs.should-run == 'true'
+    if: needs.check-commit-message.outputs.should-skip != 'true'
     runs-on: ubuntu-latest
     environment: testing
     services:
