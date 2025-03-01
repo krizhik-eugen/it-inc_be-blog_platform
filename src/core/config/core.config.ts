@@ -30,7 +30,7 @@ export class CoreConfig {
             message: 'Set Env variable PORT, example: 3000',
         },
     )
-    port: number = Number(this.configService.get('PORT'));
+    port: number = parseInt(this.configService.get('PORT') || 'No Port');
 
     @IsEnum(Environments, {
         message:
