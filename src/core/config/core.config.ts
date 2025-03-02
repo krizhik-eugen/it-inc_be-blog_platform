@@ -45,9 +45,29 @@ export class CoreConfig {
     mongoURL: string = this.configService.get('MONGO_URL') as string;
 
     @IsNotEmpty({
-        message: 'Set Env variable DB_NAME, example: database-name',
+        message: 'Set Env variable PG_HOST, example: localhost',
+    })
+    pgHost: string = this.configService.get('PG_HOST') as string;
+
+    @IsNotEmpty({
+        message: 'Set Env variable MONGO_DB_NAME, example: database-name',
     })
     mongoDBName: string = this.configService.get('MONGO_DB_NAME') as string;
+
+    @IsNotEmpty({
+        message: 'Set Env variable PG_DB_NAME, example: database-name',
+    })
+    pgDBName: string = this.configService.get('PG_DB_NAME') as string;
+
+    @IsNotEmpty({
+        message: 'Set Env variable PG_DB_LOGIN, example: database-login',
+    })
+    pgDBLogin: string = this.configService.get('PG_DB_LOGIN') as string;
+
+    @IsNotEmpty({
+        message: 'Set Env variable PG_DB_PASSWORD, example: database-password',
+    })
+    pgDBPassword: string = this.configService.get('PG_DB_PASSWORD') as string;
 
     @IsEmail()
     @IsNotEmpty({

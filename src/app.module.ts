@@ -1,7 +1,8 @@
-import { configModule } from './config-module'; // config has to be imported first to load env variables
+import { configModule } from './config-module';
 
 import { DynamicModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './core/config';
@@ -9,6 +10,7 @@ import { AppController } from './app.controller';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { TestingModule } from './modules/testing/testing.module';
+import { AppRepository } from './app.repository';
 
 const imports = [
     MongooseModule.forRootAsync({
@@ -20,6 +22,16 @@ const imports = [
         },
         inject: [CoreConfig],
     }),
+    // TypeOrmModule.forRoot({
+    //     type: 'postgres',
+    //     host: 'localhost',
+    //     port: 5432,
+    //     username: 'platform_admin',
+    //     password: 'platform_admin',
+    //     database: 'TestDB',
+    //     autoLoadEntities: false,
+    //     synchronize: false,
+    // }),
     ThrottlerModule.forRoot([
         {
             ttl: 10000,
@@ -31,7 +43,26 @@ const imports = [
 ];
 
 @Module({
-    imports: [CoreModule, configModule],
+    imports: [
+        CoreModule,
+        configModule,
+        TypeOrmModule.forRootAsync({
+            useFactory: (coreConfig: CoreConfig) => {
+                return {
+                    type: 'postgres',
+                    host: coreConfig.pgHost,
+                    port: 5432,
+                    username: coreConfig.pgDBLogin,
+                    password: coreConfig.pgDBPassword,
+                    database: coreConfig.pgDBName,
+                    autoLoadEntities: false,
+                    synchronize: false,
+                };
+            },
+            inject: [CoreConfig],
+        }),
+    ],
+    providers: [AppRepository],
     controllers: [AppController],
 })
 export class AppModule {
