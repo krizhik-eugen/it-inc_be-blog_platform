@@ -50,7 +50,7 @@ const imports = [
                 return {
                     type: 'postgres',
                     // host: coreConfig.pgHost,
-                    url: 'postgresql://neondb_owner:npg_gVKsuHk6TN5E@ep-fancy-cherry-a2i8g3mb-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require',
+                    url: coreConfig.postgresURL,
                     // port: 5432,
                     // username: coreConfig.pgDBLogin,
                     // password: coreConfig.pgDBPassword,

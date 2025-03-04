@@ -45,6 +45,11 @@ export class CoreConfig {
     mongoURL: string = this.configService.get('MONGO_URL') as string;
 
     @IsNotEmpty({
+        message: 'Set Env variable POSTGRES_URL, example: postgresql://',
+    })
+    postgresURL: string = this.configService.get('POSTGRES_URL') as string;
+
+    @IsNotEmpty({
         message: 'Set Env variable PG_HOST, example: localhost',
     })
     pgHost: string = this.configService.get('PG_HOST') as string;
