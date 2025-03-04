@@ -4,35 +4,35 @@ import { NotFoundDomainException } from '../../../../core/exceptions';
 import { PaginatedViewDto } from '../../../../core/dto';
 import { MeViewDto, UserViewDto } from '../../api/dto/view-dto';
 import { GetUsersQueryParams } from '../../api/dto/query-params-dto';
-import { User, UserModelType } from '../../domain/user.entity';
+import { MongoUser, MongoUserModelType } from '../../domain/user.entity';
 
-export class UsersQueryRepository {
+export class UsersMongoQueryRepository {
     constructor(
-        @InjectModel(User.name)
-        private UserModel: UserModelType,
+        @InjectModel(MongoUser.name)
+        private MongoUserModel: MongoUserModelType,
     ) {}
 
     async getCurrentUserByIdOrNotFoundFail(id: string): Promise<MeViewDto> {
-        const user = await this.UserModel.findOne({
+        const user = await this.MongoUserModel.findOne({
             _id: id,
             deletedAt: null,
         }).exec();
 
         if (!user) {
-            throw NotFoundDomainException.create('User is not found');
+            throw NotFoundDomainException.create('MongoUser is not found');
         }
 
         return MeViewDto.mapToView(user);
     }
 
     async getByIdOrNotFoundFail(id: string): Promise<UserViewDto> {
-        const user = await this.UserModel.findOne({
+        const user = await this.MongoUserModel.findOne({
             _id: id,
             deletedAt: null,
         }).exec();
 
         if (!user) {
-            throw NotFoundDomainException.create('User is not found');
+            throw NotFoundDomainException.create('MongoUser is not found');
         }
 
         return UserViewDto.mapToView(user);
@@ -41,8 +41,8 @@ export class UsersQueryRepository {
     async getAllUsers(
         query: GetUsersQueryParams,
     ): Promise<PaginatedViewDto<UserViewDto[]>> {
-        const findQuery: FilterQuery<User> = { deletedAt: null };
-        const searchConditions: FilterQuery<User>[] = [];
+        const findQuery: FilterQuery<MongoUser> = { deletedAt: null };
+        const searchConditions: FilterQuery<MongoUser>[] = [];
 
         if (query.searchLoginTerm) {
             searchConditions.push({
@@ -60,12 +60,12 @@ export class UsersQueryRepository {
             findQuery.$or = searchConditions;
         }
 
-        const result = await this.UserModel.find(findQuery)
+        const result = await this.MongoUserModel.find(findQuery)
             .sort({ [query.sortBy]: query.sortDirection })
             .skip(query.calculateSkip())
             .limit(query.pageSize);
 
-        const usersCount = await this.UserModel.countDocuments(findQuery);
+        const usersCount = await this.MongoUserModel.countDocuments(findQuery);
 
         const mappedUsers = result.map((user) => UserViewDto.mapToView(user));
 

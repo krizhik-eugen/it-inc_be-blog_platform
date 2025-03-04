@@ -29,11 +29,11 @@ export const userEmailConstraints = {
 };
 
 /**
- * User Entity Schema
- * This class represents the schema and behavior of a User entity.
+ * MongoUser Entity Schema
+ * This class represents the schema and behavior of a MongoUser entity.
  */
 @Schema({ timestamps: true })
-export class User {
+export class MongoUser {
     /**
      * Login of the user (must be uniq)
      * @type {string}
@@ -166,18 +166,18 @@ export class User {
     };
 
     /**
-     * Factory method to create a User instance
+     * Factory method to create a MongoUser instance
      * @param {CreateUserDto} dto - The data transfer object for user creation
-     * @returns {UserDocument} The created user document
+     * @returns {MongoUserDocument} The created user document
      */
-    static createInstance(dto: CreateUserDomainDto): UserDocument {
+    static createInstance(dto: CreateUserDomainDto): MongoUserDocument {
         const user = new this();
 
         user.email = dto.email;
         user.passwordHash = dto.passwordHash;
         user.login = dto.login;
 
-        return user as UserDocument;
+        return user as MongoUserDocument;
     }
 
     /**
@@ -313,10 +313,10 @@ export class User {
     }
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const MongoUserSchema = SchemaFactory.createForClass(MongoUser);
 
-UserSchema.loadClass(User);
+MongoUserSchema.loadClass(MongoUser);
 
-export type UserDocument = HydratedDocument<User>;
+export type MongoUserDocument = HydratedDocument<MongoUser>;
 
-export type UserModelType = Model<UserDocument> & typeof User;
+export type MongoUserModelType = Model<MongoUserDocument> & typeof MongoUser;

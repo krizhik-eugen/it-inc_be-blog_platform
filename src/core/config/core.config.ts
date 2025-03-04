@@ -54,20 +54,22 @@ export class CoreConfig {
     })
     mongoDBName: string = this.configService.get('MONGO_DB_NAME') as string;
 
-    @IsNotEmpty({
-        message: 'Set Env variable PG_DB_NAME, example: database-name',
-    })
-    pgDBName: string = this.configService.get('PG_DB_NAME') as string;
+    // TODO: add connection string variable
 
-    @IsNotEmpty({
-        message: 'Set Env variable PG_DB_LOGIN, example: database-login',
-    })
-    pgDBLogin: string = this.configService.get('PG_DB_LOGIN') as string;
+    // @IsNotEmpty({
+    //     message: 'Set Env variable PG_DB_NAME, example: database-name',
+    // })
+    // pgDBName: string = this.configService.get('PG_DB_NAME') as string;
 
-    @IsNotEmpty({
-        message: 'Set Env variable PG_DB_PASSWORD, example: database-password',
-    })
-    pgDBPassword: string = this.configService.get('PG_DB_PASSWORD') as string;
+    // @IsNotEmpty({
+    //     message: 'Set Env variable PG_DB_LOGIN, example: database-login',
+    // })
+    // pgDBLogin: string = this.configService.get('PG_DB_LOGIN') as string;
+
+    // @IsNotEmpty({
+    //     message: 'Set Env variable PG_DB_PASSWORD, example: database-password',
+    // })
+    // pgDBPassword: string = this.configService.get('PG_DB_PASSWORD') as string;
 
     @IsEmail()
     @IsNotEmpty({

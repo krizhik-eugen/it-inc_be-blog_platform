@@ -2,9 +2,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AccountsConfig } from '../../../config';
 import { CryptoService } from '../../crypto.service';
-import { UsersRepository } from '../../../infrastructure';
+import { UsersMongoRepository } from '../../../infrastructure';
 import { CreateUserDto } from '../../../dto/create';
-import { User, UserModelType } from '../../../domain/user.entity';
+import { MongoUser, MongoUserModelType } from '../../../domain/user.entity';
 
 export class CreateUserCommand {
     constructor(public dto: CreateUserDto) {}
@@ -15,9 +15,9 @@ export class CreateUserUseCase
     implements ICommandHandler<CreateUserCommand, string>
 {
     constructor(
-        @InjectModel(User.name)
-        private UserModel: UserModelType,
-        private usersRepository: UsersRepository,
+        @InjectModel(MongoUser.name)
+        private MongoUserModel: MongoUserModelType,
+        private usersMongoRepository: UsersMongoRepository,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,
     ) {}
@@ -27,7 +27,7 @@ export class CreateUserUseCase
             dto.password,
         );
 
-        const newUser = this.UserModel.createInstance({
+        const newUser = this.MongoUserModel.createInstance({
             email: dto.email,
             login: dto.login,
             passwordHash,
@@ -37,7 +37,7 @@ export class CreateUserUseCase
             newUser.emailConfirmation.isConfirmed = true;
         }
 
-        await this.usersRepository.save(newUser);
+        await this.usersMongoRepository.save(newUser);
 
         return newUser._id.toString();
     }

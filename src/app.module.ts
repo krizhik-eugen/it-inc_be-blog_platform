@@ -10,7 +10,6 @@ import { AppController } from './app.controller';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { TestingModule } from './modules/testing/testing.module';
-import { AppRepository } from './app.repository';
 
 const imports = [
     MongooseModule.forRootAsync({
@@ -50,11 +49,12 @@ const imports = [
             useFactory: (coreConfig: CoreConfig) => {
                 return {
                     type: 'postgres',
-                    host: coreConfig.pgHost,
-                    port: 5432,
-                    username: coreConfig.pgDBLogin,
-                    password: coreConfig.pgDBPassword,
-                    database: coreConfig.pgDBName,
+                    // host: coreConfig.pgHost,
+                    url: 'postgresql://neondb_owner:npg_gVKsuHk6TN5E@ep-fancy-cherry-a2i8g3mb-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require',
+                    // port: 5432,
+                    // username: coreConfig.pgDBLogin,
+                    // password: coreConfig.pgDBPassword,
+                    // database: coreConfig.pgDBName,
                     autoLoadEntities: false,
                     synchronize: false,
                 };
@@ -62,7 +62,6 @@ const imports = [
             inject: [CoreConfig],
         }),
     ],
-    providers: [AppRepository],
     controllers: [AppController],
 })
 export class AppModule {

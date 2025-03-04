@@ -1,7 +1,7 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { User, UserModelType } from '../accounts/domain/user.entity';
+import { MongoUser, MongoUserModelType } from '../accounts/domain/user.entity';
 import { Blog, BlogModelType } from '../platform/domain/blog.entity';
 import { Post, PostModelType } from '../platform/domain/post.entity';
 import { Like, LikeModelType } from '../platform/domain/like.entity';
@@ -11,8 +11,8 @@ import { Session, SessionModelType } from '../accounts/domain/session.entity';
 @Controller('testing')
 export class TestingController {
     constructor(
-        @InjectModel(User.name)
-        private UserModel: UserModelType,
+        @InjectModel(MongoUser.name)
+        private MongoUserModel: MongoUserModelType,
         @InjectModel(Blog.name)
         private BlogModel: BlogModelType,
         @InjectModel(Post.name)
@@ -36,7 +36,7 @@ export class TestingController {
     })
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteAll() {
-        await this.UserModel.deleteMany({});
+        await this.MongoUserModel.deleteMany({});
         await this.BlogModel.deleteMany({});
         await this.PostModel.deleteMany({});
         await this.CommentModel.deleteMany({});

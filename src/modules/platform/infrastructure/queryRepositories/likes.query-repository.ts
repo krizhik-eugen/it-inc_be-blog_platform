@@ -1,14 +1,14 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Like, LikeModelType, LikeStatus } from '../../domain/like.entity';
-import { UsersRepository } from '../../../accounts/infrastructure';
 import { LikeViewDto } from '../../api/dto/view-dto';
-import { UserDocument } from '../../../accounts/domain/user.entity';
+import { MongoUserDocument } from '../../../accounts/domain/user.entity';
+import { UsersMongoRepository } from '../../../accounts/infrastructure';
 
 export class LikesQueryRepository {
     constructor(
         @InjectModel(Like.name)
         private LikeModel: LikeModelType,
-        private usersRepository: UsersRepository,
+        private usersMongoRepository: UsersMongoRepository,
     ) {}
 
     async getLikeStatusByUserIdAndParentId({
@@ -51,12 +51,12 @@ export class LikesQueryRepository {
             .exec();
 
         const userIds = foundLikes.map((like) => like.userId);
-        const users = await this.usersRepository.findByIds(userIds);
+        const users = await this.usersMongoRepository.findByIds(userIds);
 
         const mappedFoundLikes: LikeViewDto[] = [];
         for (const like of foundLikes) {
             const user = users.find(
-                (u: UserDocument) => u._id.toString() === like.userId,
+                (u: MongoUserDocument) => u._id.toString() === like.userId,
             );
             mappedFoundLikes.push({
                 addedAt: like.createdAt,

@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentsRepository, PostsRepository } from '../../../infrastructure';
 import { CreateCommentDto } from '../../../dto/create';
-import { UsersRepository } from '../../../../accounts/infrastructure';
+import { UsersMongoRepository } from '../../../../accounts/infrastructure';
 import { CommentModelType, Comment } from '../../../domain/comment.entity';
 
 export class CreateCommentCommand {
@@ -22,7 +22,7 @@ export class CreateCommentUseCase
         private CommentModel: CommentModelType,
         private commentsRepository: CommentsRepository,
         private postsRepository: PostsRepository,
-        private usersRepository: UsersRepository,
+        private usersMongoRepository: UsersMongoRepository,
     ) {}
 
     async execute({
@@ -34,7 +34,7 @@ export class CreateCommentUseCase
             await this.postsRepository.findByIdOrNotFoundFail(postId);
 
         const foundUser =
-            await this.usersRepository.findByIdOrNotFoundFail(userId);
+            await this.usersMongoRepository.findByIdOrNotFoundFail(userId);
 
         const newComment = this.CommentModel.createInstance({
             content: dto.content,

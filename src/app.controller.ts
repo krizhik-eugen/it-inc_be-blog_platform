@@ -1,17 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { AppRepository } from './app.repository';
+import { Controller, Get } from '@nestjs/common';
 
-@Controller()
+@Controller('')
 export class AppController {
-    constructor(private appRepository: AppRepository) {}
-
     @Get()
-    async getAllUsers() {
-        return this.appRepository.getAllUsers();
-    }
-
-    @Get(':id')
-    async getUserById(@Param('id') id: string) {
-        return this.appRepository.getUserById(id);
+    getInfo() {
+        return `<h1>Welcome to blog platform!</h1>
+        <p>check the docs: <a href="/api">/api</a></p>
+        `;
     }
 }

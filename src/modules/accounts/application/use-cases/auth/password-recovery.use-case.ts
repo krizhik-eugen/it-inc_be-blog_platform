@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthService } from '../../auth.service';
-import { UsersRepository } from '../../../infrastructure';
+import { UsersMongoRepository } from '../../../infrastructure';
 
 export class PasswordRecoveryCommand {
     constructor(public dto: { email: string }) {}
@@ -11,12 +11,12 @@ export class PasswordRecoveryUseCase
     implements ICommandHandler<PasswordRecoveryCommand, void>
 {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersMongoRepository: UsersMongoRepository,
         private authService: AuthService,
     ) {}
 
     async execute({ dto }: PasswordRecoveryCommand): Promise<void> {
-        const foundUser = await this.usersRepository.findByLoginOrEmail(
+        const foundUser = await this.usersMongoRepository.findByLoginOrEmail(
             dto.email,
         );
         if (foundUser) {

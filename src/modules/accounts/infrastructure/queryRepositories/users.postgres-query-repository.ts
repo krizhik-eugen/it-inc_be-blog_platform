@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class AppRepository {
+export class UsersPostgresQueryRepository {
     constructor(private dataSource: DataSource) {}
     async getAllUsers() {
         let data;
         try {
             data = await this.dataSource.query(`
-                SELECT * FROM public."TestUsers"
+                SELECT * FROM public.users JOIN public.email_confirmation ON users.id = email_confirmation.user_id JOIN public.password_recovery ON users.id = password_recovery.user_id
                 `);
         } catch (e) {
             console.log('e', e);
@@ -18,10 +18,11 @@ export class AppRepository {
 
         return data.map((user) => ({
             id: user.id,
-            FirstName: user.FirstName,
-            LastName: user.LastName,
-            IsMarried: user.IsMarried,
-            PassportNumber: user.PassportNumber,
+            login: user.login,
+            email: user.email,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            deletedAt: user.deletedAt,
         }));
     }
 
@@ -30,7 +31,7 @@ export class AppRepository {
         try {
             data = await this.dataSource.query(
                 `
-                SELECT * FROM public."TestUsers"
+                SELECT * FROM public.users
                 WHERE id = $1
                 `,
                 [id],
@@ -43,10 +44,11 @@ export class AppRepository {
 
         return data.map((user) => ({
             id: user.id,
-            FirstName: user.FirstName,
-            LastName: user.LastName,
-            IsMarried: user.IsMarried,
-            PassportNumber: user.PassportNumber,
+            login: user.login,
+            email: user.email,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            deletedAt: user.deletedAt,
         }));
     }
 }

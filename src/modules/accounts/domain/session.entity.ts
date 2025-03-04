@@ -11,7 +11,7 @@ import { UpdateSessionDomainDto } from './dto/update';
 @Schema({ timestamps: true })
 export class Session {
     /**
-     * Id of the User
+     * Id of the MongoUser
      * @type {string}
      * @required
      */

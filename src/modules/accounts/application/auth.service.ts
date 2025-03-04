@@ -5,8 +5,8 @@ import { add } from 'date-fns';
 import { AccountsConfig } from '../config';
 import { UserContextDto } from '../guards/dto';
 import { CryptoService } from './crypto.service';
-import { UsersRepository } from '../infrastructure';
-import { UserDocument } from '../domain/user.entity';
+import { UsersMongoRepository } from '../infrastructure';
+import { MongoUserDocument } from '../domain/user.entity';
 import {
     UserPasswordRecoveryEvent,
     UserRegisteredEvent,
@@ -15,7 +15,7 @@ import {
 @Injectable()
 export class AuthService {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersMongoRepository: UsersMongoRepository,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,
         private eventBus: EventBus,
@@ -26,7 +26,7 @@ export class AuthService {
         password: string,
     ): Promise<UserContextDto | null> {
         const user =
-            await this.usersRepository.findByLoginOrEmail(loginOrEmail);
+            await this.usersMongoRepository.findByLoginOrEmail(loginOrEmail);
 
         if (!user) {
             return null;
@@ -45,7 +45,7 @@ export class AuthService {
     }
 
     async sendEmailConfirmationMessageToUser(
-        user: UserDocument,
+        user: MongoUserDocument,
     ): Promise<void> {
         const confirmationCode = randomUUID();
 
@@ -53,7 +53,7 @@ export class AuthService {
             hours: this.accountsConfig.confirmationCodeExpirationTimeInHours,
         });
         user.setConfirmationCode(confirmationCode, expirationDate);
-        await this.usersRepository.save(user);
+        await this.usersMongoRepository.save(user);
 
         await this.eventBus.publish(
             new UserRegisteredEvent(user.email, confirmationCode),
@@ -61,7 +61,7 @@ export class AuthService {
     }
 
     async sendEmailPasswordRecoveryMessageToUser(
-        user: UserDocument,
+        user: MongoUserDocument,
     ): Promise<void> {
         const newRecoveryCode = randomUUID();
 
@@ -70,7 +70,7 @@ export class AuthService {
         });
 
         user.setPasswordRecoveryCode(newRecoveryCode, expirationDate);
-        await this.usersRepository.save(user);
+        await this.usersMongoRepository.save(user);
 
         await this.eventBus.publish(
             new UserPasswordRecoveryEvent(user.email, newRecoveryCode),

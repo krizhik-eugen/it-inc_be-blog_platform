@@ -1,54 +1,54 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { User, UserDocument, UserModelType } from '../../domain/user.entity';
+import { MongoUser, MongoUserDocument, MongoUserModelType } from '../../domain/user.entity';
 
-export class UsersRepository {
-    constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
+export class UsersMongoRepository {
+    constructor(@InjectModel(MongoUser.name) private MongoUserModel: MongoUserModelType) {}
 
-    async save(user: UserDocument) {
+    async save(user: MongoUserDocument) {
         return user.save();
     }
 
-    async findById(id: string): Promise<UserDocument | null> {
-        return this.UserModel.findById(id);
+    async findById(id: string): Promise<MongoUserDocument | null> {
+        return this.MongoUserModel.findById(id);
     }
 
-    async findByIds(ids: string[]): Promise<UserDocument[]> {
-        return this.UserModel.find({ _id: { $in: ids } });
+    async findByIds(ids: string[]): Promise<MongoUserDocument[]> {
+        return this.MongoUserModel.find({ _id: { $in: ids } });
     }
 
-    async findByIdNonDeleted(id: string): Promise<UserDocument | null> {
-        return this.UserModel.findOne({
+    async findByIdNonDeleted(id: string): Promise<MongoUserDocument | null> {
+        return this.MongoUserModel.findOne({
             _id: id,
             deletedAt: null,
         });
     }
 
-    async findByIdOrNotFoundFail(id: string): Promise<UserDocument> {
+    async findByIdOrNotFoundFail(id: string): Promise<MongoUserDocument> {
         const user = await this.findById(id);
 
         if (!user) {
-            throw NotFoundDomainException.create('User is not found');
+            throw NotFoundDomainException.create('MongoUser is not found');
         }
 
         return user;
     }
 
-    async findByIdNonDeletedOrNotFoundFail(id: string): Promise<UserDocument> {
-        const user = await this.UserModel.findOne({
+    async findByIdNonDeletedOrNotFoundFail(id: string): Promise<MongoUserDocument> {
+        const user = await this.MongoUserModel.findOne({
             _id: id,
             deletedAt: null,
         });
         if (!user) {
-            throw NotFoundDomainException.create('User is not found');
+            throw NotFoundDomainException.create('MongoUser is not found');
         }
         return user;
     }
 
     async findByLoginOrEmail(
         loginOrEmail: string,
-    ): Promise<UserDocument | null> {
-        const user = await this.UserModel.findOne().or([
+    ): Promise<MongoUserDocument | null> {
+        const user = await this.MongoUserModel.findOne().or([
             { login: loginOrEmail },
             { email: loginOrEmail },
         ]);
@@ -57,8 +57,8 @@ export class UsersRepository {
 
     async findByLoginOrEmailNonDeleted(
         loginOrEmail: string,
-    ): Promise<UserDocument | null> {
-        const user = await this.UserModel.findOne()
+    ): Promise<MongoUserDocument | null> {
+        const user = await this.MongoUserModel.findOne()
             .and([{ deletedAt: null }])
             .or([{ login: loginOrEmail }, { email: loginOrEmail }]);
         return user;
@@ -66,20 +66,20 @@ export class UsersRepository {
 
     async findByLoginOrEmailNonDeletedOrNotFoundFail(
         loginOrEmail: string,
-    ): Promise<UserDocument> {
-        const user = await this.UserModel.findOne()
+    ): Promise<MongoUserDocument> {
+        const user = await this.MongoUserModel.findOne()
             .and([{ deletedAt: null }])
             .or([{ login: loginOrEmail }, { email: loginOrEmail }]);
         if (!user) {
-            throw NotFoundDomainException.create('User is not found');
+            throw NotFoundDomainException.create('MongoUser is not found');
         }
         return user;
     }
 
     async findUserByConfirmationCode(
         code: string,
-    ): Promise<UserDocument | null> {
-        const user = await this.UserModel.findOne({
+    ): Promise<MongoUserDocument | null> {
+        const user = await this.MongoUserModel.findOne({
             'emailConfirmation.confirmationCode': code,
         });
         return user;
@@ -87,8 +87,8 @@ export class UsersRepository {
 
     async findUserByRecoveryCodeOrNotFoundFail(
         code: string,
-    ): Promise<UserDocument> {
-        const user = await this.UserModel.findOne({
+    ): Promise<MongoUserDocument> {
+        const user = await this.MongoUserModel.findOne({
             'passwordRecovery.recoveryCode': code,
         });
         if (!user) {

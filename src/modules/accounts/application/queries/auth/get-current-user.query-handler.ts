@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { MeViewDto } from '../../../api/dto/view-dto';
-import { UsersQueryRepository } from '../../../infrastructure';
+import { UsersMongoQueryRepository } from '../../../infrastructure';
 
 export class GetCurrentUserQuery {
     constructor(public userId: string) {}
@@ -10,10 +10,10 @@ export class GetCurrentUserQuery {
 export class GetCurrentUserQueryHandler
     implements IQueryHandler<GetCurrentUserQuery, MeViewDto>
 {
-    constructor(private usersQueryRepository: UsersQueryRepository) {}
+    constructor(private usersMongoQueryRepository: UsersMongoQueryRepository) {}
 
     async execute({ userId }: GetCurrentUserQuery): Promise<MeViewDto> {
-        return this.usersQueryRepository.getCurrentUserByIdOrNotFoundFail(
+        return this.usersMongoQueryRepository.getCurrentUserByIdOrNotFoundFail(
             userId,
         );
     }

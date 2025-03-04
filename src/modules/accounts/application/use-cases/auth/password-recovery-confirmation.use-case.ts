@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CryptoService } from '../../crypto.service';
-import { UsersRepository } from '../../../infrastructure';
+import { UsersMongoRepository } from '../../../infrastructure';
 import { UpdatePasswordDto } from '../../../dto/update';
 
 export class PasswordRecoveryConfirmationCommand {
@@ -12,13 +12,13 @@ export class PasswordRecoveryConfirmationUseCase
     implements ICommandHandler<PasswordRecoveryConfirmationCommand, void>
 {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersMongoRepository: UsersMongoRepository,
         private cryptoService: CryptoService,
     ) {}
 
     async execute({ dto }: PasswordRecoveryConfirmationCommand): Promise<void> {
         const foundUser =
-            await this.usersRepository.findUserByRecoveryCodeOrNotFoundFail(
+            await this.usersMongoRepository.findUserByRecoveryCodeOrNotFoundFail(
                 dto.recoveryCode,
             );
 
@@ -28,6 +28,6 @@ export class PasswordRecoveryConfirmationUseCase
 
         foundUser.changePassword(dto.recoveryCode, newPasswordHash);
 
-        await this.usersRepository.save(foundUser);
+        await this.usersMongoRepository.save(foundUser);
     }
 }

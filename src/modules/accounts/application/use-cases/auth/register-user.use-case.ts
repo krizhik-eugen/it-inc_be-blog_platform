@@ -2,7 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestDomainException } from '../../../../../core/exceptions';
 import { CreateUserCommand } from '../users';
 import { AuthService } from '../../auth.service';
-import { UsersRepository } from '../../../infrastructure';
+import { UsersMongoRepository } from '../../../infrastructure';
 import { CreateUserDto } from '../../../dto/create';
 
 export class RegisterUserCommand {
@@ -15,24 +15,24 @@ export class RegisterUserUseCase
 {
     constructor(
         private authService: AuthService,
-        private usersRepository: UsersRepository,
+        private usersMongoRepository: UsersMongoRepository,
         private commandBus: CommandBus,
     ) {}
 
     async execute({ dto }: RegisterUserCommand): Promise<void> {
-        const foundUserByLogin = await this.usersRepository.findByLoginOrEmail(
+        const foundUserByLogin = await this.usersMongoRepository.findByLoginOrEmail(
             dto.login,
         );
-        const foundUserByEmail = await this.usersRepository.findByLoginOrEmail(
+        const foundUserByEmail = await this.usersMongoRepository.findByLoginOrEmail(
             dto.email,
         );
 
         if (foundUserByLogin || foundUserByEmail) {
             const fieldName = foundUserByLogin ? 'login' : 'email';
-            let message = `User with this ${fieldName} already exists`;
+            let message = `MongoUser with this ${fieldName} already exists`;
 
             if (foundUserByLogin?.deletedAt || foundUserByEmail?.deletedAt) {
-                message = `User with this ${fieldName} was in the system and has been deleted`;
+                message = `MongoUser with this ${fieldName} was in the system and has been deleted`;
             }
 
             throw BadRequestDomainException.create(message, fieldName);
@@ -44,7 +44,7 @@ export class RegisterUserUseCase
         >(new CreateUserCommand(dto));
 
         const newUser =
-            await this.usersRepository.findByIdOrNotFoundFail(newUserId);
+            await this.usersMongoRepository.findByIdOrNotFoundFail(newUserId);
 
         if (!newUser.emailConfirmation.isConfirmed) {
             await this.authService.sendEmailConfirmationMessageToUser(newUser);

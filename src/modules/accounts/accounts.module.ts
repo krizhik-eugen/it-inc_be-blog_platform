@@ -31,12 +31,13 @@ import {
 import { AuthService } from './application/auth.service';
 import { CryptoService } from './application/crypto.service';
 import {
-    UsersQueryRepository,
-    UsersRepository,
+    UsersMongoQueryRepository,
+    UsersMongoRepository,
     SessionsRepository,
     SessionsQueryRepository,
+    UsersPostgresQueryRepository,
 } from './infrastructure';
-import { User, UserSchema } from './domain/user.entity';
+import { MongoUser, MongoUserSchema } from './domain/user.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthController } from './api/auth.controller';
 import { UsersController } from './api/users.controller';
@@ -72,10 +73,11 @@ const queries = [
     GetSessionsQueryHandler,
 ] as Provider[];
 const repositories = [
-    UsersQueryRepository,
-    UsersRepository,
+    UsersMongoQueryRepository,
+    UsersMongoRepository,
     SessionsRepository,
     SessionsQueryRepository,
+    UsersPostgresQueryRepository
 ] as Provider[];
 const strategies = [
     LocalStrategy,
@@ -86,7 +88,7 @@ const strategies = [
 @Module({
     imports: [
         MongooseModule.forFeature([
-            { name: User.name, schema: UserSchema },
+            { name: MongoUser.name, schema: MongoUserSchema },
             { name: Session.name, schema: SessionSchema },
         ]),
         JwtModule,
@@ -126,6 +128,6 @@ const strategies = [
         ...queries,
         CryptoService,
     ],
-    exports: [UsersRepository, MongooseModule, AccountsConfig],
+    exports: [UsersMongoRepository, MongooseModule, AccountsConfig],
 })
 export class AccountsModule {}
