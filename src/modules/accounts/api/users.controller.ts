@@ -30,23 +30,14 @@ import {
     DeleteUserCommand,
     UpdateUserCommand,
 } from '../application/use-cases/users';
-import { UsersPostgresQueryRepository } from '../infrastructure';
 
-@Controller('users')
+@Controller('/sa/users')
 @UseGuards(BasicAuthGuard)
 export class UsersController {
     constructor(
         private commandBus: CommandBus,
         private queryBus: QueryBus,
-        private usersPostgresQueryRepository: UsersPostgresQueryRepository,
     ) {}
-
-    @Public()
-    @Get('/postgres')
-    @GetUsersApi()
-    async getAllUsersPostgres() {
-        return this.usersPostgresQueryRepository.getAllUsers();
-    }
 
     @Public()
     @Get()

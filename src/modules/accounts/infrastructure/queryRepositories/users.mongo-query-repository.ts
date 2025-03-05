@@ -1,8 +1,11 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PaginatedViewDto } from '../../../../core/dto';
-import { MeViewDto, UserViewDto } from '../../api/dto/view-dto';
+import {
+    MeViewDto,
+    PaginatedUsersViewDto,
+    UserViewDto,
+} from '../../api/dto/view-dto';
 import { GetUsersQueryParams } from '../../api/dto/query-params-dto';
 import { MongoUser, MongoUserModelType } from '../../domain/user.entity';
 
@@ -40,7 +43,7 @@ export class UsersMongoQueryRepository {
 
     async getAllUsers(
         query: GetUsersQueryParams,
-    ): Promise<PaginatedViewDto<UserViewDto[]>> {
+    ): Promise<PaginatedUsersViewDto> {
         const findQuery: FilterQuery<MongoUser> = { deletedAt: null };
         const searchConditions: FilterQuery<MongoUser>[] = [];
 
@@ -69,7 +72,7 @@ export class UsersMongoQueryRepository {
 
         const mappedUsers = result.map((user) => UserViewDto.mapToView(user));
 
-        return PaginatedViewDto.mapToView({
+        return PaginatedUsersViewDto.mapToView({
             items: mappedUsers,
             page: query.pageNumber,
             size: query.pageSize,
