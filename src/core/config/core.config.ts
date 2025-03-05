@@ -49,10 +49,10 @@ export class CoreConfig {
     })
     postgresURL: string = this.configService.get('POSTGRES_URL') as string;
 
-    @IsNotEmpty({
-        message: 'Set Env variable PG_HOST, example: localhost',
-    })
-    pgHost: string = this.configService.get('PG_HOST') as string;
+    // @IsNotEmpty({
+    //     message: 'Set Env variable PG_HOST, example: localhost',
+    // })
+    // pgHost: string = this.configService.get('PG_HOST') as string;
 
     @IsNotEmpty({
         message: 'Set Env variable MONGO_DB_NAME, example: database-name',
