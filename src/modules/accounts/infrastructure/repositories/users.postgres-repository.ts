@@ -124,8 +124,6 @@ export class UsersPostgresRepository {
             [login, email, passwordHash],
         );
 
-        console.log('data', data);
-
         return data[0].id;
     }
 
