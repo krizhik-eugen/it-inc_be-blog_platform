@@ -13,7 +13,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response, Request } from 'express';
-import { MongoMeViewDto, PostgresUserViewDto } from './dto/view-dto';
+import { PostgresUserViewDto } from './dto/view-dto';
 import {
     ExtractSessionDataFromRequest,
     ExtractUserFromRequest,

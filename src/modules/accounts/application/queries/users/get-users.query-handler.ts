@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PaginatedMongoUsersViewDto } from '../../../api/dto/view-dto';
+import { PaginatedPostgresUsersViewDto } from '../../../api/dto/view-dto';
 import { GetUsersQueryParams } from '../../../api/dto/query-params-dto';
 import { UsersPostgresQueryRepository } from '../../../infrastructure';
 
@@ -9,17 +9,16 @@ export class GetUsersQuery {
 
 @QueryHandler(GetUsersQuery)
 export class GetUsersQueryHandler
-    implements IQueryHandler<GetUsersQuery, PaginatedMongoUsersViewDto>
+    implements IQueryHandler<GetUsersQuery, PaginatedPostgresUsersViewDto>
 {
     constructor(
-        // private usersMongoQueryRepository: UsersMongoQueryRepository,
         private usersPostgresQueryRepository: UsersPostgresQueryRepository,
     ) {}
 
     async execute({
         query,
-    }: GetUsersQuery): Promise<PaginatedMongoUsersViewDto> {
-        return this.usersPostgresQueryRepository.getAllUsers(query);
+    }: GetUsersQuery): Promise<PaginatedPostgresUsersViewDto> {
         // return this.usersMongoQueryRepository.getAllUsers(query);
+        return this.usersPostgresQueryRepository.getAllUsers(query);
     }
 }

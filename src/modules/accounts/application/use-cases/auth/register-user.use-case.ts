@@ -2,10 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestDomainException } from '../../../../../core/exceptions';
 import { CreateUserCommand } from '../users';
 import { AuthService } from '../../auth.service';
-import {
-    UsersPostgresRepository,
-    UsersMongoRepository,
-} from '../../../infrastructure';
+import { UsersPostgresRepository } from '../../../infrastructure';
 import { CreateUserDto } from '../../../dto/create';
 
 export class RegisterUserCommand {
@@ -18,7 +15,6 @@ export class RegisterUserUseCase
 {
     constructor(
         private authService: AuthService,
-        // private usersMongoRepository: UsersMongoRepository,
         private usersPostgresRepository: UsersPostgresRepository,
         private commandBus: CommandBus,
     ) {}
@@ -31,10 +27,10 @@ export class RegisterUserUseCase
 
         if (foundUserByLogin || foundUserByEmail) {
             const fieldName = foundUserByLogin ? 'login' : 'email';
-            let message = `MongoUser with this ${fieldName} already exists`;
+            let message = `PostgresUser with this ${fieldName} already exists`;
 
             if (foundUserByLogin?.deleted_at || foundUserByEmail?.deleted_at) {
-                message = `MongoUser with this ${fieldName} was in the system and has been deleted`;
+                message = `PostgresUser with this ${fieldName} was in the system and has been deleted`;
             }
 
             throw BadRequestDomainException.create(message, fieldName);

@@ -8,10 +8,7 @@ export class DeleteUserCommand {
 export class DeleteUserUseCase
     implements ICommandHandler<DeleteUserCommand, void>
 {
-    constructor(
-        // private usersMongoRepository: UsersMongoRepository,
-        private usersPostgresRepository: UsersPostgresRepository,
-    ) {}
+    constructor(private usersPostgresRepository: UsersPostgresRepository) {}
 
     async execute({ userId }: DeleteUserCommand): Promise<void> {
         // const user =

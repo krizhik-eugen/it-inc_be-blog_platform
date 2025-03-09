@@ -13,10 +13,7 @@ export class UpdateUserCommand {
 export class UpdateUserUseCase
     implements ICommandHandler<UpdateUserCommand, void>
 {
-    constructor(
-        // private usersMongoRepository: UsersMongoRepository,
-        private usersPostgresRepository: UsersPostgresRepository,
-    ) {}
+    constructor(private usersPostgresRepository: UsersPostgresRepository) {}
 
     async execute({ id, dto }: UpdateUserCommand): Promise<void> {
         // const user = await this.usersMongoRepository.findByIdOrNotFoundFail(id);

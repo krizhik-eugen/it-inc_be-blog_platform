@@ -10,7 +10,6 @@ export class DeleteAllSessionsUseCase
     implements ICommandHandler<DeleteAllSessionsCommand, void>
 {
     constructor(
-        // private mongoSessionsRepository: MongoSessionsRepository,
         private postgresSessionsRepository: PostgresSessionsRepository,
     ) {}
 

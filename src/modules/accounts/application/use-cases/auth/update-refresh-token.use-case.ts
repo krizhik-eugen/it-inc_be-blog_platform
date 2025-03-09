@@ -5,8 +5,8 @@ import {
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
 } from '../../../constants';
 import { TypedJwtPayload, TypedJwtService } from '../../typedJwtService';
-import { MongoSessionsRepository } from '../../../infrastructure/repositories/sessions.mongo-repository';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/domain-exceptions';
+import { PostgresSessionsRepository } from '../../../infrastructure';
 
 export class UpdateRefreshTokenUseCaseResponse {
     accessToken: string;
@@ -32,23 +32,25 @@ export class UpdateRefreshTokenUseCase
         @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
         private refreshTokenContext: TypedJwtService,
 
-        private mongoSessionRepository: MongoSessionsRepository,
+        private postgresSessionRepository: PostgresSessionsRepository,
     ) {}
 
     async execute({
         dto,
     }: UpdateRefreshTokenCommand): Promise<UpdateRefreshTokenUseCaseResponse> {
         const foundSession =
-            await this.mongoSessionRepository.findByDeviceIdNonDeleted(
+            await this.postgresSessionRepository.findByDeviceIdNonDeleted(
                 dto.deviceId,
             );
 
         if (!foundSession) {
-            throw UnauthorizedDomainException.create('MongoSession not found');
+            throw UnauthorizedDomainException.create(
+                'PostgresSession not found',
+            );
         }
 
         if (foundSession.iat !== dto.iat) {
-            throw UnauthorizedDomainException.create('MongoSession expired');
+            throw UnauthorizedDomainException.create('PostgresSession expired');
         }
 
         const updatedAccessToken = this.accessTokenContext.sign({
@@ -63,14 +65,19 @@ export class UpdateRefreshTokenUseCase
         const decodedIssuedToken =
             this.refreshTokenContext.decode(updatedRefreshToken);
 
-        foundSession.update({
+        // foundSession.update({
+        //     ip: dto.ip,
+        //     iat: decodedIssuedToken.iat!,
+        //     exp: decodedIssuedToken.exp!,
+        // });
+        // await this.mongoSessionRepository.save(foundSession);
+
+        await this.postgresSessionRepository.updateSession({
+            deviceId: dto.deviceId,
             ip: dto.ip,
             iat: decodedIssuedToken.iat!,
             exp: decodedIssuedToken.exp!,
         });
-
-        await this.mongoSessionRepository.save(foundSession);
-
         return {
             accessToken: updatedAccessToken,
             refreshToken: updatedRefreshToken,

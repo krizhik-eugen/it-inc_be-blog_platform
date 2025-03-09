@@ -15,7 +15,6 @@ import { PostgresUser } from '../domain/user.postgres-entity';
 @Injectable()
 export class AuthService {
     constructor(
-        // private usersMongoRepository: UsersMongoRepository,
         private usersPostgresRepository: UsersPostgresRepository,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,

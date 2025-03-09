@@ -22,7 +22,7 @@ import {
 } from './swagger';
 import { CreateUserInputDto, UpdateUserInputDto } from './dto/input-dto';
 import { GetUsersQueryParams } from './dto/query-params-dto';
-import { MongoUserViewDto, PostgresUserViewDto } from './dto/view-dto';
+import { PostgresUserViewDto } from './dto/view-dto';
 import { GetUserByIdQuery, GetUsersQuery } from '../application/queries/users';
 import { PaginatedPostgresUsersViewDto } from './dto/view-dto/users.view-dto';
 import {
@@ -55,7 +55,7 @@ export class UsersController {
     @CreateUserApi()
     async createUser(
         @Body() body: CreateUserInputDto,
-    ): Promise<MongoUserViewDto> {
+    ): Promise<PostgresUserViewDto> {
         const newUserId = await this.commandBus.execute<
             CreateUserCommand,
             number

@@ -72,6 +72,28 @@ export class PostgresSessionsRepository {
         );
     }
 
+    async updateSession({
+        deviceId,
+        ip,
+        iat,
+        exp,
+    }: {
+        deviceId: string;
+        ip: string;
+        iat: number;
+        exp: number;
+    }): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE sessions
+                SET ip = $1, iat = $2, exp = $3 updated_at = NOW()
+                WHERE device_id = $4
+                AND deleted_at IS NULL
+            `,
+            [ip, iat, exp, deviceId],
+        );
+    }
+
     async deleteAllSessionsExceptCurrent({
         userId,
         deviceId,

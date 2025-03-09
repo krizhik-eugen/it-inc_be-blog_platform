@@ -11,7 +11,6 @@ export class GetCurrentUserQueryHandler
     implements IQueryHandler<GetCurrentUserQuery, PostgresUserViewDto>
 {
     constructor(
-        // private usersMongoQueryRepository: UsersMongoQueryRepository,
         private usersPostgresQueryRepository: UsersPostgresQueryRepository,
     ) {}
 

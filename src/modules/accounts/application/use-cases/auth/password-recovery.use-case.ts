@@ -11,7 +11,6 @@ export class PasswordRecoveryUseCase
     implements ICommandHandler<PasswordRecoveryCommand, void>
 {
     constructor(
-        // private usersMongoRepository: UsersMongoRepository,
         private postgresUserRepository: UsersPostgresRepository,
         private authService: AuthService,
     ) {}

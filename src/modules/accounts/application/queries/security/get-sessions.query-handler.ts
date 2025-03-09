@@ -1,9 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PostgresSessionsQueryRepository } from '../../../infrastructure';
-import {
-    MongoSessionViewDto,
-    PostgresSessionViewDto,
-} from '../../../api/dto/view-dto';
+import { PostgresSessionViewDto } from '../../../api/dto/view-dto';
 
 export class GetSessionsQuery {
     constructor(public userId: number) {}
@@ -14,13 +11,12 @@ export class GetSessionsQueryHandler
     implements IQueryHandler<GetSessionsQuery, PostgresSessionViewDto[]>
 {
     constructor(
-        // private sessionsQueryRepository: MongoSessionsQueryRepository,
         private postgresSessionsQueryRepository: PostgresSessionsQueryRepository,
     ) {}
 
     async execute({
         userId,
-    }: GetSessionsQuery): Promise<MongoSessionViewDto[]> {
+    }: GetSessionsQuery): Promise<PostgresSessionViewDto[]> {
         // return this.sessionsQueryRepository.getAllSessionsDevices(userId);
         return this.postgresSessionsQueryRepository.getAllSessionsDevices(
             userId,

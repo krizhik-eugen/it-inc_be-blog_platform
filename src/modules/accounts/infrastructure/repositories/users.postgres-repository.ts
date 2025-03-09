@@ -219,4 +219,62 @@ export class UsersPostgresRepository {
             [id],
         );
     }
+
+    async findUserByConfirmationCode(
+        confirmationCode: string,
+    ): Promise<(PostgresUser & PostgresEmailConfirmation) | null> {
+        const result: (PostgresUser & PostgresEmailConfirmation)[] =
+            await this.dataSource.query(
+                `
+            SELECT u.*, e.* FROM users u
+            JOIN email_confirmation e ON u.id = e.user_id
+            WHERE e.confirmation_code = $1
+            AND e.deleted_at IS NULL 
+            AND u.deleted_at IS NULL
+            `,
+                [confirmationCode],
+            );
+
+        return result[0] || null;
+    }
+
+    async findUserByRecoveryCodeOrNotFoundFail(
+        recoveryCode: string,
+    ): Promise<PostgresUser> {
+        const result: PostgresUser[] = await this.dataSource.query(
+            `
+                WITH recovery_code AS (
+                    SELECT * FROM password_recovery
+                    WHERE recovery_code = $1
+                    AND deleted_at IS NULL
+                )
+                SELECT * FROM users
+                WHERE id = (SELECT user_id FROM recovery_code)
+                AND deleted_at IS NULL
+            `,
+            [recoveryCode],
+        );
+
+        if (!result[0]) {
+            throw NotFoundDomainException.create(
+                'No user found for this recovery code',
+            );
+        }
+
+        return result[0];
+    }
+
+    async changeUserPasswordById(
+        userId: number,
+        newPasswordHash: string,
+    ): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE users
+                SET password_hash = $1
+                WHERE id = $2 AND deleted_at IS NULL
+            `,
+            [newPasswordHash, userId],
+        );
+    }
 }

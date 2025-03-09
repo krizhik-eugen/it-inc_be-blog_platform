@@ -12,7 +12,6 @@ export class RegistrationEmailResendingUseCase
     implements ICommandHandler<RegistrationEmailResendingCommand, void>
 {
     constructor(
-        // private usersMongoRepository: UsersMongoRepository,
         private usersPostgresRepository: UsersPostgresRepository,
         private authService: AuthService,
     ) {}

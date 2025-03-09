@@ -11,7 +11,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
-import { MongoMeViewDto, SuccessLoginViewDto } from '../dto/view-dto';
+import { PostgresUserViewDto, SuccessLoginViewDto } from '../dto/view-dto';
 import {
     CreateUserInputDto,
     LoginUserInputDto,
@@ -201,7 +201,7 @@ export const GetCurrentUserApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: MongoMeViewDto,
+            type: PostgresUserViewDto,
         }),
         ApiUnauthorizedResponse({
             description: 'Unauthorized',
