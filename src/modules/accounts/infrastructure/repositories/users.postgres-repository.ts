@@ -155,7 +155,7 @@ export class UsersPostgresRepository {
     }
 
     async makeUserDeletedById(id: number): Promise<void> {
-        const user = await this.findById(id);
+        const user = await this.findByIdOrNotFoundFail(id);
         if (user?.deleted_at) {
             throw NotFoundDomainException.create('Entity is already deleted');
         }
