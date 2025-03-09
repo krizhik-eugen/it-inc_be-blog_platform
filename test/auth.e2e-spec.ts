@@ -9,7 +9,7 @@ import { delay } from './helpers/delay';
 import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from '../src/modules/accounts/constants';
 import { AccountsConfig } from '../src/modules/accounts/config/accounts.config';
 import { CreateUserDto } from '../src/modules/accounts/dto/create';
-import { MeViewDto } from '../src/modules/accounts/api/dto/view-dto';
+import { MongoMeViewDto } from '../src/modules/accounts/api/dto/view-dto';
 import { EmailService } from '../src/modules/notifications/email.service';
 import { AuthTestManager } from './helpers/auth-test-manager';
 
@@ -55,7 +55,7 @@ describe('auth', () => {
             login: expect.anything() as string,
             userId: expect.anything() as string,
             email: expect.anything() as string,
-        } as MeViewDto);
+        } as MongoMeViewDto);
     });
 
     it('GET /auth/me, shouldn\'t return user info with "me" request if accessTokens expired', async () => {

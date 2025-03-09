@@ -1,9 +1,15 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { MongoUser, MongoUserDocument, MongoUserModelType } from '../../domain/user.entity';
+import {
+    MongoUser,
+    MongoUserDocument,
+    MongoUserModelType,
+} from '../../domain/user.entity';
 
 export class UsersMongoRepository {
-    constructor(@InjectModel(MongoUser.name) private MongoUserModel: MongoUserModelType) {}
+    constructor(
+        @InjectModel(MongoUser.name) private MongoUserModel: MongoUserModelType,
+    ) {}
 
     async save(user: MongoUserDocument) {
         return user.save();
@@ -34,7 +40,9 @@ export class UsersMongoRepository {
         return user;
     }
 
-    async findByIdNonDeletedOrNotFoundFail(id: string): Promise<MongoUserDocument> {
+    async findByIdNonDeletedOrNotFoundFail(
+        id: string,
+    ): Promise<MongoUserDocument> {
         const user = await this.MongoUserModel.findOne({
             _id: id,
             deletedAt: null,

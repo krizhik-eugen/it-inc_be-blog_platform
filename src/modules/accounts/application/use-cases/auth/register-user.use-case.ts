@@ -20,12 +20,10 @@ export class RegisterUserUseCase
     ) {}
 
     async execute({ dto }: RegisterUserCommand): Promise<void> {
-        const foundUserByLogin = await this.usersMongoRepository.findByLoginOrEmail(
-            dto.login,
-        );
-        const foundUserByEmail = await this.usersMongoRepository.findByLoginOrEmail(
-            dto.email,
-        );
+        const foundUserByLogin =
+            await this.usersMongoRepository.findByLoginOrEmail(dto.login);
+        const foundUserByEmail =
+            await this.usersMongoRepository.findByLoginOrEmail(dto.email);
 
         if (foundUserByLogin || foundUserByEmail) {
             const fieldName = foundUserByLogin ? 'login' : 'email';

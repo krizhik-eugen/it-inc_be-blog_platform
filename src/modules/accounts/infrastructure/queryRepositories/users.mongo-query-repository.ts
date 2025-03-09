@@ -2,9 +2,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import {
-    MeViewDto,
-    PaginatedUsersViewDto,
-    UserViewDto,
+    MongoMeViewDto,
+    PaginatedMongoUsersViewDto,
+    MongoUserViewDto,
 } from '../../api/dto/view-dto';
 import { GetUsersQueryParams } from '../../api/dto/query-params-dto';
 import { MongoUser, MongoUserModelType } from '../../domain/user.entity';
@@ -15,7 +15,9 @@ export class UsersMongoQueryRepository {
         private MongoUserModel: MongoUserModelType,
     ) {}
 
-    async getCurrentUserByIdOrNotFoundFail(id: string): Promise<MeViewDto> {
+    async getCurrentUserByIdOrNotFoundFail(
+        id: string,
+    ): Promise<MongoMeViewDto> {
         const user = await this.MongoUserModel.findOne({
             _id: id,
             deletedAt: null,
@@ -25,10 +27,10 @@ export class UsersMongoQueryRepository {
             throw NotFoundDomainException.create('MongoUser is not found');
         }
 
-        return MeViewDto.mapToView(user);
+        return MongoMeViewDto.mapToView(user);
     }
 
-    async getByIdOrNotFoundFail(id: string): Promise<UserViewDto> {
+    async getByIdOrNotFoundFail(id: string): Promise<MongoUserViewDto> {
         const user = await this.MongoUserModel.findOne({
             _id: id,
             deletedAt: null,
@@ -38,12 +40,12 @@ export class UsersMongoQueryRepository {
             throw NotFoundDomainException.create('MongoUser is not found');
         }
 
-        return UserViewDto.mapToView(user);
+        return MongoUserViewDto.mapToView(user);
     }
 
     async getAllUsers(
         query: GetUsersQueryParams,
-    ): Promise<PaginatedUsersViewDto> {
+    ): Promise<PaginatedMongoUsersViewDto> {
         const findQuery: FilterQuery<MongoUser> = { deletedAt: null };
         const searchConditions: FilterQuery<MongoUser>[] = [];
 
@@ -70,9 +72,11 @@ export class UsersMongoQueryRepository {
 
         const usersCount = await this.MongoUserModel.countDocuments(findQuery);
 
-        const mappedUsers = result.map((user) => UserViewDto.mapToView(user));
+        const mappedUsers = result.map((user) =>
+            MongoUserViewDto.mapToView(user),
+        );
 
-        return PaginatedUsersViewDto.mapToView({
+        return PaginatedMongoUsersViewDto.mapToView({
             items: mappedUsers,
             page: query.pageNumber,
             size: query.pageSize,

@@ -2,9 +2,9 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import {
-    MeViewDto,
+    MongoMeViewDto,
     SuccessLoginViewDto,
-    UserViewDto,
+    MongoUserViewDto,
 } from '../../src/modules/accounts/api/dto/view-dto';
 import { prefix } from './init-settings';
 
@@ -29,19 +29,19 @@ export class AuthTestManager {
     async me(
         accessToken: string,
         statusCode: number = HttpStatus.OK,
-    ): Promise<MeViewDto> {
+    ): Promise<MongoMeViewDto> {
         const response = await request(this.app.getHttpServer() as App)
             .get(`${prefix}/auth/me`)
             .auth(accessToken, { type: 'bearer' })
             .expect(statusCode);
 
-        return response.body as MeViewDto;
+        return response.body as MongoMeViewDto;
     }
 
     async loginSeveralUsers(
-        users: UserViewDto[],
+        users: MongoUserViewDto[],
     ): Promise<SuccessLoginViewDto[]> {
-        const loginPromises = users.map((user: UserViewDto) =>
+        const loginPromises = users.map((user: MongoUserViewDto) =>
             this.login(user.login, '123456789'),
         );
 

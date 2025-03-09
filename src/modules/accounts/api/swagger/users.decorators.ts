@@ -12,7 +12,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
-import { PaginatedUsersViewDto, UserViewDto } from '../dto/view-dto';
+import { PaginatedMongoUsersViewDto, MongoUserViewDto } from '../dto/view-dto';
 import { CreateUserInputDto, UpdateUserInputDto } from '../dto/input-dto';
 
 export const GetUsersApi = () => {
@@ -23,7 +23,7 @@ export const GetUsersApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedUsersViewDto,
+            type: PaginatedMongoUsersViewDto,
         }),
         ApiUnauthorizedResponse({
             description: 'Unauthorized',
@@ -39,7 +39,7 @@ export const CreateUserApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns the newly created user',
-            type: UserViewDto,
+            type: MongoUserViewDto,
         }),
         ApiBadRequestResponse({
             type: HttpErrorViewDto,

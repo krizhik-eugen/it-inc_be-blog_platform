@@ -9,7 +9,7 @@ import { ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from '../src/modules/accounts/cons
 import { AccountsConfig } from '../src/modules/accounts/config/accounts.config';
 import { CreateUserDto } from '../src/modules/accounts/dto/create';
 import { PaginatedViewDto } from '../src/core/dto';
-import { UserViewDto } from '../src/modules/accounts/api/dto/view-dto';
+import { MongoUserViewDto } from '../src/modules/accounts/api/dto/view-dto';
 
 describe('users', () => {
     let app: INestApplication;
@@ -65,7 +65,9 @@ describe('users', () => {
         )
             .get(`${prefix}/users?pageNumber=2&sortDirection=asc`)
             .auth('admin', 'qwerty')
-            .expect(HttpStatus.OK)) as { body: PaginatedViewDto<UserViewDto> };
+            .expect(HttpStatus.OK)) as {
+            body: PaginatedViewDto<MongoUserViewDto>;
+        };
 
         expect(responseBody.totalCount).toBe(12);
         expect(responseBody.items).toHaveLength(2);

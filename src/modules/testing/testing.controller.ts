@@ -7,6 +7,7 @@ import { Post, PostModelType } from '../platform/domain/post.entity';
 import { Like, LikeModelType } from '../platform/domain/like.entity';
 import { Comment, CommentModelType } from '../platform/domain/comment.entity';
 import { Session, SessionModelType } from '../accounts/domain/session.entity';
+import { DataSource } from 'typeorm';
 
 @Controller('testing')
 export class TestingController {
@@ -23,6 +24,7 @@ export class TestingController {
         private SessionModel: SessionModelType,
         @InjectModel(Like.name)
         private LikeModel: LikeModelType,
+        private dataSource: DataSource,
     ) {}
 
     @Delete('all-data')
@@ -42,5 +44,8 @@ export class TestingController {
         await this.CommentModel.deleteMany({});
         await this.SessionModel.deleteMany({});
         await this.LikeModel.deleteMany({});
+        await this.dataSource.query(
+            `TRUNCATE users, email_confirmation, password_recovery RESTART IDENTITY CASCADE;`,
+        );
     }
 }

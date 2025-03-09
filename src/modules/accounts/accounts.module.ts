@@ -36,6 +36,7 @@ import {
     SessionsRepository,
     SessionsQueryRepository,
     UsersPostgresQueryRepository,
+    UsersPostgresRepository,
 } from './infrastructure';
 import { MongoUser, MongoUserSchema } from './domain/user.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -77,7 +78,8 @@ const repositories = [
     UsersMongoRepository,
     SessionsRepository,
     SessionsQueryRepository,
-    UsersPostgresQueryRepository
+    UsersPostgresQueryRepository,
+    UsersPostgresRepository,
 ] as Provider[];
 const strategies = [
     LocalStrategy,
