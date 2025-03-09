@@ -60,7 +60,6 @@ export class UsersPostgresRepository {
                 SELECT u.*, e.* FROM public.users u
                 JOIN public.email_confirmation e ON u.id = e.user_id
                 WHERE u.id = $1 AND u.deleted_at IS NULL
-                AND e.deleted_at IS NULL
                 `,
                 [userId],
             );
@@ -183,7 +182,7 @@ export class UsersPostgresRepository {
             `
                 UPDATE public.email_confirmation
                 SET confirmation_code = $1, expiration_date = $2, updated_at = NOW()
-                WHERE user_id = $3 and deleted_at IS NULL
+                WHERE user_id = $3
                 `,
             [code, expirationDate, user_id],
         );
@@ -198,7 +197,7 @@ export class UsersPostgresRepository {
             `
                 UPDATE public.password_recovery
                 SET recovery_code = $1, expiration_date = $2, updated_at = NOW()
-                WHERE user_id = $3 and deleted_at IS NULL
+                WHERE user_id = $3
                 `,
             [code, expirationDate, user_id],
         );
@@ -228,9 +227,7 @@ export class UsersPostgresRepository {
                 `
             SELECT u.*, e.* FROM users u
             JOIN email_confirmation e ON u.id = e.user_id
-            WHERE e.confirmation_code = $1
-            AND e.deleted_at IS NULL 
-            AND u.deleted_at IS NULL
+            WHERE e.confirmation_code = $1 AND u.deleted_at IS NULL
             `,
                 [confirmationCode],
             );
@@ -246,7 +243,6 @@ export class UsersPostgresRepository {
                 WITH recovery_code AS (
                     SELECT * FROM password_recovery
                     WHERE recovery_code = $1
-                    AND deleted_at IS NULL
                 )
                 SELECT * FROM users
                 WHERE id = (SELECT user_id FROM recovery_code)
