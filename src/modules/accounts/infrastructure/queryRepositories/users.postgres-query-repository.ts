@@ -96,9 +96,10 @@ export class UsersPostgresQueryRepository {
         // Execute the query
         const result: Array<PostgresUser & { total_count: number }> =
             await this.dataSource.query(sqlQuery, queryParams);
+        console.log('result', result);
 
         // Map the results
-        const totalCount = result[0].total_count ?? 0;
+        const totalCount = result[0]?.total_count ?? 0;
         const mappedUsers = result.map((user) =>
             PostgresUserViewDto.mapToView(user),
         );
