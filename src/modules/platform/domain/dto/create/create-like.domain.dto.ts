@@ -1,7 +1,7 @@
 import { LikeStatus } from '../../like.entity';
 
 export class CreateLikeDomainDto {
-    userId: string;
+    userId: number;
     parentId: string;
     status: LikeStatus;
 }

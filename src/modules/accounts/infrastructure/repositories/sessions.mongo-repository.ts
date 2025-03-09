@@ -1,23 +1,23 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import {
-    Session,
-    SessionDocument,
+    MongoSession,
+    MongoSessionDocument,
     SessionModelType,
 } from '../../domain/session.entity';
 
-export class SessionsRepository {
+export class MongoSessionsRepository {
     constructor(
-        @InjectModel(Session.name) private SessionModel: SessionModelType,
+        @InjectModel(MongoSession.name) private SessionModel: SessionModelType,
     ) {}
 
-    async save(session: SessionDocument): Promise<SessionDocument> {
+    async save(session: MongoSessionDocument): Promise<MongoSessionDocument> {
         return session.save();
     }
 
     async findByDeviceIdNonDeleted(
         deviceId: string,
-    ): Promise<SessionDocument | null> {
+    ): Promise<MongoSessionDocument | null> {
         const session = await this.SessionModel.findOne({
             deviceId,
             deletedAt: null,
@@ -28,14 +28,14 @@ export class SessionsRepository {
 
     async findByDeviceIdNonDeletedOrNotFoundFail(
         deviceId: string,
-    ): Promise<SessionDocument> {
+    ): Promise<MongoSessionDocument> {
         const session = await this.SessionModel.findOne({
             deviceId,
             deletedAt: null,
         });
 
         if (!session) {
-            throw NotFoundDomainException.create('Session is not found');
+            throw NotFoundDomainException.create('MongoSession is not found');
         }
 
         return session;

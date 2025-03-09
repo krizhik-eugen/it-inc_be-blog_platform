@@ -5,7 +5,7 @@ import {
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
 } from '../../../constants';
 import { TypedJwtPayload, TypedJwtService } from '../../typedJwtService';
-import { SessionsRepository } from '../../../infrastructure/repositories/sessions.repository';
+import { MongoSessionsRepository } from '../../../infrastructure/repositories/sessions.mongo-repository';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/domain-exceptions';
 
 export class UpdateRefreshTokenUseCaseResponse {
@@ -32,21 +32,23 @@ export class UpdateRefreshTokenUseCase
         @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
         private refreshTokenContext: TypedJwtService,
 
-        private sessionRepository: SessionsRepository,
+        private mongoSessionRepository: MongoSessionsRepository,
     ) {}
 
     async execute({
         dto,
     }: UpdateRefreshTokenCommand): Promise<UpdateRefreshTokenUseCaseResponse> {
         const foundSession =
-            await this.sessionRepository.findByDeviceIdNonDeleted(dto.deviceId);
+            await this.mongoSessionRepository.findByDeviceIdNonDeleted(
+                dto.deviceId,
+            );
 
         if (!foundSession) {
-            throw UnauthorizedDomainException.create('Session not found');
+            throw UnauthorizedDomainException.create('MongoSession not found');
         }
 
         if (foundSession.iat !== dto.iat) {
-            throw UnauthorizedDomainException.create('Session expired');
+            throw UnauthorizedDomainException.create('MongoSession expired');
         }
 
         const updatedAccessToken = this.accessTokenContext.sign({
@@ -67,7 +69,7 @@ export class UpdateRefreshTokenUseCase
             exp: decodedIssuedToken.exp!,
         });
 
-        await this.sessionRepository.save(foundSession);
+        await this.mongoSessionRepository.save(foundSession);
 
         return {
             accessToken: updatedAccessToken,

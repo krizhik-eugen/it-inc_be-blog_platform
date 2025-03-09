@@ -33,16 +33,18 @@ import { CryptoService } from './application/crypto.service';
 import {
     UsersMongoQueryRepository,
     UsersMongoRepository,
-    SessionsRepository,
-    SessionsQueryRepository,
+    MongoSessionsRepository,
+    MongoSessionsQueryRepository,
     UsersPostgresQueryRepository,
     UsersPostgresRepository,
+    PostgresSessionsRepository,
+    PostgresSessionsQueryRepository,
 } from './infrastructure';
 import { MongoUser, MongoUserSchema } from './domain/user.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthController } from './api/auth.controller';
 import { UsersController } from './api/users.controller';
-import { Session, SessionSchema } from './domain/session.entity';
+import { MongoSession, MongoSessionSchema } from './domain/session.entity';
 import { GetSessionsQueryHandler } from './application/queries/security';
 import { TypedJwtService } from './application/typedJwtService';
 import { SessionsController } from './api/security.controller';
@@ -76,10 +78,12 @@ const queries = [
 const repositories = [
     UsersMongoQueryRepository,
     UsersMongoRepository,
-    SessionsRepository,
-    SessionsQueryRepository,
+    MongoSessionsRepository,
+    MongoSessionsQueryRepository,
     UsersPostgresQueryRepository,
     UsersPostgresRepository,
+    PostgresSessionsRepository,
+    PostgresSessionsQueryRepository,
 ] as Provider[];
 const strategies = [
     LocalStrategy,
@@ -91,7 +95,7 @@ const strategies = [
     imports: [
         MongooseModule.forFeature([
             { name: MongoUser.name, schema: MongoUserSchema },
-            { name: Session.name, schema: SessionSchema },
+            { name: MongoSession.name, schema: MongoSessionSchema },
         ]),
         JwtModule,
         NotificationsModule,
@@ -130,6 +134,11 @@ const strategies = [
         ...queries,
         CryptoService,
     ],
-    exports: [UsersMongoRepository, MongooseModule, AccountsConfig],
+    exports: [
+        UsersMongoRepository,
+        MongooseModule,
+        AccountsConfig,
+        UsersPostgresRepository,
+    ],
 })
 export class AccountsModule {}

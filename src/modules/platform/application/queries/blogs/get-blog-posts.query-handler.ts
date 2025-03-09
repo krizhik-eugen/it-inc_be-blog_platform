@@ -7,7 +7,7 @@ export class GetBlogPostsQuery {
     constructor(
         public query: GetPostsQueryParams,
         public blogId: string,
-        public userId: string | null,
+        public userId: number | null,
     ) {}
 }
 

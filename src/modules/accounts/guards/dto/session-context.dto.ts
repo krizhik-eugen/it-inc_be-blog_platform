@@ -1,5 +1,5 @@
 export class SessionContextDto {
-    userId: string;
+    userId: number;
     deviceId: string;
     iat: number;
 }

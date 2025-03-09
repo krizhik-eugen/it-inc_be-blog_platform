@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { DecodeOptions, JwtPayload } from 'jsonwebtoken';
 
 export interface TypedJwtPayload extends JwtPayload {
-    userId: string;
+    userId: number;
     deviceId: string;
 }
 

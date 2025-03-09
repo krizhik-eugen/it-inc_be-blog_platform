@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestDomainException } from '../../../../../core/exceptions';
-import { UsersMongoRepository } from '../../../infrastructure';
+import { UsersPostgresRepository } from '../../../infrastructure';
 import { AuthService } from '../../auth.service';
 
 export class RegistrationEmailResendingCommand {
@@ -12,12 +12,15 @@ export class RegistrationEmailResendingUseCase
     implements ICommandHandler<RegistrationEmailResendingCommand, void>
 {
     constructor(
-        private usersMongoRepository: UsersMongoRepository,
+        // private usersMongoRepository: UsersMongoRepository,
+        private usersPostgresRepository: UsersPostgresRepository,
         private authService: AuthService,
     ) {}
     async execute({ dto }: RegistrationEmailResendingCommand): Promise<void> {
         const foundUser =
-            await this.usersMongoRepository.findByLoginOrEmailNonDeleted(dto.email);
+            await this.usersPostgresRepository.findByLoginOrEmailNonDeleted(
+                dto.email,
+            );
 
         if (!foundUser) {
             throw BadRequestDomainException.create(

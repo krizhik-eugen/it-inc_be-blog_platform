@@ -39,10 +39,12 @@ export class PostgresUser {
 
 // CREATE TABLE email_confirmation (
 //     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-//     user_id INTEGER NOT NULL,
+//     user_id PRIMARY KEY INTEGER NOT NULL,
 //     is_confirmed BOOLEAN NOT NULL DEFAULT FALSE,
 //     confirmation_code VARCHAR(255),
 //     expiration_date TIMESTAMP WITH TIME ZONE NULL,
+
+// -- Foreign key to users table
 //     CONSTRAINT fk_email_confirmation_user FOREIGN KEY (user_id) REFERENCES public.users (id) ON UPDATE NO ACTION ON DELETE CASCADE
 // );
 
@@ -51,8 +53,10 @@ export class PostgresUser {
 // CREATE TABLE password_recovery (
 
 // id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-// user_id INTEGER NOT NULL,
+// user_id PRIMARY KEY INTEGER NOT NULL,
 // recovery_code VARCHAR(255),
 // expiration_date TIMESTAMP WITH TIME ZONE NULL,
+
+// -- Foreign key to users table
 // CONSTRAINT fk_password_recovery_user FOREIGN KEY (user_id) REFERENCES public.users (id) ON UPDATE NO ACTION ON DELETE CASCADE
 // );

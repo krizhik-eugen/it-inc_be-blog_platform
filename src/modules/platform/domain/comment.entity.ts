@@ -68,7 +68,7 @@ export class Comment extends ParentLikesEntity {
         },
     })
     commentatorInfo: {
-        userId: string;
+        userId: number;
         userLogin: string;
     };
 

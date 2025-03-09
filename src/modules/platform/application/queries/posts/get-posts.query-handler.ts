@@ -6,7 +6,7 @@ import { PostsQueryRepository } from '../../../infrastructure';
 export class GetPostsQuery {
     constructor(
         public query: GetPostsQueryParams,
-        public userId: string | null,
+        public userId: number | null,
     ) {}
 }
 

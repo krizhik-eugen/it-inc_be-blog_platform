@@ -5,7 +5,7 @@ import { Strategy } from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
 import { AccountsConfig } from '../../config';
 import { TypedJwtPayload } from '../../application/typedJwtService';
-import { SessionsRepository } from '../../infrastructure';
+import { MongoSessionsRepository } from '../../infrastructure';
 import { UnauthorizedDomainException } from '../../../../core/exceptions';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
     constructor(
         accountsConfig: AccountsConfig,
-        private sessionRepository: SessionsRepository,
+        private mongoSessionRepository: MongoSessionsRepository,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
@@ -29,13 +29,13 @@ export class RefreshTokenStrategy extends PassportStrategy(
     async validate(payload: TypedJwtPayload) {
         if (payload.exp && payload.exp < Date.now() / 1000) {
             const foundSession =
-                await this.sessionRepository.findByDeviceIdNonDeleted(
+                await this.mongoSessionRepository.findByDeviceIdNonDeleted(
                     payload.deviceId,
                 );
 
             if (foundSession) {
                 foundSession.makeDeleted();
-                await this.sessionRepository.save(foundSession);
+                await this.mongoSessionRepository.save(foundSession);
             }
 
             throw UnauthorizedDomainException.create('Refresh token expired');

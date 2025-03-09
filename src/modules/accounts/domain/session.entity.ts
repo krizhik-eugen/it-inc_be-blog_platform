@@ -5,11 +5,11 @@ import { CreateSessionDomainDto } from './dto/create';
 import { UpdateSessionDomainDto } from './dto/update';
 
 /**
- * Session Entity Schema
- * This class represents the schema and behavior of a Session entity.
+ * MongoSession Entity Schema
+ * This class represents the schema and behavior of a MongoSession entity.
  */
 @Schema({ timestamps: true })
-export class Session {
+export class MongoSession {
     /**
      * Id of the MongoUser
      * @type {string}
@@ -94,11 +94,11 @@ export class Session {
     deletedAt: string | null;
 
     /**
-     * Factory method to create a Session instance
+     * Factory method to create a MongoSession instance
      * @param {CreateSessionDto} dto - The data transfer object for user creation
-     * @returns {SessionDocument} The created user document
+     * @returns {MongoSessionDocument} The created user document
      */
-    static createInstance(dto: CreateSessionDomainDto): SessionDocument {
+    static createInstance(dto: CreateSessionDomainDto): MongoSessionDocument {
         const session = new this();
 
         session.userId = dto.userId;
@@ -108,7 +108,7 @@ export class Session {
         session.iat = dto.iat;
         session.exp = dto.exp;
 
-        return session as SessionDocument;
+        return session as MongoSessionDocument;
     }
 
     /**
@@ -134,10 +134,11 @@ export class Session {
     }
 }
 
-export const SessionSchema = SchemaFactory.createForClass(Session);
+export const MongoSessionSchema = SchemaFactory.createForClass(MongoSession);
 
-SessionSchema.loadClass(Session);
+MongoSessionSchema.loadClass(MongoSession);
 
-export type SessionDocument = HydratedDocument<Session>;
+export type MongoSessionDocument = HydratedDocument<MongoSession>;
 
-export type SessionModelType = Model<SessionDocument> & typeof Session;
+export type SessionModelType = Model<MongoSessionDocument> &
+    typeof MongoSession;

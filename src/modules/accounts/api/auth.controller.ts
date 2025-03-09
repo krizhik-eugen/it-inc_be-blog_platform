@@ -13,7 +13,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response, Request } from 'express';
-import { MongoMeViewDto } from './dto/view-dto';
+import { MongoMeViewDto, PostgresUserViewDto } from './dto/view-dto';
 import {
     ExtractSessionDataFromRequest,
     ExtractUserFromRequest,
@@ -195,8 +195,8 @@ export class AuthController {
     @GetCurrentUserApi()
     async getCurrentUser(
         @ExtractUserFromRequest() user: UserContextDto,
-    ): Promise<MongoMeViewDto> {
-        return this.queryBus.execute<GetCurrentUserQuery, MongoMeViewDto>(
+    ): Promise<PostgresUserViewDto> {
+        return this.queryBus.execute<GetCurrentUserQuery, PostgresUserViewDto>(
             new GetCurrentUserQuery(user.id),
         );
     }

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SessionsRepository } from '../../../infrastructure/repositories/sessions.repository';
+import { MongoSessionsRepository } from '../../../infrastructure/repositories/sessions.mongo-repository';
 import { SessionContextDto } from '../../../guards/dto/session-context.dto';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/domain-exceptions';
 
@@ -9,26 +9,26 @@ export class LogoutUserCommand {
 
 @CommandHandler(LogoutUserCommand)
 export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
-    constructor(private sessionsRepository: SessionsRepository) {}
+    constructor(private MongoSessionsRepository: MongoSessionsRepository) {}
 
     async execute({ session }: LogoutUserCommand): Promise<void> {
         const foundSession =
-            await this.sessionsRepository.findByDeviceIdNonDeleted(
+            await this.MongoSessionsRepository.findByDeviceIdNonDeleted(
                 session.deviceId,
             );
 
         if (!foundSession) {
             throw UnauthorizedDomainException.create(
-                'Session not found for this device',
+                'MongoSession not found for this device',
             );
         }
 
         if (foundSession.iat !== session.iat) {
-            throw UnauthorizedDomainException.create('Session expired');
+            throw UnauthorizedDomainException.create('MongoSession expired');
         }
 
         foundSession.makeDeleted();
 
-        await this.sessionsRepository.save(foundSession);
+        await this.MongoSessionsRepository.save(foundSession);
     }
 }

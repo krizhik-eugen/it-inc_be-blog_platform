@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SessionsRepository } from '../../../infrastructure';
+import { PostgresSessionsRepository } from '../../../infrastructure';
 import { SessionContextDto } from '../../../guards/dto/session-context.dto';
 import { ForbiddenDomainException } from '../../../../../core/exceptions/domain-exceptions';
 
@@ -13,22 +13,33 @@ export class DeleteSessionCommand {
 export class DeleteSessionUseCase
     implements ICommandHandler<DeleteSessionCommand, void>
 {
-    constructor(private sessionsRepository: SessionsRepository) {}
+    constructor(
+        // private mongoSessionsRepository: MongoSessionsRepository,
+        private postgresSessionsRepository: PostgresSessionsRepository,
+    ) {}
 
     async execute({ deviceId, session }: DeleteSessionCommand): Promise<void> {
+        // const foundSession =
+        //     await this.mongoSessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
+        //         deviceId,
+        //     );
+
         const foundSession =
-            await this.sessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
+            await this.postgresSessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
                 deviceId,
             );
 
-        if (foundSession.userId !== session.userId) {
+        if (foundSession.user_id !== session.userId) {
             throw ForbiddenDomainException.create(
                 'You are not a owner of this session',
             );
         }
 
-        foundSession.makeDeleted();
+        // foundSession.makeDeleted();
+        // await this.mongoSessionsRepository.save(foundSession);
 
-        await this.sessionsRepository.save(foundSession);
+        await this.postgresSessionsRepository.makeSessionDeletedById(
+            foundSession.id,
+        );
     }
 }

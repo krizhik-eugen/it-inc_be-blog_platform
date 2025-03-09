@@ -6,7 +6,7 @@ export class UpdateCommentCommand {
     constructor(
         public id: string,
         public dto: UpdateCommentDto,
-        public userId: string,
+        public userId: number,
     ) {}
 }
 

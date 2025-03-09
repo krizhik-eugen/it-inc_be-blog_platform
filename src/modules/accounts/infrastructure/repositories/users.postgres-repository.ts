@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { CreateUserDomainDto } from '../../domain/dto/create';
-import { PostgresUser } from '../../domain/user.postgres-entity';
+import {
+    PostgresEmailConfirmation,
+    PostgresUser,
+} from '../../domain/user.postgres-entity';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 
 @Injectable()
@@ -46,6 +49,23 @@ export class UsersPostgresRepository {
             throw NotFoundDomainException.create('PostgresUser is not found');
         }
         return user;
+    }
+
+    async findUserWithConfirmationStatus(
+        userId: number,
+    ): Promise<(PostgresUser & PostgresEmailConfirmation) | null> {
+        const result: Array<PostgresEmailConfirmation & PostgresUser> =
+            await this.dataSource.query(
+                `
+                SELECT u.*, e.* FROM public.users u
+                JOIN public.email_confirmation e ON u.id = e.user_id
+                WHERE u.id = $1 AND u.deleted_at IS NULL
+                AND e.deleted_at IS NULL
+                `,
+                [userId],
+            );
+
+        return result[0] || null;
     }
 
     async findByLoginOrEmail(
@@ -151,6 +171,36 @@ export class UsersPostgresRepository {
                 WHERE user_id = $2
                 `,
             [isConfirmed, id],
+        );
+    }
+
+    async setConfirmationCode(
+        user_id: number,
+        code: string,
+        expirationDate: Date,
+    ): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE public.email_confirmation
+                SET confirmation_code = $1, expiration_date = $2, updated_at = NOW()
+                WHERE user_id = $3 and deleted_at IS NULL
+                `,
+            [code, expirationDate, user_id],
+        );
+    }
+
+    async setPasswordRecoveryCode(
+        user_id: number,
+        code: string,
+        expirationDate: Date,
+    ): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE public.password_recovery
+                SET recovery_code = $1, expiration_date = $2, updated_at = NOW()
+                WHERE user_id = $3 and deleted_at IS NULL
+                `,
+            [code, expirationDate, user_id],
         );
     }
 

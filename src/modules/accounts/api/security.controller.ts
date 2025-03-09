@@ -11,7 +11,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { ExtractSessionDataFromRequest } from '../guards/decorators';
-import { SessionViewDto } from './dto/view-dto';
+import { PostgresSessionViewDto } from './dto/view-dto';
 import { GetSessionsQuery } from '../application/queries/security';
 import { SessionContextDto } from '../guards/dto';
 import { RefreshTokenAuthGuard } from '../guards/bearer';
@@ -37,10 +37,11 @@ export class SessionsController {
     @GetSessionsApi()
     async getAllSessionDevices(
         @ExtractSessionDataFromRequest() session: SessionContextDto,
-    ): Promise<SessionViewDto[]> {
-        return this.queryBus.execute<GetSessionsQuery, SessionViewDto[]>(
-            new GetSessionsQuery(session.userId),
-        );
+    ): Promise<PostgresSessionViewDto[]> {
+        return this.queryBus.execute<
+            GetSessionsQuery,
+            PostgresSessionViewDto[]
+        >(new GetSessionsQuery(session.userId));
     }
 
     @Delete()

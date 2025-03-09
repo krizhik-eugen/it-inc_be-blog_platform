@@ -9,7 +9,7 @@ export abstract class UpdateLikeStatusBaseCommand {
     constructor(
         public parentId: string,
         public dto: UpdateLikeDto,
-        public userId: string,
+        public userId: number,
     ) {}
 }
 

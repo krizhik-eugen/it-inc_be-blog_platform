@@ -9,7 +9,7 @@ import {
     ApiParam,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { SessionViewDto } from '../dto/view-dto';
+import { MongoSessionViewDto } from '../dto/view-dto';
 
 export const GetSessionsApi = () => {
     return applyDecorators(
@@ -20,7 +20,7 @@ export const GetSessionsApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: [SessionViewDto],
+            type: [MongoSessionViewDto],
         }),
         ApiUnauthorizedResponse({
             description: 'Unauthorized',

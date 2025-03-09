@@ -1,14 +1,15 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Like, LikeModelType, LikeStatus } from '../../domain/like.entity';
 import { LikeViewDto } from '../../api/dto/view-dto';
-import { MongoUserDocument } from '../../../accounts/domain/user.entity';
-import { UsersMongoRepository } from '../../../accounts/infrastructure';
+import { UsersPostgresRepository } from '../../../accounts/infrastructure';
+import { PostgresUser } from '../../../accounts/domain/user.postgres-entity';
 
 export class LikesQueryRepository {
     constructor(
         @InjectModel(Like.name)
         private LikeModel: LikeModelType,
-        private usersMongoRepository: UsersMongoRepository,
+        // private usersMongoRepository: UsersMongoRepository,
+        private usersPostgresRepository: UsersPostgresRepository,
     ) {}
 
     async getLikeStatusByUserIdAndParentId({
@@ -16,7 +17,7 @@ export class LikesQueryRepository {
         userId,
     }: {
         parentId: string;
-        userId: string;
+        userId: number;
     }): Promise<LikeStatus> {
         const like = await this.LikeModel.findOne({
             userId,
@@ -32,7 +33,7 @@ export class LikesQueryRepository {
         userId,
     }: {
         parentIdsArray: string[];
-        userId: string;
+        userId: number;
     }) {
         const foundLikes = await this.LikeModel.find({
             parentId: { $in: parentIdsArray },
@@ -51,16 +52,14 @@ export class LikesQueryRepository {
             .exec();
 
         const userIds = foundLikes.map((like) => like.userId);
-        const users = await this.usersMongoRepository.findByIds(userIds);
+        const users = await this.usersPostgresRepository.findByIds(userIds);
 
         const mappedFoundLikes: LikeViewDto[] = [];
         for (const like of foundLikes) {
-            const user = users.find(
-                (u: MongoUserDocument) => u._id.toString() === like.userId,
-            );
+            const user = users.find((u: PostgresUser) => u.id === like.userId);
             mappedFoundLikes.push({
                 addedAt: like.createdAt,
-                userId: like.userId,
+                userId: like.userId.toString(),
                 login: user?.login || '',
             });
         }

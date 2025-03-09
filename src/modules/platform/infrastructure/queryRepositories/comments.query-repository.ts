@@ -26,7 +26,7 @@ export class CommentsQueryRepository {
         userId,
     }: {
         commentId: string;
-        userId: string | null;
+        userId: number | null;
     }): Promise<CommentViewDto> {
         const comment = await this.CommentModel.findOne({
             _id: commentId,
@@ -56,7 +56,7 @@ export class CommentsQueryRepository {
     }: {
         query: GetCommentsQueryParams;
         postId: string;
-        userId: string | null;
+        userId: number | null;
     }): Promise<PaginatedCommentsViewDto> {
         const post = await this.PostModel.findOne({
             _id: postId,

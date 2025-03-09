@@ -29,7 +29,7 @@ export class LikesRepository {
         userId,
         parentId,
     }: {
-        userId: string;
+        userId: number;
         parentId: string;
     }): Promise<LikeDocument | null> {
         return this.LikeModel.findOne({ userId, parentId, deletedAt: null });

@@ -7,7 +7,7 @@ export class GetCommentsQuery {
     constructor(
         public query: GetCommentsQueryParams,
         public postId: string,
-        public userId: string | null,
+        public userId: number | null,
     ) {}
 }
 

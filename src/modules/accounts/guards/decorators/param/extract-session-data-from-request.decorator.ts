@@ -9,7 +9,7 @@ export const ExtractSessionDataFromRequest = createParamDecorator(
         const session = request.user;
 
         if (!session) {
-            throw new Error('Session data is missing in the request!');
+            throw new Error('MongoSession data is missing in the request!');
         }
 
         return session as SessionContextDto;

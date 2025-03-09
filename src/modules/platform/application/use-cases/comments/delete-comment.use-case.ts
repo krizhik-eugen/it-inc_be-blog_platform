@@ -5,7 +5,7 @@ import { ForbiddenDomainException } from '../../../../../core/exceptions';
 export class DeleteCommentCommand {
     constructor(
         public commentId: string,
-        public userId: string,
+        public userId: number,
     ) {}
 }
 

@@ -22,12 +22,9 @@ import {
 } from './swagger';
 import { CreateUserInputDto, UpdateUserInputDto } from './dto/input-dto';
 import { GetUsersQueryParams } from './dto/query-params-dto';
-import {
-    PaginatedMongoUsersViewDto,
-    MongoUserViewDto,
-    PostgresUserViewDto,
-} from './dto/view-dto';
+import { MongoUserViewDto, PostgresUserViewDto } from './dto/view-dto';
 import { GetUserByIdQuery, GetUsersQuery } from '../application/queries/users';
+import { PaginatedPostgresUsersViewDto } from './dto/view-dto/users.view-dto';
 import {
     CreateUserCommand,
     DeleteUserCommand,
@@ -47,10 +44,11 @@ export class UsersController {
     @GetUsersApi()
     async getAllUsers(
         @Query() query: GetUsersQueryParams,
-    ): Promise<PaginatedMongoUsersViewDto> {
-        return this.queryBus.execute<GetUsersQuery, PaginatedMongoUsersViewDto>(
-            new GetUsersQuery(query),
-        );
+    ): Promise<PaginatedPostgresUsersViewDto> {
+        return this.queryBus.execute<
+            GetUsersQuery,
+            PaginatedPostgresUsersViewDto
+        >(new GetUsersQuery(query));
     }
 
     @Post()

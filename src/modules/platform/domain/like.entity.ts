@@ -33,10 +33,10 @@ export class Like {
      * @required
      */
     @Prop({
-        type: String,
+        type: Number,
         required: true,
     })
-    userId: string;
+    userId: number;
 
     /**
      * Status of the like

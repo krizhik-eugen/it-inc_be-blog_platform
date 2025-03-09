@@ -23,7 +23,7 @@ export class PostsQueryRepository {
         userId,
     }: {
         postId: string;
-        userId: string | null;
+        userId: number | null;
     }): Promise<PostViewDto> {
         const post = await this.PostModel.findOne({
             _id: postId,
@@ -54,7 +54,7 @@ export class PostsQueryRepository {
         userId,
     }: {
         query: GetPostsQueryParams;
-        userId: string | null;
+        userId: number | null;
     }): Promise<PaginatedViewDto<PostViewDto[]>> {
         const findQuery: FilterQuery<Post> = { deletedAt: null };
 
@@ -103,7 +103,7 @@ export class PostsQueryRepository {
     }: {
         query: GetPostsQueryParams;
         blogId: string;
-        userId: string | null;
+        userId: number | null;
     }): Promise<PaginatedViewDto<PostViewDto[]>> {
         const blog = await this.BlogModel.findOne({
             _id: blogId,

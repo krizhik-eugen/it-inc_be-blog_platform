@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto';
-import { InjectModel } from '@nestjs/mongoose';
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { getDeviceTitle } from '../../../../../helpers';
@@ -8,8 +7,7 @@ import {
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
 } from '../../../constants';
 import { TypedJwtService } from '../../typedJwtService';
-import { SessionsRepository } from '../../../infrastructure/repositories/sessions.repository';
-import { Session, SessionModelType } from '../../../domain/session.entity';
+import { PostgresSessionsRepository } from '../../../infrastructure';
 
 export class LoginUseCaseResponse {
     accessToken: string;
@@ -18,7 +16,7 @@ export class LoginUseCaseResponse {
 
 export class LoginUserCommand {
     constructor(
-        public dto: { userId: string; ip: string; userAgent: string },
+        public dto: { userId: number; ip: string; userAgent: string },
     ) {}
 }
 
@@ -31,10 +29,11 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
         private refreshTokenContext: TypedJwtService,
 
-        @InjectModel(Session.name)
-        private SessionModel: SessionModelType,
+        // @InjectModel(MongoSession.name)
+        // private SessionModel: SessionModelType,
 
-        private sessionRepository: SessionsRepository,
+        // private mongoSessionRepository: MongoSessionsRepository,
+        private postgresSessionRepository: PostgresSessionsRepository,
     ) {}
 
     async execute({ dto }: LoginUserCommand): Promise<LoginUseCaseResponse> {
@@ -49,7 +48,17 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         const decodedIssuedToken =
             this.refreshTokenContext.decode(refreshToken);
 
-        const newSession = this.SessionModel.createInstance({
+        // const newSession = this.SessionModel.createInstance({
+        //     userId: dto.userId,
+        //     deviceId,
+        //     deviceName: getDeviceTitle(dto.userAgent),
+        //     ip: dto.ip,
+        //     iat: decodedIssuedToken.iat!,
+        //     exp: decodedIssuedToken.exp!,
+        // });
+        // await this.mongoSessionRepository.save(newSession);
+
+        await this.postgresSessionRepository.createSession({
             userId: dto.userId,
             deviceId,
             deviceName: getDeviceTitle(dto.userAgent),
@@ -57,8 +66,6 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
             iat: decodedIssuedToken.iat!,
             exp: decodedIssuedToken.exp!,
         });
-
-        await this.sessionRepository.save(newSession);
 
         return { accessToken, refreshToken };
     }
