@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { DataSource } from 'typeorm';
 import { PostgresSession } from '../../domain/session.postgres-entity';
 
+@Injectable()
 export class PostgresSessionsRepository {
     constructor(private dataSource: DataSource) {}
 

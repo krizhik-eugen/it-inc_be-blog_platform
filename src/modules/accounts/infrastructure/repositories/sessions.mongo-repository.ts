@@ -1,4 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import {
     MongoSession,
@@ -6,6 +7,7 @@ import {
     SessionModelType,
 } from '../../domain/session.entity';
 
+@Injectable()
 export class MongoSessionsRepository {
     constructor(
         @InjectModel(MongoSession.name) private SessionModel: SessionModelType,
