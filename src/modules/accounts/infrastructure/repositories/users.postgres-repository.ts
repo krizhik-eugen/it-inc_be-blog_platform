@@ -67,6 +67,22 @@ export class UsersPostgresRepository {
         return result[0] || null;
     }
 
+    async findByEmailWithConfirmationStatusNonDeleted(
+        email: string,
+    ): Promise<(PostgresUser & PostgresEmailConfirmation) | null> {
+        const data: (PostgresUser & PostgresEmailConfirmation)[] =
+            await this.dataSource.query(
+                `
+                SELECT u.*, e.* FROM public.users u
+                JOIN public.email_confirmation e ON u.id = e.user_id
+                WHERE u.email = $1 AND u.deleted_at IS NULL
+                `,
+                [email],
+            );
+
+        return data[0] || null;
+    }
+
     async findByLoginOrEmail(
         loginOrEmail: string,
     ): Promise<PostgresUser | null> {

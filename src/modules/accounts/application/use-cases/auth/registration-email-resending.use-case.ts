@@ -17,13 +17,20 @@ export class RegistrationEmailResendingUseCase
     ) {}
     async execute({ dto }: RegistrationEmailResendingCommand): Promise<void> {
         const foundUser =
-            await this.usersPostgresRepository.findByLoginOrEmailNonDeleted(
+            await this.usersPostgresRepository.findByEmailWithConfirmationStatusNonDeleted(
                 dto.email,
             );
 
         if (!foundUser) {
             throw BadRequestDomainException.create(
                 'No user found for this email',
+                'email',
+            );
+        }
+
+        if (foundUser.is_confirmed) {
+            throw BadRequestDomainException.create(
+                'Email is already confirmed',
                 'email',
             );
         }
