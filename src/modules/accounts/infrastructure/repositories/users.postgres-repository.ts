@@ -166,7 +166,7 @@ export class UsersPostgresRepository {
         await this.dataSource.query(
             `
                 UPDATE public.email_confirmation
-                SET is_confirmed = $1, updated_at = NOW()
+                SET is_confirmed = $1
                 WHERE user_id = $2
                 `,
             [isConfirmed, id],
@@ -181,7 +181,7 @@ export class UsersPostgresRepository {
         await this.dataSource.query(
             `
                 UPDATE public.email_confirmation
-                SET confirmation_code = $1, expiration_date = $2, updated_at = NOW()
+                SET confirmation_code = $1, expiration_date = $2
                 WHERE user_id = $3
                 `,
             [code, expirationDate, user_id],
@@ -196,7 +196,7 @@ export class UsersPostgresRepository {
         await this.dataSource.query(
             `
                 UPDATE public.password_recovery
-                SET recovery_code = $1, expiration_date = $2, updated_at = NOW()
+                SET recovery_code = $1, expiration_date = $2
                 WHERE user_id = $3
                 `,
             [code, expirationDate, user_id],
