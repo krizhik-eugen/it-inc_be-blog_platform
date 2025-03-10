@@ -1,5 +1,4 @@
 import { Module, Provider } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { AccountsConfig } from './config';
 import {
@@ -31,20 +30,14 @@ import {
 import { AuthService } from './application/auth.service';
 import { CryptoService } from './application/crypto.service';
 import {
-    UsersMongoQueryRepository,
-    UsersMongoRepository,
-    MongoSessionsRepository,
-    MongoSessionsQueryRepository,
     UsersPostgresQueryRepository,
     UsersPostgresRepository,
     PostgresSessionsRepository,
     PostgresSessionsQueryRepository,
 } from './infrastructure';
-import { MongoUser, MongoUserSchema } from './domain/user.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthController } from './api/auth.controller';
 import { UsersController } from './api/users.controller';
-import { MongoSession, MongoSessionSchema } from './domain/session.entity';
 import { GetSessionsQueryHandler } from './application/queries/security';
 import { TypedJwtService } from './application/typedJwtService';
 import { SessionsController } from './api/security.controller';
@@ -76,10 +69,6 @@ const queries = [
     GetSessionsQueryHandler,
 ] as Provider[];
 const repositories = [
-    UsersMongoQueryRepository,
-    UsersMongoRepository,
-    MongoSessionsRepository,
-    MongoSessionsQueryRepository,
     UsersPostgresQueryRepository,
     UsersPostgresRepository,
     PostgresSessionsRepository,
@@ -92,14 +81,7 @@ const strategies = [
 ] as Provider[];
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            { name: MongoUser.name, schema: MongoUserSchema },
-            { name: MongoSession.name, schema: MongoSessionSchema },
-        ]),
-        JwtModule,
-        NotificationsModule,
-    ],
+    imports: [JwtModule, NotificationsModule],
     controllers: [AuthController, UsersController, SessionsController],
     providers: [
         AccountsConfig,
@@ -134,11 +116,6 @@ const strategies = [
         ...queries,
         CryptoService,
     ],
-    exports: [
-        UsersMongoRepository,
-        MongooseModule,
-        AccountsConfig,
-        UsersPostgresRepository,
-    ],
+    exports: [AccountsConfig, UsersPostgresRepository],
 })
 export class AccountsModule {}
