@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import {
     PaginatedPostgresUsersViewDto,
+    PostgresMeViewDto,
     PostgresUserViewDto,
 } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
@@ -25,7 +26,7 @@ export class UsersPostgresQueryRepository {
             throw NotFoundDomainException.create('PostgresUser is not found');
         }
 
-        return PostgresUserViewDto.mapToView(data[0]);
+        return PostgresMeViewDto.mapToView(data[0]);
     }
 
     async getByIdOrNotFoundFail(id: number): Promise<PostgresUserViewDto> {

@@ -54,18 +54,21 @@ import { PostgresUser } from '../../../domain/user.postgres-entity';
 
 export class PostgresUserViewDto {
     @ApiProperty()
-    userId: string;
+    id: string;
     @ApiProperty()
     login: string;
     @ApiProperty()
     email: string;
+    @ApiProperty()
+    createdAt: string;
 
     static mapToView(user: PostgresUser): PostgresUserViewDto {
         const dto = new PostgresUserViewDto();
 
-        dto.userId = user.id.toString();
+        dto.id = user.id.toString();
         dto.login = user.login;
         dto.email = user.email;
+        dto.createdAt = new Date(user.created_at).toISOString();
 
         return dto;
     }
