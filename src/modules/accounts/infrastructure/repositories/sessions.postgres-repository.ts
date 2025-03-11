@@ -88,7 +88,7 @@ export class PostgresSessionsRepository {
         await this.dataSource.query(
             `
                 UPDATE sessions
-                SET ip = $1, iat = $2, exp = $3 updated_at = NOW()
+                SET ip = $1, iat = $2, exp = $3, updated_at = NOW()
                 WHERE device_id = $4
                 AND deleted_at IS NULL
             `,
