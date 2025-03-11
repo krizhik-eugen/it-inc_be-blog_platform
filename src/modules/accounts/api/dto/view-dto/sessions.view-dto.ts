@@ -1,28 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MongoSessionDocument } from '../../../domain/session.entity';
 import { PostgresSession } from '../../../domain/session.postgres-entity';
 
-export class MongoSessionViewDto {
-    @ApiProperty()
-    ip: string;
-    @ApiProperty()
-    title: string;
-    @ApiProperty()
-    lastActiveDate: string;
-    @ApiProperty()
-    deviceId: string;
+// export class MongoSessionViewDto {
+//     @ApiProperty()
+//     ip: string;
+//     @ApiProperty()
+//     title: string;
+//     @ApiProperty()
+//     lastActiveDate: string;
+//     @ApiProperty()
+//     deviceId: string;
 
-    static mapToView(session: MongoSessionDocument): MongoSessionViewDto {
-        const dto = new MongoSessionViewDto();
+//     static mapToView(session: MongoSessionDocument): MongoSessionViewDto {
+//         const dto = new MongoSessionViewDto();
 
-        dto.ip = session.ip;
-        dto.title = session.deviceName;
-        dto.lastActiveDate = new Date(session.iat * 1000).toISOString();
-        dto.deviceId = session.deviceId;
+//         dto.ip = session.ip;
+//         dto.title = session.deviceName;
+//         dto.lastActiveDate = new Date(session.iat * 1000).toISOString();
+//         dto.deviceId = session.deviceId;
 
-        return dto;
-    }
-}
+//         return dto;
+//     }
+// }
 
 export class PostgresSessionViewDto {
     @ApiProperty()
