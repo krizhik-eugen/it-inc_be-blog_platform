@@ -54,7 +54,7 @@ import {
 } from '../application/use-cases/auth';
 import { GetCurrentUserQuery } from '../application/queries/auth';
 
-// @UseGuards(ThrottlerGuard)
+@UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class AuthController {
     constructor(
