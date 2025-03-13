@@ -22,6 +22,6 @@ export function swaggerSetup(app: INestApplication, coreConfig: CoreConfig) {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document, {
-        customSiteTitle: 'Blog Platform Swagger',
+        customSiteTitle: 'MongoBlog Platform Swagger',
     });
 }

@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Post, PostModelType } from '../../../domain/post.entity';
 import { CreatePostDto } from '../../../dto/create';
-import { BlogsRepository, PostsRepository } from '../../../infrastructure';
+import { MongoBlogsRepository, PostsRepository } from '../../../infrastructure';
 
 export class CreatePostCommand {
     constructor(public dto: CreatePostDto) {}
@@ -16,17 +16,18 @@ export class CreatePostUseCase
         @InjectModel(Post.name)
         private PostModel: PostModelType,
         private postsRepository: PostsRepository,
-        private blogsRepository: BlogsRepository,
+        private mongoBlogsRepository: MongoBlogsRepository,
     ) {}
 
     async execute({ dto }: CreatePostCommand): Promise<string> {
         const blog =
-            await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(
-                dto.blogId,
+            await this.mongoBlogsRepository.findByIdNonDeletedOrNotFoundFail(
+                dto.blogId.toString(), // TODO: remove toString()
             );
 
         const newPost = this.PostModel.createInstance({
             ...dto,
+            blogId: dto.blogId.toString(), // TODO: remove toString()
             blogName: blog.name,
         });
 

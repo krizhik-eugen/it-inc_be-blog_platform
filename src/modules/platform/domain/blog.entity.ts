@@ -20,11 +20,11 @@ export const blogConstraints = {
 };
 
 /**
- * Blog Entity Schema
- * This class represents the schema and behavior of a Blog entity.
+ * MongoBlog Entity Schema
+ * This class represents the schema and behavior of a MongoBlog entity.
  */
 @Schema({ timestamps: true })
-export class Blog {
+export class MongoBlog {
     /**
      * Name of the blog
      * @type {string}
@@ -86,22 +86,22 @@ export class Blog {
     deletedAt: string | null;
 
     /**
-     * Factory method to create a Blog instance
+     * Factory method to create a MongoBlog instance
      * @param {CreateBlogDto} dto - The data transfer object for blog creation
-     * @returns {BlogDocument} The created blog document
+     * @returns {MongoBlogDocument} The created blog document
      */
-    static createInstance(dto: CreateBlogDomainDto): BlogDocument {
+    static createInstance(dto: CreateBlogDomainDto): MongoBlogDocument {
         const blog = new this();
 
         blog.name = dto.name;
         blog.description = dto.description;
         blog.websiteUrl = dto.websiteUrl;
 
-        return blog as BlogDocument;
+        return blog as MongoBlogDocument;
     }
 
     /**
-     * Factory method to update a Blog instance
+     * Factory method to update a MongoBlog instance
      * @param {UpdateBlogDto} dto - The data transfer object for blog creation
      */
     update(dto: UpdateBlogDomainDto) {
@@ -129,10 +129,10 @@ export class Blog {
     }
 }
 
-export const BlogSchema = SchemaFactory.createForClass(Blog);
+export const MongoBlogSchema = SchemaFactory.createForClass(MongoBlog);
 
-BlogSchema.loadClass(Blog);
+MongoBlogSchema.loadClass(MongoBlog);
 
-export type BlogDocument = HydratedDocument<Blog>;
+export type MongoBlogDocument = HydratedDocument<MongoBlog>;
 
-export type BlogModelType = Model<BlogDocument> & typeof Blog;
+export type MongoBlogModelType = Model<MongoBlogDocument> & typeof MongoBlog;

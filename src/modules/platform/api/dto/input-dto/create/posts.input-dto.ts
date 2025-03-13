@@ -32,5 +32,5 @@ export class CreatePostInputDto
     @ApiProperty()
     @IsObjectId()
     @BlogIsExistent()
-    blogId: string;
+    blogId: number;
 }

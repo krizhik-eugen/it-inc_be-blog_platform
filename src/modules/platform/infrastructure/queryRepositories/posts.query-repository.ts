@@ -4,7 +4,7 @@ import { PaginatedViewDto } from '../../../../core/dto';
 import { GetPostsQueryParams } from '../../api/dto/query-params-dto';
 import { Post, PostModelType } from '../../domain/post.entity';
 import { PostViewDto } from '../../api/dto/view-dto';
-import { Blog, BlogModelType } from '../../domain/blog.entity';
+import { MongoBlog, MongoBlogModelType } from '../../domain/blog.entity';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
@@ -13,8 +13,8 @@ export class PostsQueryRepository {
     constructor(
         @InjectModel(Post.name)
         private PostModel: PostModelType,
-        @InjectModel(Blog.name)
-        private BlogModel: BlogModelType,
+        @InjectModel(MongoBlog.name)
+        private BlogModel: MongoBlogModelType,
         private likesQueryRepository: LikesQueryRepository,
     ) {}
 
@@ -111,7 +111,7 @@ export class PostsQueryRepository {
         });
 
         if (!blog) {
-            throw NotFoundDomainException.create('Blog not found');
+            throw NotFoundDomainException.create('MongoBlog not found');
         }
 
         const findQuery: FilterQuery<Post> = {

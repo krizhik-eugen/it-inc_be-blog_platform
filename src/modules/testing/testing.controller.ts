@@ -1,17 +1,14 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { DataSource } from 'typeorm';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Blog, BlogModelType } from '../platform/domain/blog.entity';
 import { Post, PostModelType } from '../platform/domain/post.entity';
 import { Like, LikeModelType } from '../platform/domain/like.entity';
 import { Comment, CommentModelType } from '../platform/domain/comment.entity';
-import { DataSource } from 'typeorm';
 
 @Controller('testing')
 export class TestingController {
     constructor(
-        @InjectModel(Blog.name)
-        private BlogModel: BlogModelType,
         @InjectModel(Post.name)
         private PostModel: PostModelType,
         @InjectModel(Comment.name)
@@ -39,7 +36,10 @@ export class TestingController {
             await this.dataSource.query(
                 `TRUNCATE sessions RESTART IDENTITY CASCADE;`,
             ),
-            await this.BlogModel.deleteMany({}),
+            await this.dataSource.query(
+                `TRUNCATE blogs RESTART IDENTITY CASCADE;`,
+            ),
+            // await this.BlogModel.deleteMany({}),
             await this.PostModel.deleteMany({}),
             await this.CommentModel.deleteMany({}),
             await this.LikeModel.deleteMany({}),

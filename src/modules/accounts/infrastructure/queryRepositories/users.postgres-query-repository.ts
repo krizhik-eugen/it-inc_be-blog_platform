@@ -75,7 +75,7 @@ export class UsersPostgresQueryRepository {
         }
 
         if (searchEmailTerm) {
-            sqlQuery += ` OR email ILIKE $${paramCounter}`;
+            sqlQuery += ` ${searchLoginTerm ? 'OR' : 'AND'} email ILIKE $${paramCounter}`;
             queryParams.push(`%${searchEmailTerm}%`);
             paramCounter++;
         }

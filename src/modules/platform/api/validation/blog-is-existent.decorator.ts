@@ -5,7 +5,7 @@ import {
     ValidatorConstraint,
     ValidatorConstraintInterface,
 } from 'class-validator';
-import { BlogsRepository } from '../../infrastructure';
+import { MongoBlogsRepository } from '../../infrastructure';
 
 // Mandatory registration in ioc
 
@@ -16,14 +16,14 @@ import { BlogsRepository } from '../../infrastructure';
 @ValidatorConstraint({ name: 'BlogIsExistent', async: true })
 @Injectable()
 export class BlogIsExistentConstraint implements ValidatorConstraintInterface {
-    constructor(private blogsRepository: BlogsRepository) {}
+    constructor(private mongoBlogsRepository: MongoBlogsRepository) {}
     async validate(value: string) {
-        const foundBlog = await this.blogsRepository.findById(value);
+        const foundBlog = await this.mongoBlogsRepository.findById(value);
         return Boolean(foundBlog);
     }
 
     defaultMessage(): string {
-        return `Blog with provided Id does not exist`;
+        return `MongoBlog with provided Id does not exist`;
     }
 }
 

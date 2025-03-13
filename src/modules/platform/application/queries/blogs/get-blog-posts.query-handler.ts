@@ -6,7 +6,7 @@ import { PostsQueryRepository } from '../../../infrastructure';
 export class GetBlogPostsQuery {
     constructor(
         public query: GetPostsQueryParams,
-        public blogId: string,
+        public blogId: number,
         public userId: number | null,
     ) {}
 }
@@ -24,7 +24,7 @@ export class GetBlogPostsQueryHandler
     }: GetBlogPostsQuery): Promise<PaginatedPostsViewDto> {
         return this.postsQueryRepository.getAllBlogPosts({
             query,
-            blogId,
+            blogId: blogId.toString(), // TODO: remove toString()
             userId,
         });
     }

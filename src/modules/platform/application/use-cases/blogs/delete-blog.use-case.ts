@@ -1,45 +1,47 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import {
-    BlogsRepository,
+    MongoBlogsRepository,
     CommentsRepository,
     LikesRepository,
     PostsRepository,
+    PostgresBlogsRepository,
 } from '../../../infrastructure';
 
 export class DeleteBlogCommand {
-    constructor(public blogId: string) {}
+    constructor(public blogId: number) {}
 }
 
 @CommandHandler(DeleteBlogCommand)
 export class DeleteBlogUseCase
     implements ICommandHandler<DeleteBlogCommand, void>
 {
-    constructor(
-        private blogsRepository: BlogsRepository,
-        private postsRepository: PostsRepository,
-        private commentsRepository: CommentsRepository,
-        private likesRepository: LikesRepository,
-    ) {}
+    constructor(private postgresBlogsRepository: PostgresBlogsRepository) {}
 
     async execute({ blogId }: DeleteBlogCommand): Promise<void> {
-        const blog =
-            await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(blogId);
+        // const blog =
+        //     await this.mongoBlogsRepository.findByIdNonDeletedOrNotFoundFail(
+        //         blogId,
+        //     );
 
-        blog.makeDeleted();
+        // blog.makeDeleted();
 
-        await this.blogsRepository.save(blog);
+        // await this.mongoBlogsRepository.save(blog);
 
-        const posts =
-            await this.postsRepository.findAllByBlogIdNonDeleted(blogId);
-        const postIds = posts.map((p) => p._id.toString());
-        const comments =
-            await this.commentsRepository.findAllByPostIdsNonDeleted(postIds);
-        const commentIds = comments.map((c) => c._id.toString());
-        await this.commentsRepository.deleteAllByPostIds(postIds);
-        await this.postsRepository.deleteAllByBlogId(blogId);
-        await this.likesRepository.deleteAllByParentIds([
-            ...postIds,
-            ...commentIds,
-        ]);
+        await this.postgresBlogsRepository.makeBlogDeletedById(blogId);
+
+        // TODO: delete all posts associated with the blog, comments for these posts, likes for posts and comments
+
+        // const posts =
+        //     await this.postsRepository.findAllByBlogIdNonDeleted(blogId);
+        // const postIds = posts.map((p) => p._id.toString());
+        // const comments =
+        //     await this.commentsRepository.findAllByPostIdsNonDeleted(postIds);
+        // const commentIds = comments.map((c) => c._id.toString());
+        // await this.commentsRepository.deleteAllByPostIds(postIds);
+        // await this.postsRepository.deleteAllByBlogId(blogId);
+        // await this.likesRepository.deleteAllByParentIds([
+        //     ...postIds,
+        //     ...commentIds,
+        // ]);
     }
 }

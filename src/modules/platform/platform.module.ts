@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Blog, BlogSchema } from './domain/blog.entity';
+import { MongoBlog, MongoBlogSchema } from './domain/blog.entity';
 import {
-    BlogsQueryRepository,
-    BlogsRepository,
+    MongoBlogsQueryRepository,
+    MongoBlogsRepository,
     PostsRepository,
     PostsQueryRepository,
     CommentsRepository,
     CommentsQueryRepository,
     LikesRepository,
     LikesQueryRepository,
+    PostgresBlogsRepository,
+    PostgresBlogsQueryRepository,
 } from './infrastructure';
 import {
     CreateBlogUseCase,
@@ -71,20 +73,22 @@ const queries = [
     GetCommentsQueryHandler,
 ];
 const repositories = [
-    BlogsRepository,
-    BlogsQueryRepository,
+    MongoBlogsRepository,
+    MongoBlogsQueryRepository,
     PostsRepository,
     PostsQueryRepository,
     CommentsQueryRepository,
     CommentsRepository,
     LikesRepository,
     LikesQueryRepository,
+    PostgresBlogsRepository,
+    PostgresBlogsQueryRepository,
 ];
 
 @Module({
     imports: [
         MongooseModule.forFeature([
-            { name: Blog.name, schema: BlogSchema },
+            { name: MongoBlog.name, schema: MongoBlogSchema },
             { name: Post.name, schema: PostSchema },
             { name: Comment.name, schema: CommentSchema },
             { name: Like.name, schema: LikeSchema },

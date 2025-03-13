@@ -5,5 +5,5 @@ export class CreateBlogPostDto {
 }
 
 export class CreatePostDto extends CreateBlogPostDto {
-    blogId: string;
+    blogId: number;
 }

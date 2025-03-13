@@ -2,34 +2,34 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto';
 import { GetBlogsQueryParams } from '../../api/dto/query-params-dto';
-import { Blog, BlogModelType } from '../../domain/blog.entity';
-import { BlogViewDto } from '../../api/dto/view-dto';
+import { MongoBlog, MongoBlogModelType } from '../../domain/blog.entity';
+import { MongoBlogViewDto } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 
-export class BlogsQueryRepository {
+export class MongoBlogsQueryRepository {
     constructor(
-        @InjectModel(Blog.name)
-        private BlogModel: BlogModelType,
+        @InjectModel(MongoBlog.name)
+        private BlogModel: MongoBlogModelType,
     ) {}
 
-    async getByIdOrNotFoundFail(blogId: string): Promise<BlogViewDto> {
+    async getByIdOrNotFoundFail(blogId: string): Promise<MongoBlogViewDto> {
         const blog = await this.BlogModel.findOne({
             _id: blogId,
             deletedAt: null,
         }).exec();
 
         if (!blog) {
-            throw NotFoundDomainException.create('Blog not found');
+            throw NotFoundDomainException.create('MongoBlog not found');
         }
 
-        return BlogViewDto.mapToView(blog);
+        return MongoBlogViewDto.mapToView(blog);
     }
 
     async getAllBlogs(
         query: GetBlogsQueryParams,
-    ): Promise<PaginatedViewDto<BlogViewDto[]>> {
-        const findQuery: FilterQuery<Blog> = { deletedAt: null };
-        const searchConditions: FilterQuery<Blog>[] = [];
+    ): Promise<PaginatedViewDto<MongoBlogViewDto[]>> {
+        const findQuery: FilterQuery<MongoBlog> = { deletedAt: null };
+        const searchConditions: FilterQuery<MongoBlog>[] = [];
 
         if (query.searchNameTerm) {
             searchConditions.push({
@@ -48,7 +48,9 @@ export class BlogsQueryRepository {
 
         const blogsCount = await this.BlogModel.countDocuments(findQuery);
 
-        const mappedBlogs = result.map((blog) => BlogViewDto.mapToView(blog));
+        const mappedBlogs = result.map((blog) =>
+            MongoBlogViewDto.mapToView(blog),
+        );
 
         return PaginatedViewDto.mapToView({
             items: mappedBlogs,

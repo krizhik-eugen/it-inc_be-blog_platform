@@ -37,7 +37,7 @@ import {
 } from './infrastructure';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthController } from './api/auth.controller';
-import { UsersController } from './api/users.controller';
+import { UsersController } from './api/sa.users.controller';
 import { GetSessionsQueryHandler } from './application/queries/security';
 import { TypedJwtService } from './application/typedJwtService';
 import { SessionsController } from './api/security.controller';
