@@ -9,13 +9,11 @@ export class UpdatePostInputDto implements UpdatePostDto {
         maxLength: postConstraints.title.maxLength,
     })
     @IsStringWithTrim(1, postConstraints.title.maxLength)
-    @IsOptional()
     title: string;
 
     @ApiProperty({
         maxLength: postConstraints.shortDescription.maxLength,
     })
-    @IsOptional()
     @IsStringWithTrim(1, postConstraints.shortDescription.maxLength)
     shortDescription: string;
 
@@ -23,7 +21,6 @@ export class UpdatePostInputDto implements UpdatePostDto {
         maxLength: postConstraints.content.maxLength,
     })
     @IsStringWithTrim(1, postConstraints.content.maxLength)
-    @IsOptional()
     content: string;
 
     // TODO: removed it here for sa controller
