@@ -12,6 +12,7 @@ import {
 } from './infrastructure';
 import {
     CreateBlogUseCase,
+    DeleteBlogPostUseCase,
     DeleteBlogUseCase,
     UpdateBlogPostUseCase,
     UpdateBlogUseCase,
@@ -51,6 +52,7 @@ const useCases = [
     DeleteCommentUseCase,
     UpdateCommentLikeStatusUseCase,
     UpdateBlogPostUseCase,
+    DeleteBlogPostUseCase,
 ];
 const queries = [
     GetBlogByIdQueryHandler,
