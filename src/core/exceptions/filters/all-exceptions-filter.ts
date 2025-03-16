@@ -10,6 +10,8 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     }
 
     onCatch(exception: unknown, response: Response, request: Request): void {
+        console.log('exception', exception);
+
         const status: HttpStatus =
             exception instanceof HttpException
                 ? exception.getStatus()

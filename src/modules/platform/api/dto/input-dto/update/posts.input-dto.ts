@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
 import { IsStringWithTrim } from '../../../../../../core/decorators/validation';
 import { UpdatePostDto } from '../../../../dto/update';
 import { postConstraints } from '../../../../domain/post.entity';
