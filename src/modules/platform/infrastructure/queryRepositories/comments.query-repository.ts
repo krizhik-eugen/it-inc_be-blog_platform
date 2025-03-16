@@ -2,7 +2,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto';
 import { Comment, CommentModelType } from '../../domain/comment.entity';
-import { Post, PostModelType } from '../../domain/post.entity';
 import {
     CommentViewDto,
     PaginatedCommentsViewDto,
@@ -11,14 +10,16 @@ import { GetCommentsQueryParams } from '../../api/dto/query-params-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
+import { PostgresPostsRepository } from '../repositories/posts.postgres-repository';
 
 export class CommentsQueryRepository {
     constructor(
         @InjectModel(Comment.name)
         private CommentModel: CommentModelType,
-        @InjectModel(Post.name)
-        private PostModel: PostModelType,
+        // @InjectModel(MongoPost.name)
+        // private PostModel: MongoPostModelType,
         private likesQueryRepository: LikesQueryRepository,
+        private postgresPostsRepository: PostgresPostsRepository,
     ) {}
 
     async getByIdOrNotFoundFail({
@@ -55,17 +56,12 @@ export class CommentsQueryRepository {
         userId,
     }: {
         query: GetCommentsQueryParams;
-        postId: string;
+        postId: number;
         userId: number | null;
     }): Promise<PaginatedCommentsViewDto> {
-        const post = await this.PostModel.findOne({
-            _id: postId,
-            deletedAt: null,
-        });
-
-        if (!post) {
-            throw NotFoundDomainException.create('Post not found');
-        }
+        await this.postgresPostsRepository.findByIdNonDeletedOrNotFoundFail(
+            postId,
+        );
 
         const findQuery: FilterQuery<Comment> = {
             postId: postId,

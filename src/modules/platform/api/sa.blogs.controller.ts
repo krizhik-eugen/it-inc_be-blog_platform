@@ -12,36 +12,34 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ObjectIdValidationPipe } from '../../../core/pipes';
 import { BasicAuthGuard } from '../../accounts/guards/basic';
-import { JwtOptionalAuthGuard } from '../../accounts/guards/bearer';
 import { ExtractUserIfExistsFromRequest } from '../../accounts/guards/decorators';
 import { UserContextDto } from '../../accounts/guards/dto';
 import {
     CreateBlogApi,
     CreateBlogPostApi,
     DeleteBlogApi,
+    DeleteBlogPostApi,
     GetAllBlogPostsApi,
     GetAllBlogsApi,
-    GetBlogApi,
     UpdateBlogApi,
+    UpdateBlogPostApi,
 } from './swagger';
 import {
     GetBlogsQueryParams,
     GetPostsQueryParams,
 } from './dto/query-params-dto';
 import {
-    MongoBlogViewDto,
-    PaginatedMongoBlogsViewDto,
-    PaginatedPostsViewDto,
+    PaginatedPostgresBlogsViewDto,
     PostgresBlogViewDto,
-    PostViewDto,
+    PaginatedPostgresPostsViewDto,
+    PostgresPostViewDto,
 } from './dto/view-dto';
 import {
     CreateBlogInputDto,
     CreateBlogPostInputDto,
 } from './dto/input-dto/create';
-import { UpdateBlogInputDto } from './dto/input-dto/update';
+import { UpdateBlogInputDto, UpdatePostInputDto } from './dto/input-dto/update';
 import {
     GetBlogByIdQuery,
     GetBlogPostsQuery,
@@ -50,13 +48,16 @@ import {
 import {
     CreateBlogCommand,
     DeleteBlogCommand,
+    DeleteBlogPostCommand,
     UpdateBlogCommand,
+    UpdateBlogPostCommand,
 } from '../application/use-cases/blogs';
 import { CreatePostCommand } from '../application/use-cases/posts';
 import { GetPostByIdQuery } from '../application/queries/posts';
 
+@UseGuards(BasicAuthGuard)
 @Controller('sa/blogs')
-export class BlogsController {
+export class SaBlogsController {
     constructor(
         private commandBus: CommandBus,
         private queryBus: QueryBus,
@@ -66,11 +67,10 @@ export class BlogsController {
     @GetAllBlogsApi()
     async getAllBlogs(
         @Query() query: GetBlogsQueryParams,
-    ): Promise<PaginatedMongoBlogsViewDto> {
+    ): Promise<PaginatedPostgresBlogsViewDto> {
         return this.queryBus.execute(new GetBlogsQuery(query));
     }
 
-    @UseGuards(BasicAuthGuard)
     @Post()
     @CreateBlogApi()
     async createBlog(
@@ -83,51 +83,39 @@ export class BlogsController {
         return this.queryBus.execute(new GetBlogByIdQuery(newBlogId));
     }
 
-    @UseGuards(JwtOptionalAuthGuard)
     @Get(':blogId/posts')
     @GetAllBlogPostsApi()
     async getAllBlogPosts(
         @Param('blogId') blogId: number,
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
-    ): Promise<PaginatedPostsViewDto> {
-        return this.queryBus.execute<GetBlogPostsQuery, PaginatedPostsViewDto>(
-            new GetBlogPostsQuery(query, blogId, user?.id),
-        );
+    ): Promise<PaginatedPostgresPostsViewDto> {
+        return this.queryBus.execute<
+            GetBlogPostsQuery,
+            PaginatedPostgresPostsViewDto
+        >(new GetBlogPostsQuery(query, blogId, user?.id));
     }
 
-    @UseGuards(BasicAuthGuard)
     @Post(':blogId/posts')
     @CreateBlogPostApi()
     async createBlogPost(
         @Param('blogId') blogId: number,
         @Body() body: CreateBlogPostInputDto,
-    ): Promise<PostViewDto> {
+    ): Promise<PostgresPostViewDto> {
         const newPostId = await this.commandBus.execute<
             CreatePostCommand,
-            string
+            number
         >(
             new CreatePostCommand({
                 ...body,
                 blogId,
             }),
         );
-        return this.queryBus.execute<GetPostByIdQuery, PostViewDto>(
+        return this.queryBus.execute<GetPostByIdQuery, PostgresPostViewDto>(
             new GetPostByIdQuery(newPostId, null),
         );
     }
 
-    @Get(':blogId')
-    @GetBlogApi()
-    async getBlog(
-        @Param('blogId') blogId: number,
-    ): Promise<PostgresBlogViewDto> {
-        return this.queryBus.execute<GetBlogByIdQuery, PostgresBlogViewDto>(
-            new GetBlogByIdQuery(blogId),
-        );
-    }
-
-    @UseGuards(BasicAuthGuard)
     @Put(':blogId')
     @UpdateBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -140,13 +128,37 @@ export class BlogsController {
         );
     }
 
-    @UseGuards(BasicAuthGuard)
+    @Put(':blogId/posts/:postId')
+    @UpdateBlogPostApi()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async updatePost(
+        @Param('blogId') blogId: number,
+        @Param('postId') postId: number,
+        @Body() body: UpdatePostInputDto,
+    ): Promise<void> {
+        return this.commandBus.execute<UpdateBlogPostCommand, void>(
+            new UpdateBlogPostCommand(postId, blogId, body),
+        );
+    }
+
     @Delete(':blogId')
     @DeleteBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteBlog(@Param('blogId') blogId: number): Promise<void> {
         return this.commandBus.execute<DeleteBlogCommand, void>(
             new DeleteBlogCommand(blogId),
+        );
+    }
+
+    @Delete(':blogId/posts/:postId')
+    @DeleteBlogPostApi()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async deletePost(
+        @Param('blogId') blogId: number,
+        @Param('postId') postId: number,
+    ): Promise<void> {
+        return this.commandBus.execute<DeleteBlogPostCommand, void>(
+            new DeleteBlogPostCommand(postId, blogId),
         );
     }
 }

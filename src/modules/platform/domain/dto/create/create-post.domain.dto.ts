@@ -2,6 +2,6 @@ export class CreatePostDomainDto {
     title: string;
     shortDescription: string;
     content: string;
-    blogId: string;
+    blogId: number;
     blogName: string;
 }

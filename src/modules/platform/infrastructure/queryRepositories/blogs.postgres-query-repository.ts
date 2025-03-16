@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import {
     PaginatedPostgresBlogsViewDto,
@@ -7,6 +8,7 @@ import { NotFoundDomainException } from '../../../../core/exceptions';
 import { PostgresBlog } from '../../domain/blog.postgres-entity';
 import { GetBlogsQueryParams } from '../../api/dto/query-params-dto';
 
+@Injectable()
 export class PostgresBlogsQueryRepository {
     constructor(
         // @InjectModel(MongoBlog.name)
@@ -33,8 +35,8 @@ export class PostgresBlogsQueryRepository {
     async getAllBlogs(
         query: GetBlogsQueryParams,
     ): Promise<PaginatedPostgresBlogsViewDto> {
-        const queryParams: string[] = [];
-        let paramCounter = 1;
+        const queryParams: (string | number)[] = [];
+        let paramIndex = 1;
 
         const searchNameTerm = query.searchNameTerm
             ? query.searchNameTerm
@@ -43,23 +45,20 @@ export class PostgresBlogsQueryRepository {
         let filterCondition = `deleted_at IS NULL`;
 
         if (searchNameTerm) {
-            filterCondition += ` AND name ILIKE $${paramCounter}`;
+            filterCondition += ` AND name ILIKE $${paramIndex}`;
             queryParams.push(`%${searchNameTerm}%`);
-            paramCounter++;
+            paramIndex++;
         }
 
         const sqlQuery = `
             SELECT b.*, COUNT(*) OVER() as total_count 
             FROM public.blogs b
             WHERE ${filterCondition}
-            ORDER BY ${query.sortBy} ${query.sortDirection}
-            LIMIT $${paramCounter} OFFSET $${paramCounter + 1}
+            ORDER BY ${this.sanitizeSortField(query.sortBy)} ${query.sortDirection}
+            LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
         `;
 
-        queryParams.push(
-            query.pageSize.toString(),
-            query.calculateSkip().toString(),
-        );
+        queryParams.push(query.pageSize, query.calculateSkip());
 
         const data = await this.dataSource.query<
             (PostgresBlog & { total_count: string })[]
@@ -77,5 +76,13 @@ export class PostgresBlogsQueryRepository {
             size: query.pageSize,
             totalCount: totalCount,
         });
+    }
+
+    private sanitizeSortField(field: string): string {
+        const allowedFields = ['name', 'created_at'];
+        if (!allowedFields.includes(field.toLowerCase())) {
+            return 'created_at';
+        }
+        return field;
     }
 }

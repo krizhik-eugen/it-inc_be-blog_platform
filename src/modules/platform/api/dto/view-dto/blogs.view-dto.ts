@@ -1,47 +1,46 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MongoBlogDocument } from '../../../domain/blog.entity';
 import { PaginatedViewDto } from '../../../../../core/dto';
 import { PostgresBlog } from '../../../domain/blog.postgres-entity';
 
-export class MongoBlogViewDto {
-    @ApiProperty()
-    id: string;
-    @ApiProperty()
-    name: string;
-    @ApiProperty()
-    description: string;
-    @ApiProperty()
-    websiteUrl: string;
-    @ApiProperty()
-    createdAt: string;
-    @ApiProperty({
-        description:
-            'True if user has not expired membership subscription to blog',
-    })
-    isMembership: boolean;
+// export class MongoBlogViewDto {
+//     @ApiProperty()
+//     id: string;
+//     @ApiProperty()
+//     name: string;
+//     @ApiProperty()
+//     description: string;
+//     @ApiProperty()
+//     websiteUrl: string;
+//     @ApiProperty()
+//     createdAt: string;
+//     @ApiProperty({
+//         description:
+//             'True if user has not expired membership subscription to blog',
+//     })
+//     isMembership: boolean;
 
-    static mapToView(blog: MongoBlogDocument): MongoBlogViewDto {
-        const dto = new MongoBlogViewDto();
+//     static mapToView(blog: MongoBlogDocument): MongoBlogViewDto {
+//         const dto = new MongoBlogViewDto();
 
-        dto.id = blog._id.toString();
-        dto.description = blog.description;
-        dto.name = blog.name;
-        dto.websiteUrl = blog.websiteUrl;
-        dto.createdAt = blog.createdAt;
-        dto.isMembership = blog.isMembership;
+//         dto.id = blog._id.toString();
+//         dto.description = blog.description;
+//         dto.name = blog.name;
+//         dto.websiteUrl = blog.websiteUrl;
+//         dto.createdAt = blog.createdAt;
+//         dto.isMembership = blog.isMembership;
 
-        return dto;
-    }
-}
+//         return dto;
+//     }
+// }
 
-export class PaginatedMongoBlogsViewDto extends PaginatedViewDto<
-    MongoBlogViewDto[]
-> {
-    @ApiProperty({
-        type: [MongoBlogViewDto],
-    })
-    items: MongoBlogViewDto[];
-}
+// export class PaginatedMongoBlogsViewDto extends PaginatedViewDto<
+//     MongoBlogViewDto[]
+// > {
+//     @ApiProperty({
+//         type: [MongoBlogViewDto],
+//     })
+//     items: MongoBlogViewDto[];
+// }
 
 export class PostgresBlogViewDto {
     @ApiProperty()

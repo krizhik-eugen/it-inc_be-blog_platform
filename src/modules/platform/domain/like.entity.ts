@@ -26,10 +26,11 @@ export class Like {
         required: true,
     })
     parentId: string;
+    // TODO: fix parentID type
 
     /**
      * Id of the user who created the like
-     * @type {string}
+     * @type {number}
      * @required
      */
     @Prop({

@@ -13,7 +13,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response, Request } from 'express';
-import { PostgresMeViewDto, PostgresUserViewDto } from './dto/view-dto';
+import { PostgresMeViewDto } from './dto/view-dto';
 import {
     ExtractSessionDataFromRequest,
     ExtractUserFromRequest,
@@ -54,7 +54,7 @@ import {
 } from '../application/use-cases/auth';
 import { GetCurrentUserQuery } from '../application/queries/auth';
 
-@UseGuards(ThrottlerGuard)
+// @UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class AuthController {
     constructor(

@@ -9,8 +9,8 @@ import {
     GetPostsQueryParams,
 } from './dto/query-params-dto';
 import {
-    PaginatedMongoBlogsViewDto,
-    PaginatedPostsViewDto,
+    PaginatedPostgresBlogsViewDto,
+    PaginatedPostgresPostsViewDto,
     PostgresBlogViewDto,
 } from './dto/view-dto';
 
@@ -28,7 +28,7 @@ export class BlogsController {
     @GetAllBlogsApi()
     async getAllBlogs(
         @Query() query: GetBlogsQueryParams,
-    ): Promise<PaginatedMongoBlogsViewDto> {
+    ): Promise<PaginatedPostgresBlogsViewDto> {
         return this.queryBus.execute(new GetBlogsQuery(query));
     }
 
@@ -39,10 +39,11 @@ export class BlogsController {
         @Param('blogId') blogId: number,
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
-    ): Promise<PaginatedPostsViewDto> {
-        return this.queryBus.execute<GetBlogPostsQuery, PaginatedPostsViewDto>(
-            new GetBlogPostsQuery(query, blogId, user?.id),
-        );
+    ): Promise<PaginatedPostgresPostsViewDto> {
+        return this.queryBus.execute<
+            GetBlogPostsQuery,
+            PaginatedPostgresPostsViewDto
+        >(new GetBlogPostsQuery(query, blogId, user?.id));
     }
 
     @Get(':blogId')

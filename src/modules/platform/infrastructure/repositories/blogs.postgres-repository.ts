@@ -1,9 +1,11 @@
-import { NotFoundDomainException } from '../../../../core/exceptions';
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { NotFoundDomainException } from '../../../../core/exceptions';
 import { PostgresBlog } from '../../domain/blog.postgres-entity';
 import { CreateBlogDomainDto } from '../../domain/dto/create';
 import { UpdateBlogDomainDto } from '../../domain/dto/update';
 
+@Injectable()
 export class PostgresBlogsRepository {
     constructor(
         // @InjectModel(MongoBlog.name) private BlogModel: MongoBlogModelType,
@@ -30,6 +32,18 @@ export class PostgresBlogsRepository {
         }
 
         return blog;
+    }
+
+    async findByIdNonDeleted(id: number): Promise<PostgresBlog | null> {
+        const data: PostgresBlog[] = await this.dataSource.query(
+            `
+                SELECT * FROM public.blogs
+                WHERE id = $1 AND deleted_at IS NULL
+                `,
+            [id],
+        );
+
+        return data[0] || null;
     }
 
     async findByIdNonDeletedOrNotFoundFail(id: number): Promise<PostgresBlog> {
@@ -69,30 +83,42 @@ export class PostgresBlogsRepository {
         `;
 
         const params: (string | number)[] = [];
+        let paramIndex = 1;
+        let hasUpdates = false;
 
         if (blog.name) {
-            query += `name = $1`;
+            query += `name = $${paramIndex}`;
             params.push(blog.name);
-        }
-        if (blog.description) {
-            if (blog.name) {
-                query += `, `;
-            }
-            query += `description = $2`;
-            params.push(blog.description);
-        }
-        if (blog.websiteUrl) {
-            if (blog.name || blog.description) {
-                query += `, `;
-            }
-            query += `website_url = $3`;
-            params.push(blog.websiteUrl);
+            paramIndex++;
+            hasUpdates = true;
         }
 
-        query += `WHERE id = $4`;
+        if (blog.description) {
+            if (hasUpdates) {
+                query += `, `;
+            }
+            query += `description = $${paramIndex}`;
+            params.push(blog.description);
+            paramIndex++;
+            hasUpdates = true;
+        }
+
+        if (blog.websiteUrl) {
+            if (hasUpdates) {
+                query += `, `;
+            }
+            query += `website_url = $${paramIndex}`;
+            params.push(blog.websiteUrl);
+            paramIndex++;
+            hasUpdates = true;
+        }
+
+        query += ` WHERE id = $${paramIndex}`;
         params.push(id);
 
-        await this.dataSource.query(query, params);
+        if (hasUpdates) {
+            await this.dataSource.query(query, params);
+        }
     }
 
     async makeBlogDeletedById(id: number): Promise<void> {

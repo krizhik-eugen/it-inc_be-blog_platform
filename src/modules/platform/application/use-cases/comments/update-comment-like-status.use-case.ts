@@ -25,6 +25,7 @@ export class UpdateCommentLikeStatusUseCase
     }
 
     async getParentById(commentId: string): Promise<CommentDocument> {
+        // TODO fix types for id
         return this.commentsRepository.findByIdOrNotFoundFail(commentId);
     }
 

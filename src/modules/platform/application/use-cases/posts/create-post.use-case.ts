@@ -1,8 +1,9 @@
-import { InjectModel } from '@nestjs/mongoose';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Post, PostModelType } from '../../../domain/post.entity';
 import { CreatePostDto } from '../../../dto/create';
-import { MongoBlogsRepository, PostsRepository } from '../../../infrastructure';
+import {
+    PostgresBlogsRepository,
+    PostgresPostsRepository,
+} from '../../../infrastructure';
 
 export class CreatePostCommand {
     constructor(public dto: CreatePostDto) {}
@@ -10,29 +11,38 @@ export class CreatePostCommand {
 
 @CommandHandler(CreatePostCommand)
 export class CreatePostUseCase
-    implements ICommandHandler<CreatePostCommand, string>
+    implements ICommandHandler<CreatePostCommand, number>
 {
     constructor(
-        @InjectModel(Post.name)
-        private PostModel: PostModelType,
-        private postsRepository: PostsRepository,
-        private mongoBlogsRepository: MongoBlogsRepository,
+        // @InjectModel(MongoPost.name)
+        // private PostModel: MongoPostModelType,
+        // private mongoPostsRepository: MongoPostsRepository,
+        // private mongoBlogsRepository: MongoBlogsRepository,
+        private postgresBlogsRepository: PostgresBlogsRepository,
+        private postgresPostsRepository: PostgresPostsRepository,
     ) {}
 
-    async execute({ dto }: CreatePostCommand): Promise<string> {
+    async execute({ dto }: CreatePostCommand): Promise<number> {
         const blog =
-            await this.mongoBlogsRepository.findByIdNonDeletedOrNotFoundFail(
-                dto.blogId.toString(), // TODO: remove toString()
+            await this.postgresBlogsRepository.findByIdNonDeletedOrNotFoundFail(
+                dto.blogId,
             );
 
-        const newPost = this.PostModel.createInstance({
+        const newPostId = await this.postgresPostsRepository.addNewPost({
             ...dto,
-            blogId: dto.blogId.toString(), // TODO: remove toString()
             blogName: blog.name,
         });
 
-        await this.postsRepository.save(newPost);
+        return newPostId;
 
-        return newPost._id.toString();
+        // const newPost = this.PostModel.createInstance({
+        //     ...dto,
+        //     blogId: dto.blogId,
+        //     blogName: blog.name,
+        // });
+
+        // await this.mongoPostsRepository.save(newPost);
+
+        // return newPost._id.toString();
     }
 }

@@ -14,10 +14,10 @@ import {
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
 import {
-    PaginatedPostsViewDto,
-    PostViewDto,
     CommentViewDto,
     PaginatedCommentsViewDto,
+    PaginatedPostgresPostsViewDto,
+    PostgresPostViewDto,
 } from '../dto/view-dto';
 import {
     CreatePostInputDto,
@@ -112,7 +112,7 @@ export const GetAllPostsApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedPostsViewDto,
+            type: PaginatedPostgresPostsViewDto,
         }),
     );
 };
@@ -125,11 +125,11 @@ export const CreatePostApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns the newly created post',
-            type: PostViewDto,
+            type: PostgresPostViewDto,
         }),
         ApiBody({
             type: CreatePostInputDto,
-            description: 'Data for constructing new Post entity',
+            description: 'Data for constructing new MongoPost entity',
         }),
     );
 };
@@ -141,7 +141,7 @@ export const GetPostApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PostViewDto,
+            type: PostgresPostViewDto,
         }),
         ApiNotFoundResponse({
             description: 'Not found',
@@ -175,6 +175,34 @@ export const UpdatePostApi = () => {
     );
 };
 
+export const UpdateBlogPostApi = () => {
+    return applyDecorators(
+        ApiBasicAuth(),
+        ApiOperation({
+            summary: 'Updates existing post by id with InputModel',
+        }),
+        ApiNoContentResponse({
+            description: 'No content',
+        }),
+        ApiNotFoundResponse({
+            description: 'Not found',
+        }),
+        ApiParam({
+            name: 'blogId',
+            description: 'Blog id',
+        }),
+        ApiParam({
+            name: 'postId',
+            description: 'Post id',
+        }),
+        ApiBody({
+            type: UpdatePostInputDto,
+            description: 'Data for updating post',
+            required: false,
+        }),
+    );
+};
+
 export const DeletePostApi = () => {
     return applyDecorators(
         ApiBasicAuth(),
@@ -189,6 +217,29 @@ export const DeletePostApi = () => {
         }),
         ApiParam({
             name: 'id',
+            description: 'Post id',
+        }),
+    );
+};
+
+export const DeleteBlogPostApi = () => {
+    return applyDecorators(
+        ApiBasicAuth(),
+        ApiOperation({
+            summary: 'Deletes post by id',
+        }),
+        ApiNoContentResponse({
+            description: 'No content',
+        }),
+        ApiNotFoundResponse({
+            description: 'Not found',
+        }),
+        ApiParam({
+            name: 'blogId',
+            description: 'Blog id',
+        }),
+        ApiParam({
+            name: 'postId',
             description: 'Post id',
         }),
     );

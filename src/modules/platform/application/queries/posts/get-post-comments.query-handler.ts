@@ -6,7 +6,7 @@ import { CommentsQueryRepository } from '../../../infrastructure';
 export class GetCommentsQuery {
     constructor(
         public query: GetCommentsQueryParams,
-        public postId: string,
+        public postId: number,
         public userId: number | null,
     ) {}
 }

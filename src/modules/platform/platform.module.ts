@@ -1,21 +1,19 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MongoBlog, MongoBlogSchema } from './domain/blog.entity';
 import {
-    MongoBlogsQueryRepository,
-    MongoBlogsRepository,
-    PostsRepository,
-    PostsQueryRepository,
     CommentsRepository,
     CommentsQueryRepository,
     LikesRepository,
     LikesQueryRepository,
     PostgresBlogsRepository,
     PostgresBlogsQueryRepository,
+    PostgresPostsQueryRepository,
+    PostgresPostsRepository,
 } from './infrastructure';
 import {
     CreateBlogUseCase,
     DeleteBlogUseCase,
+    UpdateBlogPostUseCase,
     UpdateBlogUseCase,
 } from './application/use-cases/blogs';
 import {
@@ -23,13 +21,7 @@ import {
     GetBlogPostsQueryHandler,
     GetBlogsQueryHandler,
 } from './application/queries/blogs';
-import {
-    CreateCommentUseCase,
-    CreatePostUseCase,
-    DeletePostUseCase,
-    UpdatePostLikeStatusUseCase,
-    UpdatePostUseCase,
-} from './application/use-cases/posts';
+import { CreatePostUseCase } from './application/use-cases/posts';
 import {
     GetCommentsQueryHandler,
     GetPostByIdQueryHandler,
@@ -41,7 +33,6 @@ import {
     UpdateCommentUseCase,
 } from './application/use-cases/comments';
 import { GetCommentByIdQueryHandler } from './application/queries/comments';
-import { Post, PostSchema } from './domain/post.entity';
 import { Comment, CommentSchema } from './domain/comment.entity';
 import { Like, LikeSchema } from './domain/like.entity';
 import { AccountsModule } from '../accounts/accounts.module';
@@ -49,19 +40,17 @@ import { BlogsController } from './api/blogs.controller';
 import { PostsController } from './api/posts.controller';
 import { CommentsController } from './api/comments.controller';
 import { BlogIsExistentConstraint } from './api/validation';
+import { SaBlogsController } from './api/sa.blogs.controller';
 
 const useCases = [
     CreateBlogUseCase,
     UpdateBlogUseCase,
     DeleteBlogUseCase,
     CreatePostUseCase,
-    UpdatePostUseCase,
-    CreateCommentUseCase,
     UpdateCommentUseCase,
     DeleteCommentUseCase,
     UpdateCommentLikeStatusUseCase,
-    DeletePostUseCase,
-    UpdatePostLikeStatusUseCase,
+    UpdateBlogPostUseCase,
 ];
 const queries = [
     GetBlogByIdQueryHandler,
@@ -73,29 +62,30 @@ const queries = [
     GetCommentsQueryHandler,
 ];
 const repositories = [
-    MongoBlogsRepository,
-    MongoBlogsQueryRepository,
-    PostsRepository,
-    PostsQueryRepository,
     CommentsQueryRepository,
     CommentsRepository,
     LikesRepository,
     LikesQueryRepository,
     PostgresBlogsRepository,
     PostgresBlogsQueryRepository,
+    PostgresPostsRepository,
+    PostgresPostsQueryRepository,
 ];
 
 @Module({
     imports: [
         MongooseModule.forFeature([
-            { name: MongoBlog.name, schema: MongoBlogSchema },
-            { name: Post.name, schema: PostSchema },
             { name: Comment.name, schema: CommentSchema },
             { name: Like.name, schema: LikeSchema },
         ]),
         AccountsModule,
     ],
-    controllers: [BlogsController, PostsController, CommentsController],
+    controllers: [
+        BlogsController,
+        SaBlogsController,
+        PostsController,
+        CommentsController,
+    ],
     providers: [
         ...repositories,
         ...useCases,

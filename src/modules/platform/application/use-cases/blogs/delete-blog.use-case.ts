@@ -1,11 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import {
-    MongoBlogsRepository,
-    CommentsRepository,
-    LikesRepository,
-    PostsRepository,
-    PostgresBlogsRepository,
-} from '../../../infrastructure';
+import { PostgresBlogsRepository } from '../../../infrastructure';
 
 export class DeleteBlogCommand {
     constructor(public blogId: number) {}
@@ -32,13 +26,13 @@ export class DeleteBlogUseCase
         // TODO: delete all posts associated with the blog, comments for these posts, likes for posts and comments
 
         // const posts =
-        //     await this.postsRepository.findAllByBlogIdNonDeleted(blogId);
+        //     await this.mongoPostsQueryRepository.findAllByBlogIdNonDeleted(blogId);
         // const postIds = posts.map((p) => p._id.toString());
         // const comments =
         //     await this.commentsRepository.findAllByPostIdsNonDeleted(postIds);
         // const commentIds = comments.map((c) => c._id.toString());
         // await this.commentsRepository.deleteAllByPostIds(postIds);
-        // await this.postsRepository.deleteAllByBlogId(blogId);
+        // await this.mongoPostsQueryRepository.deleteAllByBlogId(blogId);
         // await this.likesRepository.deleteAllByParentIds([
         //     ...postIds,
         //     ...commentIds,

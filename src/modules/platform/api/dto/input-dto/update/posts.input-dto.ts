@@ -1,11 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
-import {
-    IsObjectId,
-    IsStringWithTrim,
-} from '../../../../../../core/decorators/validation';
+import { IsStringWithTrim } from '../../../../../../core/decorators/validation';
 import { UpdatePostDto } from '../../../../dto/update';
-import { BlogIsExistent } from '../../../validation';
 import { postConstraints } from '../../../../domain/post.entity';
 
 export class UpdatePostInputDto implements UpdatePostDto {
@@ -19,6 +15,7 @@ export class UpdatePostInputDto implements UpdatePostDto {
     @ApiProperty({
         maxLength: postConstraints.shortDescription.maxLength,
     })
+    @IsOptional()
     @IsStringWithTrim(1, postConstraints.shortDescription.maxLength)
     shortDescription: string;
 
@@ -29,8 +26,9 @@ export class UpdatePostInputDto implements UpdatePostDto {
     @IsOptional()
     content: string;
 
-    @ApiProperty()
-    @IsObjectId()
-    @BlogIsExistent()
-    blogId: string;
+    // TODO: removed it here for sa controller
+    // @ApiProperty()
+    // @IsInt()
+    // @BlogIsExistent()
+    // blogId: number;
 }

@@ -19,7 +19,6 @@ export class CreateBlogUseCase
 
     async execute({ dto }: CreateBlogCommand): Promise<number> {
         // const newBlog = this.BlogModel.createInstance(dto);
-
         const newBlogId = await this.postgresBlogsRepository.addNewBlog(dto);
 
         return newBlogId;

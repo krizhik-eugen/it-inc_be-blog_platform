@@ -10,10 +10,10 @@ import {
     ApiParam,
 } from '@nestjs/swagger';
 import {
-    MongoBlogViewDto,
-    PaginatedMongoBlogsViewDto,
-    PaginatedPostsViewDto,
-    PostViewDto,
+    PaginatedPostgresBlogsViewDto,
+    PaginatedPostgresPostsViewDto,
+    PostgresBlogViewDto,
+    PostgresPostViewDto,
 } from '../dto/view-dto';
 import {
     CreateBlogInputDto,
@@ -28,7 +28,7 @@ export const GetAllBlogsApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedMongoBlogsViewDto,
+            type: PaginatedPostgresBlogsViewDto,
         }),
     );
 };
@@ -41,7 +41,7 @@ export const CreateBlogApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns a newly created blog',
-            type: MongoBlogViewDto,
+            type: PostgresBlogViewDto,
         }),
         ApiBody({
             type: CreateBlogInputDto,
@@ -57,7 +57,7 @@ export const GetAllBlogPostsApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedPostsViewDto,
+            type: PaginatedPostgresPostsViewDto,
         }),
         ApiNotFoundResponse({
             description: 'If specified blog does not exist',
@@ -76,7 +76,7 @@ export const CreateBlogPostApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns a newly created post',
-            type: PostViewDto,
+            type: PostgresPostViewDto,
         }),
         ApiNotFoundResponse({
             description: 'If specified blog does not exist',
@@ -86,7 +86,7 @@ export const CreateBlogPostApi = () => {
         }),
         ApiBody({
             type: CreatePostInputDto,
-            description: 'Data for constructing new Post entity',
+            description: 'Data for constructing new MongoPost entity',
         }),
     );
 };
@@ -98,7 +98,7 @@ export const GetBlogApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: MongoBlogViewDto,
+            type: PostgresBlogViewDto,
         }),
         ApiNotFoundResponse({
             description: 'Not found',

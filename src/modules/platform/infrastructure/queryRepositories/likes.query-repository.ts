@@ -42,7 +42,7 @@ export class LikesQueryRepository {
         return foundLikes;
     }
 
-    async getLastThreeLikes(parentId: string) {
+    async getLastThreeLikes(parentId: number) {
         const foundLikes = await this.LikeModel.find({
             parentId,
             status: LikeStatus.Like,

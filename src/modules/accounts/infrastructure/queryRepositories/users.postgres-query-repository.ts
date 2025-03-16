@@ -48,11 +48,9 @@ export class UsersPostgresQueryRepository {
     async getAllUsers(
         query: GetUsersQueryParams,
     ): Promise<PaginatedPostgresUsersViewDto> {
-        // Build the base query with parameters
-        const queryParams: string[] = [];
-        let paramCounter = 1;
+        const queryParams: (string | number)[] = [];
+        let paramIndex = 1;
 
-        // Add search parameters if provided
         const searchLoginTerm = query.searchLoginTerm
             ? query.searchLoginTerm
             : null;
@@ -60,24 +58,22 @@ export class UsersPostgresQueryRepository {
             ? query.searchEmailTerm
             : null;
 
-        // Create the main query
         let sqlQuery = `
             WITH filtered_users AS (
                 SELECT * FROM users
                 WHERE deleted_at IS NULL
         `;
 
-        // Add search conditions
         if (searchLoginTerm) {
-            sqlQuery += ` AND login ILIKE $${paramCounter}`;
+            sqlQuery += ` AND login ILIKE $${paramIndex}`;
             queryParams.push(`%${searchLoginTerm}%`);
-            paramCounter++;
+            paramIndex++;
         }
 
         if (searchEmailTerm) {
-            sqlQuery += ` ${searchLoginTerm ? 'OR' : 'AND'} email ILIKE $${paramCounter}`;
+            sqlQuery += ` ${searchLoginTerm ? 'OR' : 'AND'} email ILIKE $${paramIndex}`;
             queryParams.push(`%${searchEmailTerm}%`);
-            paramCounter++;
+            paramIndex++;
         }
 
         sqlQuery += `
@@ -87,24 +83,19 @@ export class UsersPostgresQueryRepository {
                 COUNT(*) OVER() AS total_count
             FROM filtered_users
             ORDER BY ${this.sanitizeSortField(query.sortBy)} ${query.sortDirection}
-            LIMIT $${paramCounter} OFFSET $${paramCounter + 1}
+            LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
         `;
 
-        // Add pagination parameters
-        queryParams.push(query.pageSize.toString());
-        queryParams.push(query.calculateSkip().toString());
+        queryParams.push(query.pageSize, query.calculateSkip());
 
-        // Execute the query
         const result: Array<PostgresUser & { total_count: string }> =
             await this.dataSource.query(sqlQuery, queryParams);
 
-        // Map the results
         const totalCount = Number(result[0]?.total_count) || 0;
         const mappedUsers = result.map((user) =>
             PostgresUserViewDto.mapToView(user),
         );
 
-        // Return paginated results
         return PaginatedPostgresUsersViewDto.mapToView({
             items: mappedUsers,
             page: query.pageNumber,
@@ -113,7 +104,6 @@ export class UsersPostgresQueryRepository {
         });
     }
 
-    // Helper method to prevent SQL injection in sort fields
     private sanitizeSortField(field: string): string {
         const allowedFields = [
             'id',
@@ -123,7 +113,7 @@ export class UsersPostgresQueryRepository {
             'updated_at',
         ];
         if (!allowedFields.includes(field.toLowerCase())) {
-            return 'created_at'; // Default sort field if invalid
+            return 'created_at';
         }
         return field;
     }
