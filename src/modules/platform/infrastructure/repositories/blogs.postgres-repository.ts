@@ -128,6 +128,7 @@ export class PostgresBlogsRepository {
         }
         await this.dataSource.query(
             `UPDATE public.blogs SET deleted_at = NOW() WHERE id = $1`,
+            [id],
         );
     }
 }

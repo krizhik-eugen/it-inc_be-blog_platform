@@ -60,7 +60,7 @@ import { PostgresPost } from '../../../domain/post.postgres-entity';
 
 export class PostgresPostViewDto {
     @ApiProperty()
-    id: number;
+    id: string;
     @ApiProperty()
     title: string;
     @ApiProperty()
@@ -70,7 +70,7 @@ export class PostgresPostViewDto {
     @ApiProperty()
     createdAt: string;
     @ApiProperty()
-    blogId: number;
+    blogId: string;
     @ApiProperty()
     blogName: string;
     @ApiProperty({
@@ -85,12 +85,12 @@ export class PostgresPostViewDto {
     ): PostgresPostViewDto {
         const dto = new PostgresPostViewDto();
 
-        dto.id = post.id;
+        dto.id = post.id.toString();
         dto.shortDescription = post.short_description;
         dto.title = post.title;
         dto.content = post.content;
         dto.createdAt = new Date(post.created_at).toISOString();
-        dto.blogId = post.blog_id;
+        dto.blogId = post.blog_id.toString();
         dto.blogName = post.blog_name;
         dto.extendedLikesInfo = {
             // TODO: implement likesCount and dislikesCount

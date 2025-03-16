@@ -46,8 +46,9 @@ export class PostgresPostsQueryRepository {
                 );
         }
 
-        const newestLikes =
-            await this.likesQueryRepository.getLastThreeLikes(postId);
+        const newestLikes = await this.likesQueryRepository.getLastThreeLikes(
+            post.id.toString(),
+        );
 
         return PostgresPostViewDto.mapToView(post, likeStatus, newestLikes);
     }
