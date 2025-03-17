@@ -30,7 +30,7 @@ export class CreatePostInputDto
     implements CreateBlogPostDto
 {
     @ApiProperty()
-    @IsObjectId()
+    // @IsObjectId()
     @BlogIsExistent()
     blogId: number;
 }
