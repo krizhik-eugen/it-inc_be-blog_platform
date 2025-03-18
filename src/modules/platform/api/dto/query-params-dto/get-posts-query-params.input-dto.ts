@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../core/dto';
 
 enum PostsSortBy {
@@ -14,5 +14,6 @@ export class GetPostsQueryParams extends BaseSortablePaginationParams<PostsSortB
         default: PostsSortBy.CreatedAt,
     })
     @IsEnum(PostsSortBy)
+    @IsOptional()
     sortBy = PostsSortBy.CreatedAt;
 }

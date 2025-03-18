@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../core/dto';
 
 enum CommentsSortBy {
@@ -13,5 +13,6 @@ export class GetCommentsQueryParams extends BaseSortablePaginationParams<Comment
         default: CommentsSortBy.CreatedAt,
     })
     @IsEnum(CommentsSortBy)
+    @IsOptional()
     sortBy = CommentsSortBy.CreatedAt;
 }

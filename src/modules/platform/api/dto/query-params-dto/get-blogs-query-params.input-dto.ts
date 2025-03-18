@@ -14,6 +14,7 @@ export class GetBlogsQueryParams extends BaseSortablePaginationParams<BlogsSortB
         default: BlogsSortBy.CreatedAt,
     })
     @IsEnum(BlogsSortBy)
+    @IsOptional()
     sortBy = BlogsSortBy.CreatedAt;
 
     @ApiPropertyOptional({
