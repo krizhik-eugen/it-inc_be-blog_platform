@@ -131,7 +131,7 @@ export class PostgresPostsQueryRepository {
     }
 
     private sanitizeSortField(field: string): string {
-        const allowedFields = ['title', 'created_at'];
+        const allowedFields = ['title', 'created_at', 'blog_name'];
         if (!allowedFields.includes(field.toLowerCase())) {
             return 'created_at';
         }
