@@ -15,6 +15,7 @@ export class GetUsersQueryParams extends BaseSortablePaginationParams<UsersSortB
         default: UsersSortBy.CreatedAt,
     })
     @IsEnum(UsersSortBy)
+    @IsOptional()
     sortBy = UsersSortBy.CreatedAt;
 
     @ApiPropertyOptional({
