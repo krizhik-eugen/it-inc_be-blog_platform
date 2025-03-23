@@ -1,10 +1,10 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { CommentViewDto } from '../../../api/dto/view-dto';
+import { CommentViewDto } from '../../../api/dto/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../../../infrastructure';
 
 export class GetCommentByIdQuery {
     constructor(
-        public commentId: string,
+        public commentId: number,
         public userId: number | null,
     ) {}
 }

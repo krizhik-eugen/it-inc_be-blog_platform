@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresPost } from '../../domain/post.postgres-entity';
+import { PostgresPost } from '../../domain/post.entity';
 import { CreatePostDomainDto } from '../../domain/dto/create';
 import { UpdatePostDomainDto } from '../../domain/dto/update';
 
 @Injectable()
-export class PostgresPostsRepository {
-    constructor(
-        // @InjectModel(MongoPost.name) private PostModel: MongoPostModelType,
-        private dataSource: DataSource,
-    ) {}
+export class PostsRepository {
+    constructor(private dataSource: DataSource) {}
 
     async findById(id: number): Promise<PostgresPost | null> {
         const data: PostgresPost[] = await this.dataSource.query(
@@ -61,7 +58,7 @@ export class PostgresPostsRepository {
         return data;
     }
 
-    async addNewPost(post: CreatePostDomainDto) {
+    async addNewPost(post: CreatePostDomainDto): Promise<number> {
         const data: { id: number }[] = await this.dataSource.query(
             `
                 INSERT INTO public.posts (title, short_description, content, blog_id, blog_name)

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostgresBlogsRepository } from '../../../infrastructure';
+import { BlogsRepository } from '../../../infrastructure';
 
 export class DeleteBlogCommand {
     constructor(public blogId: number) {}
@@ -9,19 +9,10 @@ export class DeleteBlogCommand {
 export class DeleteBlogUseCase
     implements ICommandHandler<DeleteBlogCommand, void>
 {
-    constructor(private postgresBlogsRepository: PostgresBlogsRepository) {}
+    constructor(private blogsRepository: BlogsRepository) {}
 
     async execute({ blogId }: DeleteBlogCommand): Promise<void> {
-        // const blog =
-        //     await this.mongoBlogsRepository.findByIdNonDeletedOrNotFoundFail(
-        //         blogId,
-        //     );
-
-        // blog.makeDeleted();
-
-        // await this.mongoBlogsRepository.save(blog);
-
-        await this.postgresBlogsRepository.makeBlogDeletedById(blogId);
+        await this.blogsRepository.makeBlogDeletedById(blogId);
 
         // TODO: delete all posts associated with the blog, comments for these posts, likes for posts and comments
 

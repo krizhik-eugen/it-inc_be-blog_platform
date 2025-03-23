@@ -18,7 +18,6 @@ export class GetUsersQueryHandler
     async execute({
         query,
     }: GetUsersQuery): Promise<PaginatedPostgresUsersViewDto> {
-        // return this.usersMongoQueryRepository.getAllUsers(query);
         return this.usersPostgresQueryRepository.getAllUsers(query);
     }
 }

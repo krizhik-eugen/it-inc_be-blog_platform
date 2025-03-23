@@ -14,10 +14,6 @@ export class DeleteAllSessionsUseCase
     ) {}
 
     async execute({ session }: DeleteAllSessionsCommand): Promise<void> {
-        // await this.mongoSessionsRepository.deleteAllSessionsExceptCurrent({
-        //     userId: session.userId,
-        //     deviceId: session.deviceId,
-        // });
         await this.postgresSessionsRepository.deleteAllSessionsExceptCurrent({
             userId: session.userId,
             deviceId: session.deviceId,

@@ -37,8 +37,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
                 await this.postgresSessionRepository.makeSessionDeletedById(
                     foundSession.id,
                 );
-                // foundSession.makeDeleted();
-                // await this.mongoSessionRepository.save(foundSession);
             }
 
             throw UnauthorizedDomainException.create('Refresh token expired');

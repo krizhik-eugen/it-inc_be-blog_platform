@@ -1,10 +1,3 @@
-// import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-// import { HydratedDocument, Model } from 'mongoose';
-// import { NotFoundDomainException } from '../../../core/exceptions';
-// import { CreatePostDomainDto } from './dto/create';
-// import { UpdatePostDomainDto } from './dto/update';
-// import { ParentLikesEntity } from './parent-likes.entity';
-
 export const postConstraints = {
     title: {
         maxLength: 30,
@@ -17,136 +10,31 @@ export const postConstraints = {
     },
 };
 
-// /**
-//  * MongoPost Entity Schema
-//  * This class represents the schema and behavior of a MongoPost entity.
-//  */
-// @Schema({ timestamps: true })
-// export class MongoPost extends ParentLikesEntity {
-//     /**
-//      * Id of the blog that the post belongs to
-//      * @type {number}
-//      * @required
-//      */
-//     @Prop({
-//         type: Number,
-//         required: true,
-//     })
-//     blogId: number;
+export class PostgresPost {
+    id: number;
+    title: string;
+    short_description: string;
+    content: string;
+    blog_id: number;
+    blog_name: string;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date | null;
+}
 
-//     /**
-//      * Name of the blog that the post belongs to
-//      * @type {string}
-//      * @required
-//      */
-//     @Prop({
-//         type: String,
-//         required: true,
-//     })
-//     blogName: string;
+// Postgres posts table:
 
-//     /**
-//      * Title of the post
-//      * @type {string}
-//      * @required
-//      */
-//     @Prop({
-//         type: String,
-//         required: true,
-//         maxlength: postConstraints.title.maxLength,
-//     })
-//     title: string;
+// CREATE TABLE posts (
+//     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+//     title VARCHAR(255) NOT NULL,
+//     short_description VARCHAR(255) NOT NULL,
+//     content VARCHAR(1023) NOT NULL,
+//     blog_id INTEGER NOT NULL,
+//     blog_name VARCHAR(255) NOT NULL,
+//     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+//     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+//     deleted_at TIMESTAMP WITH TIME ZONE
 
-//     /**
-//      * Content of the post
-//      * @type {string}
-//      * @required
-//      */
-//     @Prop({
-//         type: String,
-//         required: true,
-//         maxlength: postConstraints.content.maxLength,
-//     })
-//     content: string;
-
-//     /**
-//      * Short description of the post
-//      * @type {string}
-//      * @required
-//      */
-//     @Prop({
-//         type: String,
-//         required: true,
-//         maxlength: postConstraints.shortDescription.maxLength,
-//     })
-//     shortDescription: string;
-
-//     /**
-//      * Creation timestamp
-//      * Explicitly defined despite timestamps: true
-//      * properties without @Prop for typescript so that they are in the class instance (or in instance methods)
-//      * @type {String}
-//      */
-//     createdAt: string;
-//     updatedAt: string;
-
-//     /**
-//      * Deletion timestamp, nullable, if date exist, means entity soft deleted
-//      * @type {String | null}
-//      */
-//     @Prop({ type: String, nullable: true })
-//     deletedAt: string | null;
-
-//     /**
-//      * Factory method to create a MongoPost instance
-//      * @param {CreateBlogPostDto} dto - The data transfer object for post creation
-//      * @returns {MongoPostDocument} The created post document
-//      */
-//     static createInstance(dto: CreatePostDomainDto): MongoPostDocument {
-//         const post = new this();
-
-//         post.title = dto.title;
-//         post.shortDescription = dto.shortDescription;
-//         post.content = dto.content;
-//         post.blogId = dto.blogId;
-//         post.blogName = dto.blogName;
-
-//         return post as MongoPostDocument;
-//     }
-
-//     /**
-//      * Factory method to update a MongoPost instance
-//      * @param {UpdatePostDto} dto - The data transfer object for post creation
-//      */
-//     update(dto: UpdatePostDomainDto) {
-//         if (dto.title) {
-//             this.title = dto.title;
-//         }
-//         if (dto.shortDescription) {
-//             this.shortDescription = dto.shortDescription;
-//         }
-//         if (dto.content) {
-//             this.content = dto.content;
-//         }
-//     }
-
-//     /**
-//      * Marks the post as deleted
-//      * Throws an error if already deleted
-//      * @throws {Error} If the entity is already deleted
-//      */
-//     makeDeleted() {
-//         if (this.deletedAt) {
-//             throw NotFoundDomainException.create('Entity already deleted');
-//         }
-//         this.deletedAt = new Date().toISOString();
-//     }
-// }
-
-// export const MongoPostSchema = SchemaFactory.createForClass(MongoPost);
-
-// MongoPostSchema.loadClass(MongoPost);
-
-// export type MongoPostDocument = HydratedDocument<MongoPost>;
-
-// export type MongoPostModelType = Model<MongoPostDocument> & typeof MongoPost;
+// -- Foreign key to blogs table
+//     CONSTRAINT fk_posts_blogs FOREIGN KEY (blog_id) REFERENCES public.blogs (id) ON UPDATE NO ACTION ON DELETE CASCADE
+// );

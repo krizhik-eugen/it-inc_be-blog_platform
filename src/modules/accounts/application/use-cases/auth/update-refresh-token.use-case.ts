@@ -44,13 +44,11 @@ export class UpdateRefreshTokenUseCase
             );
 
         if (!foundSession) {
-            throw UnauthorizedDomainException.create(
-                'PostgresSession not found',
-            );
+            throw UnauthorizedDomainException.create('Session not found');
         }
 
         if (foundSession.iat !== dto.iat) {
-            throw UnauthorizedDomainException.create('PostgresSession expired');
+            throw UnauthorizedDomainException.create('Session expired');
         }
 
         const updatedAccessToken = this.accessTokenContext.sign({
@@ -64,13 +62,6 @@ export class UpdateRefreshTokenUseCase
 
         const decodedIssuedToken =
             this.refreshTokenContext.decode(updatedRefreshToken);
-
-        // foundSession.update({
-        //     ip: dto.ip,
-        //     iat: decodedIssuedToken.iat!,
-        //     exp: decodedIssuedToken.exp!,
-        // });
-        // await this.mongoSessionRepository.save(foundSession);
 
         await this.postgresSessionRepository.updateSession({
             deviceId: dto.deviceId,

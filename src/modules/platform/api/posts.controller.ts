@@ -1,21 +1,56 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
-import { JwtOptionalAuthGuard } from '../../../modules/accounts/guards/bearer';
-import { GetAllPostsApi, GetPostApi } from './swagger';
-import { ExtractUserIfExistsFromRequest } from '../../../modules/accounts/guards/decorators';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Post,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import {
+    JwtAuthGuard,
+    JwtOptionalAuthGuard,
+} from '../../../modules/accounts/guards/bearer';
+import {
+    CreateCommentApi,
+    GetAllPostCommentsApi,
+    GetAllPostsApi,
+    GetPostApi,
+} from './swagger';
+import {
+    ExtractUserFromRequest,
+    ExtractUserIfExistsFromRequest,
+} from '../../../modules/accounts/guards/decorators';
 import { UserContextDto } from '../../../modules/accounts/guards/dto';
-import { GetPostsQueryParams } from './dto/query-params-dto';
+import {
+    GetCommentsQueryParams,
+    GetPostsQueryParams,
+} from './dto/query-params-dto';
 
-import { GetPostByIdQuery, GetPostsQuery } from '../application/queries/posts';
+import {
+    GetCommentsQuery,
+    GetPostByIdQuery,
+    GetPostsQuery,
+} from '../application/queries/posts';
 import {
     PaginatedPostgresPostsViewDto,
     PostgresPostViewDto,
-} from './dto/view-dto/posts.view-dto';
+} from './dto/view-dto';
+import { CreateCommentInputDto } from './dto/input-dto/create';
+
+import { CreateCommentCommand } from '../application/use-cases/posts';
+import {
+    CommentViewDto,
+    PaginatedCommentsViewDto,
+} from './dto/view-dto/comments.view-dto';
+import { GetCommentByIdQuery } from '../application/queries/comments';
 
 @Controller('posts')
 export class PostsController {
     constructor(
-        // private commandBus: CommandBus,
+        private commandBus: CommandBus,
         private queryBus: QueryBus,
     ) {}
 
@@ -33,37 +68,37 @@ export class PostsController {
     //     );
     // }
 
-    // @UseGuards(JwtOptionalAuthGuard)
-    // @Get(':postId/comments')
-    // @GetAllPostCommentsApi()
-    // async getAllPostComments(
-    //     @Param('postId', ObjectIdValidationPipe) postId: string,
-    //     @Query() query: GetCommentsQueryParams,
-    //     @ExtractUserIfExistsFromRequest() user: UserContextDto,
-    // ): Promise<PaginatedCommentsViewDto> {
-    //     return this.queryBus.execute<
-    //         GetCommentsQuery,
-    //         PaginatedCommentsViewDto
-    //     >(new GetCommentsQuery(query, postId, user?.id));
-    // }
+    @UseGuards(JwtOptionalAuthGuard)
+    @Get(':postId/comments')
+    @GetAllPostCommentsApi()
+    async getAllPostComments(
+        @Param('postId', ParseIntPipe) postId: number,
+        @Query() query: GetCommentsQueryParams,
+        @ExtractUserIfExistsFromRequest() user: UserContextDto,
+    ): Promise<PaginatedCommentsViewDto> {
+        return this.queryBus.execute<
+            GetCommentsQuery,
+            PaginatedCommentsViewDto
+        >(new GetCommentsQuery(query, postId, user?.id));
+    }
 
-    // @UseGuards(JwtAuthGuard)
-    // @Post(':postId/comments')
-    // @CreateCommentApi()
-    // async createComment(
-    //     @Param('postId', ObjectIdValidationPipe) postId: string,
-    //     @Body() body: CreateCommentInputDto,
-    //     @ExtractUserFromRequest() user: UserContextDto,
-    // ): Promise<CommentViewDto> {
-    //     const newCommentId = await this.commandBus.execute<
-    //         CreateCommentCommand,
-    //         string
-    //     >(new CreateCommentCommand(postId, user.id, body));
+    @UseGuards(JwtAuthGuard)
+    @Post(':postId/comments')
+    @CreateCommentApi()
+    async createComment(
+        @Param('postId', ParseIntPipe) postId: number,
+        @Body() body: CreateCommentInputDto,
+        @ExtractUserFromRequest() user: UserContextDto,
+    ): Promise<CommentViewDto> {
+        const newCommentId = await this.commandBus.execute<
+            CreateCommentCommand,
+            number
+        >(new CreateCommentCommand(postId, user.id, body));
 
-    //     return this.queryBus.execute<GetCommentByIdQuery, CommentViewDto>(
-    //         new GetCommentByIdQuery(newCommentId, user.id),
-    //     );
-    // }
+        return this.queryBus.execute<GetCommentByIdQuery, CommentViewDto>(
+            new GetCommentByIdQuery(newCommentId, user.id),
+        );
+    }
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get()
@@ -98,7 +133,7 @@ export class PostsController {
     @Get(':postId')
     @GetPostApi()
     async getPost(
-        @Param('postId') postId: number,
+        @Param('postId', ParseIntPipe) postId: number,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PostgresPostViewDto> {
         return this.queryBus.execute(new GetPostByIdQuery(postId, user?.id));

@@ -10,9 +10,9 @@ import {
     ApiParam,
 } from '@nestjs/swagger';
 import {
-    PaginatedPostgresBlogsViewDto,
+    PaginatedBlogsViewDto,
     PaginatedPostgresPostsViewDto,
-    PostgresBlogViewDto,
+    BlogViewDto,
     PostgresPostViewDto,
 } from '../dto/view-dto';
 import {
@@ -28,7 +28,7 @@ export const GetAllBlogsApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedPostgresBlogsViewDto,
+            type: PaginatedBlogsViewDto,
         }),
     );
 };
@@ -41,11 +41,11 @@ export const CreateBlogApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns a newly created blog',
-            type: PostgresBlogViewDto,
+            type: BlogViewDto,
         }),
         ApiBody({
             type: CreateBlogInputDto,
-            description: 'Data for constructing new MongoBlog entity',
+            description: 'Data for constructing new Blog entity',
         }),
     );
 };
@@ -86,7 +86,7 @@ export const CreateBlogPostApi = () => {
         }),
         ApiBody({
             type: CreatePostInputDto,
-            description: 'Data for constructing new MongoPost entity',
+            description: 'Data for constructing new Post entity',
         }),
     );
 };
@@ -98,7 +98,7 @@ export const GetBlogApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PostgresBlogViewDto,
+            type: BlogViewDto,
         }),
         ApiNotFoundResponse({
             description: 'Not found',

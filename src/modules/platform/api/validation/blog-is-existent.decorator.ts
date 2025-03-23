@@ -5,7 +5,7 @@ import {
     ValidatorConstraint,
     ValidatorConstraintInterface,
 } from 'class-validator';
-import { PostgresBlogsRepository } from '../../infrastructure';
+import { BlogsRepository } from '../../infrastructure';
 
 // Mandatory registration in ioc
 
@@ -13,16 +13,13 @@ import { PostgresBlogsRepository } from '../../infrastructure';
 // This example is for testing purposes.
 // Better to perform such checks in the BLL (Business Logic Layer).
 
+// TODO: remove this decorator and make a check in service
 @ValidatorConstraint({ name: 'BlogIsExistent', async: true })
 @Injectable()
 export class BlogIsExistentConstraint implements ValidatorConstraintInterface {
-    constructor(
-        // private mongoBlogsRepository: MongoBlogsRepository,
-        private postgresBlogsRepository: PostgresBlogsRepository,
-    ) {}
+    constructor(private blogsRepository: BlogsRepository) {}
     async validate(value: number) {
-        const foundBlog =
-            await this.postgresBlogsRepository.findByIdNonDeleted(value);
+        const foundBlog = await this.blogsRepository.findByIdNonDeleted(value);
         return Boolean(foundBlog);
     }
 

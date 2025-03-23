@@ -1,78 +1,78 @@
 name: E2E Tests Workflow
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  # Add a workflow_dispatch to allow manual triggering
-  workflow_dispatch:
+    push:
+        branches: ['main']
+    pull_request:
+        branches: ['main']
+    # Add a workflow_dispatch to allow manual triggering
+    workflow_dispatch:
 
 jobs:
-  check-commit-message:
-    runs-on: ubuntu-latest
-    outputs:
-      should-skip: ${{ steps.check.outputs.should-skip }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-      - id: check
-        name: Check if commit message contains [ci skip]
-        run: |
-          if git log -1 --pretty=%B | grep -i -q "\[ci skip\]"; then
-            echo "should-skip=true" >> $GITHUB_OUTPUT
-          else
-            echo "should-skip=false" >> $GITHUB_OUTPUT
-          fi
+    check-commit-message:
+        runs-on: ubuntu-latest
+        outputs:
+            should-skip: ${{ steps.check.outputs.should-skip }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 2
+            - id: check
+              name: Check if commit message contains [ci skip]
+              run: |
+                  if git log -1 --pretty=%B | grep -i -q "\[ci skip\]"; then
+                    echo "should-skip=true" >> $GITHUB_OUTPUT
+                  else
+                    echo "should-skip=false" >> $GITHUB_OUTPUT
+                  fi
 
-  build:
-    needs: check-commit-message
-    if: needs.check-commit-message.outputs.should-skip != 'true'
-    runs-on: ubuntu-latest
-    environment: testing
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd mongosh
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    build:
+        needs: check-commit-message
+        if: needs.check-commit-message.outputs.should-skip != 'true'
+        runs-on: ubuntu-latest
+        environment: testing
+        services:
+            mongodb:
+                image: mongo:latest
+                ports:
+                    - 27017:27017
+                options: >-
+                    --health-cmd mongosh
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
 
-    strategy:
-      matrix:
-        node-version: [22.x]
-      fail-fast: false
+        strategy:
+            matrix:
+                node-version: [22.x]
+            fail-fast: false
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-    - name: Cache yarn dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-    - name: Build
-      run: yarn build
-    - name: Run E2E Tests
-      env:
-        NODE_ENV: testing
-        MONGO_URL: mongodb://127.0.0.1:27017/blog_platform_e2e_testing
-        ADMIN_LOGIN: ${{ secrets.ADMIN_LOGIN }}
-        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-      run: yarn test:e2e
-      timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'yarn'
+            - name: Get yarn cache directory path
+              id: yarn-cache-dir-path
+              run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+            - name: Cache yarn dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+            - name: Build
+              run: yarn build
+            - name: Run E2E Tests
+              env:
+                  NODE_ENV: testing
+                  MONGO_URL: mongodb://127.0.0.1:27017/blog_platform_e2e_testing
+                  ADMIN_LOGIN: ${{ secrets.ADMIN_LOGIN }}
+                  ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+              run: yarn test:e2e
+              timeout-minutes: 10

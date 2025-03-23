@@ -2,7 +2,7 @@ import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestDomainException } from '../../../../../core/exceptions';
 import { CreateUserCommand } from '../users';
 import { AuthService } from '../../auth.service';
-import { UsersPostgresRepository } from '../../../infrastructure';
+import { UsersRepository } from '../../../infrastructure';
 import { CreateUserDto } from '../../../dto/create';
 
 export class RegisterUserCommand {
@@ -15,7 +15,7 @@ export class RegisterUserUseCase
 {
     constructor(
         private authService: AuthService,
-        private usersPostgresRepository: UsersPostgresRepository,
+        private usersPostgresRepository: UsersRepository,
         private commandBus: CommandBus,
     ) {}
 

@@ -6,6 +6,7 @@ import {
     HttpCode,
     HttpStatus,
     Param,
+    ParseIntPipe,
     Post,
     Put,
     Query,
@@ -30,8 +31,8 @@ import {
     GetPostsQueryParams,
 } from './dto/query-params-dto';
 import {
-    PaginatedPostgresBlogsViewDto,
-    PostgresBlogViewDto,
+    PaginatedBlogsViewDto,
+    BlogViewDto,
     PaginatedPostgresPostsViewDto,
     PostgresPostViewDto,
 } from './dto/view-dto';
@@ -67,15 +68,13 @@ export class SaBlogsController {
     @GetAllBlogsApi()
     async getAllBlogs(
         @Query() query: GetBlogsQueryParams,
-    ): Promise<PaginatedPostgresBlogsViewDto> {
+    ): Promise<PaginatedBlogsViewDto> {
         return this.queryBus.execute(new GetBlogsQuery(query));
     }
 
     @Post()
     @CreateBlogApi()
-    async createBlog(
-        @Body() body: CreateBlogInputDto,
-    ): Promise<PostgresBlogViewDto> {
+    async createBlog(@Body() body: CreateBlogInputDto): Promise<BlogViewDto> {
         const newBlogId = await this.commandBus.execute<
             CreateBlogCommand,
             number
@@ -86,7 +85,7 @@ export class SaBlogsController {
     @Get(':blogId/posts')
     @GetAllBlogPostsApi()
     async getAllBlogPosts(
-        @Param('blogId') blogId: number,
+        @Param('blogId', ParseIntPipe) blogId: number,
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostgresPostsViewDto> {
@@ -99,7 +98,7 @@ export class SaBlogsController {
     @Post(':blogId/posts')
     @CreateBlogPostApi()
     async createBlogPost(
-        @Param('blogId') blogId: number,
+        @Param('blogId', ParseIntPipe) blogId: number,
         @Body() body: CreateBlogPostInputDto,
     ): Promise<PostgresPostViewDto> {
         const newPostId = await this.commandBus.execute<
@@ -120,7 +119,7 @@ export class SaBlogsController {
     @UpdateBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateBlog(
-        @Param('blogId') blogId: number,
+        @Param('blogId', ParseIntPipe) blogId: number,
         @Body() body: UpdateBlogInputDto,
     ): Promise<void> {
         return this.commandBus.execute<UpdateBlogCommand, void>(
@@ -132,8 +131,8 @@ export class SaBlogsController {
     @UpdateBlogPostApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(
-        @Param('blogId') blogId: number,
-        @Param('postId') postId: number,
+        @Param('blogId', ParseIntPipe) blogId: number,
+        @Param('postId', ParseIntPipe) postId: number,
         @Body() body: UpdatePostInputDto,
     ): Promise<void> {
         return this.commandBus.execute<UpdateBlogPostCommand, void>(
@@ -144,7 +143,9 @@ export class SaBlogsController {
     @Delete(':blogId')
     @DeleteBlogApi()
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteBlog(@Param('blogId') blogId: number): Promise<void> {
+    async deleteBlog(
+        @Param('blogId', ParseIntPipe) blogId: number,
+    ): Promise<void> {
         return this.commandBus.execute<DeleteBlogCommand, void>(
             new DeleteBlogCommand(blogId),
         );
@@ -154,8 +155,8 @@ export class SaBlogsController {
     @DeleteBlogPostApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deletePost(
-        @Param('blogId') blogId: number,
-        @Param('postId') postId: number,
+        @Param('blogId', ParseIntPipe) blogId: number,
+        @Param('postId', ParseIntPipe) postId: number,
     ): Promise<void> {
         return this.commandBus.execute<DeleteBlogPostCommand, void>(
             new DeleteBlogPostCommand(postId, blogId),

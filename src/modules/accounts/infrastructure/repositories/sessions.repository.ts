@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { DataSource } from 'typeorm';
-import { PostgresSession } from '../../domain/session.postgres-entity';
+import { Session } from '../../domain/session.entity';
 
 @Injectable()
 export class PostgresSessionsRepository {
@@ -22,7 +22,7 @@ export class PostgresSessionsRepository {
         iat: number;
         exp: number;
     }): Promise<number> {
-        const result: PostgresSession[] = await this.dataSource.query(
+        const result: Session[] = await this.dataSource.query(
             `
                 INSERT INTO sessions (user_id, device_id, device_name, ip, iat, exp)
                 VALUES ($1, $2, $3, $4, $5, $6)
@@ -34,10 +34,8 @@ export class PostgresSessionsRepository {
         return result[0].id;
     }
 
-    async findByDeviceIdNonDeleted(
-        deviceId: string,
-    ): Promise<PostgresSession | null> {
-        const sessions: PostgresSession[] = await this.dataSource.query(
+    async findByDeviceIdNonDeleted(deviceId: string): Promise<Session | null> {
+        const sessions: Session[] = await this.dataSource.query(
             `
                 SELECT * FROM sessions
                 WHERE device_id = $1
@@ -51,13 +49,11 @@ export class PostgresSessionsRepository {
 
     async findByDeviceIdNonDeletedOrNotFoundFail(
         deviceId: string,
-    ): Promise<PostgresSession> {
+    ): Promise<Session> {
         const session = await this.findByDeviceIdNonDeleted(deviceId);
 
         if (!session) {
-            throw NotFoundDomainException.create(
-                'PostgresSession is not found',
-            );
+            throw NotFoundDomainException.create('Session is not found');
         }
 
         return session;

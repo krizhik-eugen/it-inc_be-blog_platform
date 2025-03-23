@@ -3,13 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { DataSource } from 'typeorm';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Like, LikeModelType } from '../platform/domain/like.entity';
-import { Comment, CommentModelType } from '../platform/domain/comment.entity';
 
 @Controller('testing')
 export class TestingController {
     constructor(
-        @InjectModel(Comment.name)
-        private CommentModel: CommentModelType,
         @InjectModel(Like.name)
         private LikeModel: LikeModelType,
         private dataSource: DataSource,
@@ -39,9 +36,10 @@ export class TestingController {
             await this.dataSource.query(
                 `TRUNCATE posts RESTART IDENTITY CASCADE;`,
             ),
-            // await this.BlogModel.deleteMany({}),
-            // await this.PostModel.deleteMany({}),
-            await this.CommentModel.deleteMany({}),
+            await this.dataSource.query(
+                `TRUNCATE comments RESTART IDENTITY CASCADE;`,
+            ),
+
             await this.LikeModel.deleteMany({}),
         ]);
     }

@@ -15,7 +15,6 @@ export class GetUserByIdQueryHandler
     ) {}
 
     async execute({ userId }: GetUserByIdQuery): Promise<PostgresUserViewDto> {
-        // return this.usersMongoQueryRepository.getByIdOrNotFoundFail(userId);
         return this.usersPostgresQueryRepository.getByIdOrNotFoundFail(userId);
     }
 }

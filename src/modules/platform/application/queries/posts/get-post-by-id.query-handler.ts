@@ -14,7 +14,6 @@ export class GetPostByIdQueryHandler
     implements IQueryHandler<GetPostByIdQuery, PostgresPostViewDto>
 {
     constructor(
-        // private mongoPostsQueryRepository: MongoPostsQueryRepository,
         private postgresPostsQueryRepository: PostgresPostsQueryRepository,
     ) {}
 

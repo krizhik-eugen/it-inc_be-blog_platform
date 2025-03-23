@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PostgresSessionsQueryRepository } from '../../../infrastructure';
-import { PostgresSessionViewDto } from '../../../api/dto/view-dto';
+import { SessionsQueryRepository } from '../../../infrastructure';
+import { SessionViewDto } from '../../../api/dto/view-dto';
 
 export class GetSessionsQuery {
     constructor(public userId: number) {}
@@ -8,18 +8,11 @@ export class GetSessionsQuery {
 
 @QueryHandler(GetSessionsQuery)
 export class GetSessionsQueryHandler
-    implements IQueryHandler<GetSessionsQuery, PostgresSessionViewDto[]>
+    implements IQueryHandler<GetSessionsQuery, SessionViewDto[]>
 {
-    constructor(
-        private postgresSessionsQueryRepository: PostgresSessionsQueryRepository,
-    ) {}
+    constructor(private sessionsQueryRepository: SessionsQueryRepository) {}
 
-    async execute({
-        userId,
-    }: GetSessionsQuery): Promise<PostgresSessionViewDto[]> {
-        // return this.sessionsQueryRepository.getAllSessionsDevices(userId);
-        return this.postgresSessionsQueryRepository.getAllSessionsDevices(
-            userId,
-        );
+    async execute({ userId }: GetSessionsQuery): Promise<SessionViewDto[]> {
+        return this.sessionsQueryRepository.getAllSessionsDevices(userId);
     }
 }

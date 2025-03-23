@@ -31,9 +31,9 @@ import { AuthService } from './application/auth.service';
 import { CryptoService } from './application/crypto.service';
 import {
     UsersPostgresQueryRepository,
-    UsersPostgresRepository,
+    UsersRepository,
     PostgresSessionsRepository,
-    PostgresSessionsQueryRepository,
+    SessionsQueryRepository,
 } from './infrastructure';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AuthController } from './api/auth.controller';
@@ -70,9 +70,9 @@ const queries = [
 ] as Provider[];
 const repositories = [
     UsersPostgresQueryRepository,
-    UsersPostgresRepository,
+    UsersRepository,
     PostgresSessionsRepository,
-    PostgresSessionsQueryRepository,
+    SessionsQueryRepository,
 ] as Provider[];
 const strategies = [
     LocalStrategy,
@@ -116,6 +116,6 @@ const strategies = [
         ...queries,
         CryptoService,
     ],
-    exports: [AccountsConfig, UsersPostgresRepository],
+    exports: [AccountsConfig, UsersRepository],
 })
 export class AccountsModule {}

@@ -1,26 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import {
-    PaginatedPostgresBlogsViewDto,
-    PostgresBlogViewDto,
-} from '../../api/dto/view-dto';
+import { PaginatedBlogsViewDto, BlogViewDto } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresBlog } from '../../domain/blog.postgres-entity';
+import { PostgresBlog } from '../../domain/blog.entity';
 import {
     BlogsSortBy,
     GetBlogsQueryParams,
-    PostsSortBy,
 } from '../../api/dto/query-params-dto';
 
 @Injectable()
 export class PostgresBlogsQueryRepository {
-    constructor(
-        // @InjectModel(MongoBlog.name)
-        // private BlogModel: MongoBlogModelType,
-        private dataSource: DataSource,
-    ) {}
+    constructor(private dataSource: DataSource) {}
 
-    async getByIdOrNotFoundFail(id: number): Promise<PostgresBlogViewDto> {
+    async getByIdOrNotFoundFail(id: number): Promise<BlogViewDto> {
         const data: PostgresBlog[] = await this.dataSource.query(
             `
                 SELECT * FROM public.blogs
@@ -33,12 +25,12 @@ export class PostgresBlogsQueryRepository {
             throw NotFoundDomainException.create('PostgresBlog not found');
         }
 
-        return PostgresBlogViewDto.mapToView(data[0]);
+        return BlogViewDto.mapToView(data[0]);
     }
 
     async getAllBlogs(
         query: GetBlogsQueryParams,
-    ): Promise<PaginatedPostgresBlogsViewDto> {
+    ): Promise<PaginatedBlogsViewDto> {
         const queryParams: (string | number)[] = [];
         let paramIndex = 1;
 
@@ -70,11 +62,9 @@ export class PostgresBlogsQueryRepository {
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;
 
-        const mappedBlogs = data.map((blog) =>
-            PostgresBlogViewDto.mapToView(blog),
-        );
+        const mappedBlogs = data.map((blog) => BlogViewDto.mapToView(blog));
 
-        return PaginatedPostgresBlogsViewDto.mapToView({
+        return PaginatedBlogsViewDto.mapToView({
             items: mappedBlogs,
             page: query.pageNumber,
             size: query.pageSize,

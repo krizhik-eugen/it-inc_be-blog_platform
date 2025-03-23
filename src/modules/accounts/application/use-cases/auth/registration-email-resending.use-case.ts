@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestDomainException } from '../../../../../core/exceptions';
-import { UsersPostgresRepository } from '../../../infrastructure';
+import { UsersRepository } from '../../../infrastructure';
 import { AuthService } from '../../auth.service';
 
 export class RegistrationEmailResendingCommand {
@@ -12,7 +12,7 @@ export class RegistrationEmailResendingUseCase
     implements ICommandHandler<RegistrationEmailResendingCommand, void>
 {
     constructor(
-        private usersPostgresRepository: UsersPostgresRepository,
+        private usersPostgresRepository: UsersRepository,
         private authService: AuthService,
     ) {}
     async execute({ dto }: RegistrationEmailResendingCommand): Promise<void> {

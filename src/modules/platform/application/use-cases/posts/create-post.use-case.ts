@@ -1,9 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from '../../../dto/create';
-import {
-    PostgresBlogsRepository,
-    PostgresPostsRepository,
-} from '../../../infrastructure';
+import { BlogsRepository, PostsRepository } from '../../../infrastructure';
 
 export class CreatePostCommand {
     constructor(public dto: CreatePostDto) {}
@@ -14,35 +11,21 @@ export class CreatePostUseCase
     implements ICommandHandler<CreatePostCommand, number>
 {
     constructor(
-        // @InjectModel(MongoPost.name)
-        // private PostModel: MongoPostModelType,
-        // private mongoPostsRepository: MongoPostsRepository,
-        // private mongoBlogsRepository: MongoBlogsRepository,
-        private postgresBlogsRepository: PostgresBlogsRepository,
-        private postgresPostsRepository: PostgresPostsRepository,
+        private blogsRepository: BlogsRepository,
+        private postsRepository: PostsRepository,
     ) {}
 
     async execute({ dto }: CreatePostCommand): Promise<number> {
         const blog =
-            await this.postgresBlogsRepository.findByIdNonDeletedOrNotFoundFail(
+            await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(
                 dto.blogId,
             );
 
-        const newPostId = await this.postgresPostsRepository.addNewPost({
+        const newPostId = await this.postsRepository.addNewPost({
             ...dto,
             blogName: blog.name,
         });
 
         return newPostId;
-
-        // const newPost = this.PostModel.createInstance({
-        //     ...dto,
-        //     blogId: dto.blogId,
-        //     blogName: blog.name,
-        // });
-
-        // await this.mongoPostsRepository.save(newPost);
-
-        // return newPost._id.toString();
     }
 }

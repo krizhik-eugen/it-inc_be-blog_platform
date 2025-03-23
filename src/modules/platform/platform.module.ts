@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
-    CommentsRepository,
-    CommentsQueryRepository,
     LikesRepository,
     LikesQueryRepository,
-    PostgresBlogsRepository,
+    BlogsRepository,
     PostgresBlogsQueryRepository,
     PostgresPostsQueryRepository,
-    PostgresPostsRepository,
+    PostsRepository,
+    CommentsRepository,
 } from './infrastructure';
 import {
     CreateBlogUseCase,
@@ -24,22 +23,14 @@ import {
 } from './application/queries/blogs';
 import { CreatePostUseCase } from './application/use-cases/posts';
 import {
-    GetCommentsQueryHandler,
     GetPostByIdQueryHandler,
     GetPostsQueryHandler,
 } from './application/queries/posts';
-import {
-    DeleteCommentUseCase,
-    UpdateCommentLikeStatusUseCase,
-    UpdateCommentUseCase,
-} from './application/use-cases/comments';
-import { GetCommentByIdQueryHandler } from './application/queries/comments';
-import { Comment, CommentSchema } from './domain/comment.entity';
 import { Like, LikeSchema } from './domain/like.entity';
 import { AccountsModule } from '../accounts/accounts.module';
 import { BlogsController } from './api/blogs.controller';
 import { PostsController } from './api/posts.controller';
-import { CommentsController } from './api/comments.controller';
+
 import { BlogIsExistentConstraint } from './api/validation';
 import { SaBlogsController } from './api/sa.blogs.controller';
 
@@ -48,9 +39,7 @@ const useCases = [
     UpdateBlogUseCase,
     DeleteBlogUseCase,
     CreatePostUseCase,
-    UpdateCommentUseCase,
-    DeleteCommentUseCase,
-    UpdateCommentLikeStatusUseCase,
+
     UpdateBlogPostUseCase,
     DeleteBlogPostUseCase,
 ];
@@ -60,34 +49,23 @@ const queries = [
     GetBlogPostsQueryHandler,
     GetPostByIdQueryHandler,
     GetPostsQueryHandler,
-    GetCommentByIdQueryHandler,
-    GetCommentsQueryHandler,
 ];
 const repositories = [
-    CommentsQueryRepository,
     CommentsRepository,
     LikesRepository,
     LikesQueryRepository,
-    PostgresBlogsRepository,
+    BlogsRepository,
     PostgresBlogsQueryRepository,
-    PostgresPostsRepository,
+    PostsRepository,
     PostgresPostsQueryRepository,
 ];
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            { name: Comment.name, schema: CommentSchema },
-            { name: Like.name, schema: LikeSchema },
-        ]),
+        MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
         AccountsModule,
     ],
-    controllers: [
-        BlogsController,
-        SaBlogsController,
-        PostsController,
-        CommentsController,
-    ],
+    controllers: [BlogsController, SaBlogsController, PostsController],
     providers: [
         ...repositories,
         ...useCases,

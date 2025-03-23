@@ -1,56 +1,40 @@
-// import { InjectModel } from '@nestjs/mongoose';
-// import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-// import {
-//     CommentsRepository,
-//     MongoPostsRepository,
-// } from '../../../infrastructure';
-// import { CreateCommentDto } from '../../../dto/create';
-// import { UsersPostgresRepository } from '../../../../accounts/infrastructure';
-// import { CommentModelType, Comment } from '../../../domain/comment.entity';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommentsRepository, PostsRepository } from '../../../infrastructure';
+import { CreateCommentDto } from '../../../dto/create';
+import { UsersRepository } from '../../../../accounts/infrastructure';
 
-// export class CreateCommentCommand {
-//     constructor(
-//         public postId: string,
-//         public userId: number,
-//         public dto: CreateCommentDto,
-//     ) {}
-// }
+export class CreateCommentCommand {
+    constructor(
+        public postId: number,
+        public userId: number,
+        public dto: CreateCommentDto,
+    ) {}
+}
 
-// @CommandHandler(CreateCommentCommand)
-// export class CreateCommentUseCase
-//     implements ICommandHandler<CreateCommentCommand, string>
-// {
-//     constructor(
-//         @InjectModel(Comment.name)
-//         private CommentModel: CommentModelType,
-//         private commentsRepository: CommentsRepository,
-//         private mongoPostsRepository: MongoPostsRepository,
-//         // private usersMongoRepository: UsersMongoRepository,
-//         private usersPostgresRepository: UsersPostgresRepository,
-//     ) {}
+@CommandHandler(CreateCommentCommand)
+export class CreateCommentUseCase
+    implements ICommandHandler<CreateCommentCommand, number>
+{
+    constructor(
+        private commentsRepository: CommentsRepository,
+        private postsRepository: PostsRepository,
+        private usersRepository: UsersRepository,
+    ) {}
 
-//     async execute({
-//         postId,
-//         userId,
-//         dto,
-//     }: CreateCommentCommand): Promise<string> {
-//         const foundPost =
-//             await this.mongoPostsRepository.findByIdOrNotFoundFail(postId);
+    async execute({
+        postId,
+        userId,
+        dto,
+    }: CreateCommentCommand): Promise<number> {
+        await this.postsRepository.findByIdNonDeletedOrNotFoundFail(postId);
+        await this.usersRepository.findByIdOrNotFoundFail(userId);
 
-//         const foundUser =
-//             await this.usersPostgresRepository.findByIdOrNotFoundFail(userId);
+        const newCommentId = await this.commentsRepository.addNewComment({
+            postId,
+            userId,
+            content: dto.content,
+        });
 
-//         const newComment = this.CommentModel.createInstance({
-//             content: dto.content,
-//             commentatorInfo: {
-//                 userId: foundUser.id,
-//                 userLogin: foundUser.login,
-//             },
-//             postId: foundPost._id.toString(),
-//         });
-
-//         await this.commentsRepository.save(newComment);
-
-//         return newComment._id.toString();
-//     }
-// }
+        return newCommentId;
+    }
+}

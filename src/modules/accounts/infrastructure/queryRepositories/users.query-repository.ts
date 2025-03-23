@@ -6,7 +6,7 @@ import {
     PostgresUserViewDto,
 } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresUser } from '../../domain/user.postgres-entity';
+import { PostgresUser } from '../../domain/user.entity';
 import {
     GetUsersQueryParams,
     UsersSortBy,

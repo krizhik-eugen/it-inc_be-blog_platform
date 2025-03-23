@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthService } from '../../auth.service';
-import { UsersPostgresRepository } from '../../../infrastructure';
+import { UsersRepository } from '../../../infrastructure';
 
 export class PasswordRecoveryCommand {
     constructor(public dto: { email: string }) {}
@@ -11,7 +11,7 @@ export class PasswordRecoveryUseCase
     implements ICommandHandler<PasswordRecoveryCommand, void>
 {
     constructor(
-        private postgresUserRepository: UsersPostgresRepository,
+        private postgresUserRepository: UsersRepository,
         private authService: AuthService,
     ) {}
 

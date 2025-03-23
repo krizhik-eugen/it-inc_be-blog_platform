@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersPostgresRepository } from '../../../infrastructure';
+import { UsersRepository } from '../../../infrastructure';
 import { UpdateUserDto } from '../../../dto/update';
 
 export class UpdateUserCommand {
@@ -13,12 +13,9 @@ export class UpdateUserCommand {
 export class UpdateUserUseCase
     implements ICommandHandler<UpdateUserCommand, void>
 {
-    constructor(private usersPostgresRepository: UsersPostgresRepository) {}
+    constructor(private usersPostgresRepository: UsersRepository) {}
 
     async execute({ id, dto }: UpdateUserCommand): Promise<void> {
-        // const user = await this.usersMongoRepository.findByIdOrNotFoundFail(id);
-        // user.update(dto);
-        // await this.usersMongoRepository.save(user);
         await this.usersPostgresRepository.updateUserEmail(id, dto.email);
     }
 }

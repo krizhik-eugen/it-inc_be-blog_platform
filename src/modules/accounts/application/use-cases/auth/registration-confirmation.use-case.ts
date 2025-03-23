@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestDomainException } from '../../../../../core/exceptions';
-import { UsersPostgresRepository } from '../../../infrastructure';
+import { UsersRepository } from '../../../infrastructure';
 
 export class RegistrationConfirmationCommand {
     constructor(public dto: { code: string }) {}
@@ -10,7 +10,7 @@ export class RegistrationConfirmationCommand {
 export class RegistrationConfirmationUseCase
     implements ICommandHandler<RegistrationConfirmationCommand, void>
 {
-    constructor(private usersPostgresRepository: UsersPostgresRepository) {}
+    constructor(private usersPostgresRepository: UsersRepository) {}
     async execute({ dto }: RegistrationConfirmationCommand): Promise<void> {
         const foundUser =
             await this.usersPostgresRepository.findUserByConfirmationCode(
@@ -49,8 +49,5 @@ export class RegistrationConfirmationUseCase
             foundUser.id,
             true,
         );
-
-        // foundUser.confirmUserEmail(dto.code);
-        // await this.usersMongoRepository.save(foundUser);
     }
 }

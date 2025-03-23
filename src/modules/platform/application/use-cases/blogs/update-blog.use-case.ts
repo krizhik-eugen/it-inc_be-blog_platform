@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostgresBlogsRepository } from '../../../infrastructure';
+import { BlogsRepository } from '../../../infrastructure';
 import { UpdateBlogDto } from '../../../dto/update';
 
 export class UpdateBlogCommand {
@@ -13,12 +13,9 @@ export class UpdateBlogCommand {
 export class UpdateBlogUseCase
     implements ICommandHandler<UpdateBlogCommand, void>
 {
-    constructor(
-        // private mongoBlogsRepository: MongoBlogsRepository,
-        private postgresBlogsRepository: PostgresBlogsRepository,
-    ) {}
+    constructor(private blogsRepository: BlogsRepository) {}
 
     async execute({ id, dto }: UpdateBlogCommand): Promise<void> {
-        await this.postgresBlogsRepository.updateBlog(id, dto);
+        await this.blogsRepository.updateBlog(id, dto);
     }
 }

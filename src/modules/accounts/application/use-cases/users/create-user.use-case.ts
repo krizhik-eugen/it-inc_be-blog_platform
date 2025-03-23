@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AccountsConfig } from '../../../config';
 import { CryptoService } from '../../crypto.service';
-import { UsersPostgresRepository } from '../../../infrastructure';
+import { UsersRepository } from '../../../infrastructure';
 import { CreateUserDto } from '../../../dto/create';
 
 export class CreateUserCommand {
@@ -13,10 +13,7 @@ export class CreateUserUseCase
     implements ICommandHandler<CreateUserCommand, number>
 {
     constructor(
-        // @InjectModel(MongoUser.name)
-        // private MongoUserModel: MongoUserModelType,
-        // private usersMongoRepository: UsersMongoRepository,
-        private usersPostgresRepository: UsersPostgresRepository,
+        private usersPostgresRepository: UsersRepository,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,
     ) {}
@@ -32,21 +29,12 @@ export class CreateUserUseCase
             passwordHash,
         });
 
-        // const newUser = this.MongoUserModel.createInstance({
-        //     email: dto.email,
-        //     login: dto.login,
-        //     passwordHash,
-        // });
-
         if (this.accountsConfig.isUserAutomaticallyConfirmed) {
-            //     newUser.emailConfirmation.isConfirmed = true;
             await this.usersPostgresRepository.updateUserIsConfirmed(
                 newUserId,
                 true,
             );
         }
-
-        // await this.usersMongoRepository.save(newUser);
 
         return newUserId;
     }

@@ -1,80 +1,114 @@
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import {
-    CommentDocument,
-    CommentModelType,
-    Comment,
-} from '../../domain/comment.entity';
+import { CreateCommentDomainDto } from '../../domain/dto/create';
+import { CommentWithCommentatorInfo } from '../../domain/comment.entity';
+import { UpdateCommentDomainDto } from '../../domain/dto/update';
 
+@Injectable()
 export class CommentsRepository {
-    constructor(
-        @InjectModel(Comment.name)
-        private CommentModel: CommentModelType,
-    ) {}
+    constructor(private dataSource: DataSource) {}
+    async addNewComment(comment: CreateCommentDomainDto): Promise<number> {
+        const data: { id: number }[] = await this.dataSource.query(
+            `
+                INSERT INTO public.comments (post_id, user_id, content)
+                VALUES ($1, $2, $3)
+                RETURNING id
+                `,
+            [comment.postId, comment.userId, comment.content],
+        );
 
-    async save(comment: CommentDocument) {
-        return comment.save();
+        return data[0].id;
     }
 
-    async findById(id: string): Promise<CommentDocument | null> {
-        return this.CommentModel.findOne({
-            _id: id,
-            deletedAt: null,
-        });
-    }
+    async findByIdNonDeleted(
+        id: number,
+    ): Promise<CommentWithCommentatorInfo | null> {
+        const data: CommentWithCommentatorInfo[] = await this.dataSource.query(
+            `
+                SELECT c.* , u.login AS userLogin, u.id AS userId FROM public.comments c 
+                JOIN public.users u ON c.user_id = u.id
+                WHERE c.id = $1 AND c.deleted_at IS NULL    
+                `,
+            [id],
+        );
 
-    async findByIdOrNotFoundFail(id: string): Promise<CommentDocument> {
-        const comment = await this.findById(id);
-
-        if (!comment) {
-            throw NotFoundDomainException.create('Comment not found');
-        }
-
-        return comment;
+        return data[0] || null;
     }
 
     async findByIdNonDeletedOrNotFoundFail(
-        id: string,
-    ): Promise<CommentDocument> {
-        const comment = await this.CommentModel.findOne({
-            _id: id,
-            deletedAt: null,
-        });
+        id: number,
+    ): Promise<CommentWithCommentatorInfo> {
+        const comment = await this.findByIdNonDeleted(id);
+
         if (!comment) {
             throw NotFoundDomainException.create('Comment not found');
         }
+
         return comment;
     }
 
     async findAllByPostIdNonDeleted(
         postId: string,
-    ): Promise<CommentDocument[]> {
-        return this.CommentModel.find({
-            postId: postId,
-            deletedAt: null,
-        });
+    ): Promise<CommentWithCommentatorInfo[]> {
+        const data: CommentWithCommentatorInfo[] = await this.dataSource.query(
+            `
+                SELECT c.* , u.login AS userLogin, u.id AS userId FROM public.comments c 
+                JOIN public.users u ON c.user_id = u.id
+                WHERE c.post_id = $1 AND c.deleted_at IS NULL
+                `,
+            [postId],
+        );
+
+        return data;
     }
 
     async findAllByPostIdsNonDeleted(
-        postIds: string[],
-    ): Promise<CommentDocument[]> {
-        return this.CommentModel.find({
-            postId: { $in: postIds },
-            deletedAt: null,
-        });
+        postIds: number[],
+    ): Promise<CommentWithCommentatorInfo[]> {
+        const data: CommentWithCommentatorInfo[] = await this.dataSource.query(
+            `
+                SELECT c.* , u.login AS userLogin, u.id AS userId FROM public.comments c 
+                JOIN public.users u ON c.user_id = u.id
+                WHERE c.post_id = ANY($1) AND c.deleted_at IS NULL
+                `,
+            [postIds],
+        );
+
+        return data;
     }
 
-    async deleteAllByPostId(postId: string): Promise<void> {
-        await this.CommentModel.updateMany(
-            { postId: postId, deletedAt: null },
-            { deletedAt: new Date().toISOString() },
+    async updateCommentById(id: number, dto: UpdateCommentDomainDto) {
+        await this.findByIdNonDeletedOrNotFoundFail(id);
+
+        await this.dataSource.query(
+            `
+                UPDATE public.comments
+                SET content = $1 WHERE id = $2
+            `,
+            [dto.content, id],
         );
     }
 
-    async deleteAllByPostIds(postIds: string[]): Promise<void> {
-        await this.CommentModel.updateMany(
-            { postId: { $in: postIds }, deletedAt: null },
-            { deletedAt: new Date().toISOString() },
+    async makeDeletedAllByPostId(postId: number): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE public.comments
+                SET deleted_at = NOW()
+                WHERE post_id = $1
+                `,
+            [postId],
+        );
+    }
+
+    async makeDeletedAllByPostIds(postIds: number[]): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE public.comments
+                SET deleted_at = NOW()
+                WHERE post_id = ANY($1)
+                `,
+            [postIds],
         );
     }
 }

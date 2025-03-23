@@ -6,6 +6,7 @@ import {
     HttpCode,
     HttpStatus,
     Param,
+    ParseIntPipe,
     Post,
     Put,
     Query,
@@ -75,8 +76,7 @@ export class UsersController {
     @UpdateUserApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateUser(
-        // @Param('userId', ObjectIdValidationPipe) userId: string,
-        @Param('userId') userId: number,
+        @Param('userId', ParseIntPipe) userId: number,
         @Body() body: UpdateUserInputDto,
     ): Promise<void> {
         return this.commandBus.execute<UpdateUserCommand, void>(
@@ -90,8 +90,7 @@ export class UsersController {
     @DeleteUserApi()
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteUser(
-        // @Param('userId', ObjectIdValidationPipe) userId: string,
-        @Param('userId') userId: number,
+        @Param('userId', ParseIntPipe) userId: number,
     ): Promise<void> {
         return this.commandBus.execute<DeleteUserCommand, void>(
             new DeleteUserCommand(userId),

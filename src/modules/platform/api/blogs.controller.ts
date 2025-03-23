@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { JwtOptionalAuthGuard } from '../../../modules/accounts/guards/bearer';
 import { ExtractUserIfExistsFromRequest } from '../../../modules/accounts/guards/decorators';
@@ -9,9 +16,9 @@ import {
     GetPostsQueryParams,
 } from './dto/query-params-dto';
 import {
-    PaginatedPostgresBlogsViewDto,
+    PaginatedBlogsViewDto,
     PaginatedPostgresPostsViewDto,
-    PostgresBlogViewDto,
+    BlogViewDto,
 } from './dto/view-dto';
 
 import {
@@ -28,7 +35,7 @@ export class BlogsController {
     @GetAllBlogsApi()
     async getAllBlogs(
         @Query() query: GetBlogsQueryParams,
-    ): Promise<PaginatedPostgresBlogsViewDto> {
+    ): Promise<PaginatedBlogsViewDto> {
         return this.queryBus.execute(new GetBlogsQuery(query));
     }
 
@@ -36,7 +43,7 @@ export class BlogsController {
     @Get(':blogId/posts')
     @GetAllBlogPostsApi()
     async getAllBlogPosts(
-        @Param('blogId') blogId: number,
+        @Param('blogId', ParseIntPipe) blogId: number,
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
     ): Promise<PaginatedPostgresPostsViewDto> {
@@ -49,9 +56,9 @@ export class BlogsController {
     @Get(':blogId')
     @GetBlogApi()
     async getBlog(
-        @Param('blogId') blogId: number,
-    ): Promise<PostgresBlogViewDto> {
-        return this.queryBus.execute<GetBlogByIdQuery, PostgresBlogViewDto>(
+        @Param('blogId', ParseIntPipe) blogId: number,
+    ): Promise<BlogViewDto> {
+        return this.queryBus.execute<GetBlogByIdQuery, BlogViewDto>(
             new GetBlogByIdQuery(blogId),
         );
     }

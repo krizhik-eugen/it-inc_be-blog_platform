@@ -14,8 +14,6 @@ import {
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
 import {
-    CommentViewDto,
-    PaginatedCommentsViewDto,
     PaginatedPostgresPostsViewDto,
     PostgresPostViewDto,
 } from '../dto/view-dto';
@@ -27,6 +25,10 @@ import {
     UpdateLikeInputDto,
     UpdatePostInputDto,
 } from '../dto/input-dto/update';
+import {
+    CommentViewDto,
+    PaginatedCommentsViewDto,
+} from '../dto/view-dto/comments.view-dto';
 
 export const UpdatePostCommentLikeStatusApi = () => {
     return applyDecorators(
@@ -129,7 +131,7 @@ export const CreatePostApi = () => {
         }),
         ApiBody({
             type: CreatePostInputDto,
-            description: 'Data for constructing new MongoPost entity',
+            description: 'Data for constructing new Post entity',
         }),
     );
 };

@@ -20,7 +20,7 @@ import {
                     },
                 },
                 defaults: {
-                    from: `MongoBlog Platform <${coreConfig.hostEmailLogin}>`,
+                    from: `Blog Platform <${coreConfig.hostEmailLogin}>`,
                 },
             }),
             inject: [CoreConfig],

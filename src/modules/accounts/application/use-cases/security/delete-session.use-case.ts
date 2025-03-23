@@ -18,11 +18,6 @@ export class DeleteSessionUseCase
     ) {}
 
     async execute({ deviceId, session }: DeleteSessionCommand): Promise<void> {
-        // const foundSession =
-        //     await this.mongoSessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
-        //         deviceId,
-        //     );
-
         const foundSession =
             await this.postgresSessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
                 deviceId,
@@ -33,9 +28,6 @@ export class DeleteSessionUseCase
                 'You are not a owner of this session',
             );
         }
-
-        // foundSession.makeDeleted();
-        // await this.mongoSessionsRepository.save(foundSession);
 
         await this.postgresSessionsRepository.makeSessionDeletedById(
             foundSession.id,

@@ -12,11 +12,12 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
-import { CommentViewDto } from '../dto/view-dto';
+
 import {
     UpdateCommentInputDto,
     UpdateLikeInputDto,
 } from '../dto/input-dto/update';
+import { CommentViewDto } from '../dto/view-dto/comments.view-dto';
 
 export const UpdateCommentLikeStatusApi = () => {
     return applyDecorators(

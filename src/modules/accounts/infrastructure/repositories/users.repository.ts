@@ -4,11 +4,11 @@ import { CreateUserDomainDto } from '../../domain/dto/create';
 import {
     PostgresEmailConfirmation,
     PostgresUser,
-} from '../../domain/user.postgres-entity';
+} from '../../domain/user.entity';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 
 @Injectable()
-export class UsersPostgresRepository {
+export class UsersRepository {
     constructor(private dataSource: DataSource) {}
 
     async findById(id: number): Promise<PostgresUser | null> {

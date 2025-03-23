@@ -15,7 +15,6 @@ export class GetPostsQueryHandler
     implements IQueryHandler<GetPostsQuery, PaginatedPostgresPostsViewDto>
 {
     constructor(
-        // private mongoPostsQueryRepository: MongoPostsQueryRepository,
         private postgresPostsQueryRepository: PostgresPostsQueryRepository,
     ) {}
 

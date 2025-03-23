@@ -1,8 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import {
-    PostgresBlogsRepository,
-    PostgresPostsRepository,
-} from '../../../infrastructure';
+import { BlogsRepository, PostsRepository } from '../../../infrastructure';
 
 export class DeleteBlogPostCommand {
     constructor(
@@ -16,23 +13,16 @@ export class DeleteBlogPostUseCase
     implements ICommandHandler<DeleteBlogPostCommand, void>
 {
     constructor(
-        // private mongoPostsRepository: MongoPostsRepository,
-        private postgresPostsRepository: PostgresPostsRepository,
-        private postgresBlogsRepository: PostgresBlogsRepository,
+        private postsRepository: PostsRepository,
+        private blogsRepository: BlogsRepository,
         // private commentsRepository: CommentsRepository,
         // private likesRepository: LikesRepository,
     ) {}
 
     async execute({ postId, blogId }: DeleteBlogPostCommand): Promise<void> {
-        await this.postgresBlogsRepository.findByIdNonDeletedOrNotFoundFail(
-            blogId,
-        );
+        await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(blogId);
 
-        await this.postgresPostsRepository.makePostDeletedById(postId);
-
-        // post.makeDeleted();
-
-        // await this.mongoPostsRepository.save(post);
+        await this.postsRepository.makePostDeletedById(postId);
 
         // TODO: delete comments and likes
         // const comments =

@@ -5,17 +5,17 @@ import { add } from 'date-fns';
 import { AccountsConfig } from '../config';
 import { UserContextDto } from '../guards/dto';
 import { CryptoService } from './crypto.service';
-import { UsersPostgresRepository } from '../infrastructure';
+import { UsersRepository } from '../infrastructure';
 import {
     UserPasswordRecoveryEvent,
     UserRegisteredEvent,
 } from '../domain/events';
-import { PostgresUser } from '../domain/user.postgres-entity';
+import { PostgresUser } from '../domain/user.entity';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private usersPostgresRepository: UsersPostgresRepository,
+        private usersPostgresRepository: UsersRepository,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,
         private eventBus: EventBus,
@@ -52,8 +52,6 @@ export class AuthService {
         const expirationDate = add(new Date(), {
             hours: this.accountsConfig.confirmationCodeExpirationTimeInHours,
         });
-        // user.setConfirmationCode(confirmationCode, expirationDate);
-        // await this.usersMongoRepository.save(user);
 
         await this.usersPostgresRepository.setConfirmationCode(
             user.id,
@@ -74,9 +72,6 @@ export class AuthService {
         const expirationDate = add(new Date(), {
             hours: this.accountsConfig.recoveryCodeExpirationTimeInHours,
         });
-
-        // user.setPasswordRecoveryCode(newRecoveryCode, expirationDate);
-        // await this.usersMongoRepository.save(user);
 
         await this.usersPostgresRepository.setPasswordRecoveryCode(
             user.id,

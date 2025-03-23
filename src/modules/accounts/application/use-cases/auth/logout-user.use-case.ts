@@ -21,12 +21,12 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
 
         if (!foundSession) {
             throw UnauthorizedDomainException.create(
-                'PostgresSession not found for this device',
+                'Session not found for this device',
             );
         }
 
         if (foundSession.iat !== session.iat) {
-            throw UnauthorizedDomainException.create('PostgresSession expired');
+            throw UnauthorizedDomainException.create('Session expired');
         }
 
         await this.postgresSessionsRepository.makeSessionDeletedById(

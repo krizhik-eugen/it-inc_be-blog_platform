@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresBlog } from '../../domain/blog.postgres-entity';
+import { PostgresBlog } from '../../domain/blog.entity';
 import { CreateBlogDomainDto } from '../../domain/dto/create';
 import { UpdateBlogDomainDto } from '../../domain/dto/update';
 
 @Injectable()
-export class PostgresBlogsRepository {
-    constructor(
-        // @InjectModel(MongoBlog.name) private BlogModel: MongoBlogModelType,
-        private dataSource: DataSource,
-    ) {}
+export class BlogsRepository {
+    constructor(private dataSource: DataSource) {}
 
     async findById(id: number): Promise<PostgresBlog | null> {
         const data: PostgresBlog[] = await this.dataSource.query(

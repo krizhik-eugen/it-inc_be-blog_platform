@@ -29,10 +29,6 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
         private refreshTokenContext: TypedJwtService,
 
-        // @InjectModel(MongoSession.name)
-        // private SessionModel: SessionModelType,
-
-        // private mongoSessionRepository: MongoSessionsRepository,
         private postgresSessionRepository: PostgresSessionsRepository,
     ) {}
 
@@ -47,16 +43,6 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
 
         const decodedIssuedToken =
             this.refreshTokenContext.decode(refreshToken);
-
-        // const newSession = this.SessionModel.createInstance({
-        //     userId: dto.userId,
-        //     deviceId,
-        //     deviceName: getDeviceTitle(dto.userAgent),
-        //     ip: dto.ip,
-        //     iat: decodedIssuedToken.iat!,
-        //     exp: decodedIssuedToken.exp!,
-        // });
-        // await this.mongoSessionRepository.save(newSession);
 
         await this.postgresSessionRepository.createSession({
             userId: dto.userId,

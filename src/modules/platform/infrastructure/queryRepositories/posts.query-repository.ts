@@ -10,20 +10,16 @@ import {
 } from '../../api/dto/view-dto';
 import { LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
-import { PostgresBlogsRepository } from '../repositories/blogs.postgres-repository';
-import { PostgresPostsRepository } from '../repositories/posts.postgres-repository';
-import { PostgresPost } from '../../domain/post.postgres-entity';
+import { BlogsRepository } from '../repositories/blogs.repository';
+import { PostsRepository } from '../repositories/posts.repository';
+import { PostgresPost } from '../../domain/post.entity';
 
 @Injectable()
 export class PostgresPostsQueryRepository {
     constructor(
-        // @InjectModel(MongoPost.name)
-        // private PostModel: MongoPostModelType,
-        // @InjectModel(MongoBlog.name)
-        // private BlogModel: MongoBlogModelType,
         private likesQueryRepository: LikesQueryRepository,
-        private postgresBlogsRepository: PostgresBlogsRepository,
-        private postgresPostsRepository: PostgresPostsRepository,
+        private blogsRepository: BlogsRepository,
+        private postsRepository: PostsRepository,
         private dataSource: DataSource,
     ) {}
 
@@ -35,9 +31,7 @@ export class PostgresPostsQueryRepository {
         userId: number | null;
     }): Promise<PostgresPostViewDto> {
         const post =
-            await this.postgresPostsRepository.findByIdNonDeletedOrNotFoundFail(
-                postId,
-            );
+            await this.postsRepository.findByIdNonDeletedOrNotFoundFail(postId);
 
         let likeStatus: LikeStatus = LikeStatus.None;
 
@@ -66,9 +60,7 @@ export class PostgresPostsQueryRepository {
         userId: number | null;
     }): Promise<PaginatedPostgresPostsViewDto> {
         if (blogId) {
-            await this.postgresBlogsRepository.findByIdNonDeletedOrNotFoundFail(
-                blogId,
-            );
+            await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(blogId);
         }
 
         const queryParams: (string | number)[] = [];
