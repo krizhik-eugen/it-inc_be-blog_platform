@@ -6,7 +6,11 @@ import {
 } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { PostgresBlog } from '../../domain/blog.postgres-entity';
-import { GetBlogsQueryParams } from '../../api/dto/query-params-dto';
+import {
+    BlogsSortBy,
+    GetBlogsQueryParams,
+    PostsSortBy,
+} from '../../api/dto/query-params-dto';
 
 @Injectable()
 export class PostgresBlogsQueryRepository {
@@ -78,11 +82,14 @@ export class PostgresBlogsQueryRepository {
         });
     }
 
-    private sanitizeSortField(field: string): string {
-        const allowedFields = ['name', 'created_at'];
-        if (!allowedFields.includes(field.toLowerCase())) {
-            return 'created_at';
+    private sanitizeSortField(field: BlogsSortBy): 'name' | 'created_at' {
+        switch (field) {
+            case BlogsSortBy.Name:
+                return 'name';
+            case BlogsSortBy.CreatedAt:
+                return 'created_at';
+            default:
+                return 'created_at';
         }
-        return field;
     }
 }

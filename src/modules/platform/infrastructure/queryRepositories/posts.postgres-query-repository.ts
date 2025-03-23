@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { GetPostsQueryParams } from '../../api/dto/query-params-dto';
+import {
+    GetPostsQueryParams,
+    PostsSortBy,
+} from '../../api/dto/query-params-dto';
 import {
     PaginatedPostgresPostsViewDto,
     PostgresPostViewDto,
@@ -130,11 +133,18 @@ export class PostgresPostsQueryRepository {
         });
     }
 
-    private sanitizeSortField(field: string): string {
-        const allowedFields = ['title', 'created_at', 'blog_name'];
-        if (!allowedFields.includes(field.toLowerCase())) {
-            return 'created_at';
+    private sanitizeSortField(
+        field: PostsSortBy,
+    ): 'title' | 'created_at' | 'blog_name' {
+        switch (field) {
+            case PostsSortBy.Title:
+                return 'title';
+            case PostsSortBy.CreatedAt:
+                return 'created_at';
+            case PostsSortBy.BlogName:
+                return 'blog_name';
+            default:
+                return 'created_at';
         }
-        return field;
     }
 }

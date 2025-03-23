@@ -7,7 +7,10 @@ import {
 } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { PostgresUser } from '../../domain/user.postgres-entity';
-import { GetUsersQueryParams } from '../../api/dto/query-params-dto';
+import {
+    GetUsersQueryParams,
+    UsersSortBy,
+} from '../../api/dto/query-params-dto';
 
 @Injectable()
 export class UsersPostgresQueryRepository {
@@ -104,17 +107,18 @@ export class UsersPostgresQueryRepository {
         });
     }
 
-    private sanitizeSortField(field: string): string {
-        const allowedFields = [
-            'id',
-            'login',
-            'email',
-            'created_at',
-            'updated_at',
-        ];
-        if (!allowedFields.includes(field.toLowerCase())) {
-            return 'created_at';
+    private sanitizeSortField(
+        field: UsersSortBy,
+    ): 'login' | 'email' | 'created_at' {
+        switch (field) {
+            case UsersSortBy.Login:
+                return 'login';
+            case UsersSortBy.Email:
+                return 'email';
+            case UsersSortBy.CreatedAt:
+                return 'created_at';
+            default:
+                return 'created_at';
         }
-        return field;
     }
 }

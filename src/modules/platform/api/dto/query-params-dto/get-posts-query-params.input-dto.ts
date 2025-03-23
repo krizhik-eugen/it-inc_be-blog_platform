@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../core/dto';
 
-enum PostsSortBy {
+export enum PostsSortBy {
     CreatedAt = 'createdAt',
     Title = 'title',
     BlogName = 'blogName',
