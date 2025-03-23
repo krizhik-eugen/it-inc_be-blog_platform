@@ -5,6 +5,7 @@ import { BaseSortablePaginationParams } from '../../../../../core/dto';
 enum PostsSortBy {
     CreatedAt = 'createdAt',
     Title = 'title',
+    BlogName = 'blogName',
 }
 
 export class GetPostsQueryParams extends BaseSortablePaginationParams<PostsSortBy> {
