@@ -16,6 +16,7 @@ export type HttpErrorBody = {
 @Catch(DomainException)
 export class DomainExceptionsFilter extends BaseExceptionFilter {
     onCatch(exception: DomainException, response: Response): void {
+        console.log('exception', exception);
         response
             .status(this.calculateHttpCode(exception))
             .json(this.getHttpErrorBody(exception));
