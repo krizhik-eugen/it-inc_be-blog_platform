@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsPositive } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
 
 class PaginationParams {
     @ApiPropertyOptional({
@@ -12,6 +12,7 @@ class PaginationParams {
     @Type(() => Number)
     @IsPositive()
     @IsInt()
+    @IsOptional()
     pageNumber: number = 1;
 
     @ApiPropertyOptional({
@@ -23,6 +24,7 @@ class PaginationParams {
     @Type(() => Number)
     @IsPositive()
     @IsInt()
+    @IsOptional()
     pageSize: number = 10;
 
     calculateSkip() {
@@ -43,6 +45,7 @@ export abstract class BaseSortablePaginationParams<T> extends PaginationParams {
         default: SortDirection.Desc,
         enum: SortDirection,
     })
+    @IsOptional()
     sortDirection: SortDirection = SortDirection.Desc;
 
     abstract sortBy: T;
