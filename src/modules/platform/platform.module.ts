@@ -8,6 +8,7 @@ import {
     PostgresPostsQueryRepository,
     PostsRepository,
     CommentsRepository,
+    CommentsQueryRepository,
 } from './infrastructure';
 import {
     CreateBlogUseCase,
@@ -21,8 +22,12 @@ import {
     GetBlogPostsQueryHandler,
     GetBlogsQueryHandler,
 } from './application/queries/blogs';
-import { CreatePostUseCase } from './application/use-cases/posts';
 import {
+    CreateCommentUseCase,
+    CreatePostUseCase,
+} from './application/use-cases/posts';
+import {
+    GetCommentsQueryHandler,
     GetPostByIdQueryHandler,
     GetPostsQueryHandler,
 } from './application/queries/posts';
@@ -30,18 +35,25 @@ import { Like, LikeSchema } from './domain/like.entity';
 import { AccountsModule } from '../accounts/accounts.module';
 import { BlogsController } from './api/blogs.controller';
 import { PostsController } from './api/posts.controller';
-
 import { BlogIsExistentConstraint } from './api/validation';
 import { SaBlogsController } from './api/sa.blogs.controller';
+import { GetCommentByIdQueryHandler } from './application/queries/comments';
+import { CommentsController } from './api/comments.controller';
+import {
+    DeleteCommentUseCase,
+    UpdateCommentUseCase,
+} from './application/use-cases/comments';
 
 const useCases = [
     CreateBlogUseCase,
     UpdateBlogUseCase,
     DeleteBlogUseCase,
     CreatePostUseCase,
-
+    CreateCommentUseCase,
     UpdateBlogPostUseCase,
     DeleteBlogPostUseCase,
+    UpdateCommentUseCase,
+    DeleteCommentUseCase,
 ];
 const queries = [
     GetBlogByIdQueryHandler,
@@ -49,6 +61,8 @@ const queries = [
     GetBlogPostsQueryHandler,
     GetPostByIdQueryHandler,
     GetPostsQueryHandler,
+    GetCommentsQueryHandler,
+    GetCommentByIdQueryHandler,
 ];
 const repositories = [
     CommentsRepository,
@@ -58,6 +72,7 @@ const repositories = [
     PostgresBlogsQueryRepository,
     PostsRepository,
     PostgresPostsQueryRepository,
+    CommentsQueryRepository,
 ];
 
 @Module({
@@ -65,7 +80,12 @@ const repositories = [
         MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
         AccountsModule,
     ],
-    controllers: [BlogsController, SaBlogsController, PostsController],
+    controllers: [
+        BlogsController,
+        SaBlogsController,
+        PostsController,
+        CommentsController,
+    ],
     providers: [
         ...repositories,
         ...useCases,

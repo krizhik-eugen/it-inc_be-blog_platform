@@ -8,7 +8,7 @@ import {
     CommentViewDto,
     PaginatedCommentsViewDto,
 } from '../../api/dto/view-dto/comments.view-dto';
-import { CommentWithCommentatorInfo } from '../../domain/comment.entity';
+import { CommentWithUserLogin } from '../../domain/comment.entity';
 import {
     CommentsSortBy,
     GetCommentsQueryParams,
@@ -29,9 +29,9 @@ export class CommentsQueryRepository {
         commentId: number;
         userId: number | null;
     }): Promise<CommentViewDto> {
-        const data: CommentWithCommentatorInfo[] = await this.dataSource.query(
+        const data: CommentWithUserLogin[] = await this.dataSource.query(
             `
-                SELECT c.* , u.login AS userLogin, u.id AS userId FROM public.comments c 
+                SELECT c.* , u.login AS user_login FROM public.comments c 
                 JOIN public.users u ON c.user_id = u.id
                 WHERE c.id = $1 AND c.deleted_at IS NULL 
                 `,
@@ -66,7 +66,7 @@ export class CommentsQueryRepository {
         await this.postsRepository.findByIdNonDeletedOrNotFoundFail(postId);
 
         const sqlQuery = `
-            SELECT c.*, u.login AS userLogin, u.id AS userId, COUNT(*) OVER() as total_count 
+            SELECT c.*, u.login AS user_login, COUNT(*) OVER() as total_count 
             FROM public.comments c JOIN public.users u ON c.user_id = u.id
             WHERE c.post_id = $1 AND c.deleted_at IS NULL
             ORDER BY ${this.sanitizeSortField(query.sortBy)} ${query.sortDirection}
@@ -80,7 +80,7 @@ export class CommentsQueryRepository {
         ];
 
         const data = await this.dataSource.query<
-            (CommentWithCommentatorInfo & { total_count: string })[]
+            (CommentWithUserLogin & { total_count: string })[]
         >(sqlQuery, queryParams);
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;

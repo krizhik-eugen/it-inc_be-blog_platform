@@ -17,8 +17,8 @@ export class Comment {
     deleted_at: Date | null;
 }
 
-export class CommentWithCommentatorInfo extends Comment {
-    commentatorInfo: { userId: number; userLogin: string };
+export class CommentWithUserLogin extends Comment {
+    user_login: string;
 }
 
 // Postgres comments table:
