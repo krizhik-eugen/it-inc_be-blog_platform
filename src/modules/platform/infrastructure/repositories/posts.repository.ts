@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresPost } from '../../domain/post.entity';
+import { Post } from '../../domain/post.entity';
 import { CreatePostDomainDto } from '../../domain/dto/create';
 import { UpdatePostDomainDto } from '../../domain/dto/update';
 
@@ -9,8 +9,8 @@ import { UpdatePostDomainDto } from '../../domain/dto/update';
 export class PostsRepository {
     constructor(private dataSource: DataSource) {}
 
-    async findById(id: number): Promise<PostgresPost | null> {
-        const data: PostgresPost[] = await this.dataSource.query(
+    async findById(id: number): Promise<Post | null> {
+        const data: Post[] = await this.dataSource.query(
             `
                 SELECT * FROM public.posts
                 WHERE id = $1
@@ -21,18 +21,18 @@ export class PostsRepository {
         return data[0] || null;
     }
 
-    async findByIdOrNotFoundFail(id: number): Promise<PostgresPost> {
+    async findByIdOrNotFoundFail(id: number): Promise<Post> {
         const post = await this.findById(id);
 
         if (!post) {
-            throw NotFoundDomainException.create('PostgresPost not found');
+            throw NotFoundDomainException.create('Post not found');
         }
 
         return post;
     }
 
-    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<PostgresPost> {
-        const post: PostgresPost[] = await this.dataSource.query(
+    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<Post> {
+        const post: Post[] = await this.dataSource.query(
             `
                 SELECT * FROM public.posts
                 WHERE id = $1 AND deleted_at IS NULL
@@ -41,13 +41,13 @@ export class PostsRepository {
         );
 
         if (!post[0]) {
-            throw NotFoundDomainException.create('PostgresPost not found');
+            throw NotFoundDomainException.create('Post not found');
         }
         return post[0];
     }
 
-    async findAllByBlogIdNonDeleted(blogId: number): Promise<PostgresPost[]> {
-        const data: PostgresPost[] = await this.dataSource.query(
+    async findAllByBlogIdNonDeleted(blogId: number): Promise<Post[]> {
+        const data: Post[] = await this.dataSource.query(
             `
                 SELECT * FROM public.posts
                 WHERE blog_id = $1 AND deleted_at IS NULL

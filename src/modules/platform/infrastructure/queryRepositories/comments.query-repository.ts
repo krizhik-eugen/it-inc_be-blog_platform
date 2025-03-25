@@ -43,6 +43,11 @@ export class CommentsQueryRepository {
         }
 
         let likeStatus: LikeStatus = LikeStatus.None;
+        const commentWithLikesCount = {
+            ...data[0],
+            likes_count: 0,
+            dislikes_count: 0,
+        };
 
         if (userId) {
             likeStatus =
@@ -55,7 +60,15 @@ export class CommentsQueryRepository {
                 );
         }
 
-        return CommentViewDto.mapToView(data[0], likeStatus);
+        const { likesCount, dislikesCount } =
+            await this.likesRepository.getLikesAndDislikesCountByParentId(
+                commentId,
+                LikeParentType.Comment,
+            );
+        commentWithLikesCount.likes_count = likesCount;
+        commentWithLikesCount.dislikes_count = dislikesCount;
+
+        return CommentViewDto.mapToView(commentWithLikesCount, likeStatus);
     }
 
     async getAllPostComments({
@@ -90,9 +103,17 @@ export class CommentsQueryRepository {
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;
 
         const commentsIds = data.map((comment) => comment.id);
-        const mappedComments = data.map((comment) =>
-            CommentViewDto.mapToView(comment, LikeStatus.None),
-        );
+        const mappedComments = data.map((comment) => {
+            const commentWithLikesCount = {
+                ...comment,
+                likes_count: 0,
+                dislikes_count: 0,
+            };
+            return CommentViewDto.mapToView(
+                commentWithLikesCount,
+                LikeStatus.None,
+            );
+        });
 
         if (userId && commentsIds.length > 0) {
             const likes = await this.likesRepository.getLikesArray({

@@ -10,7 +10,7 @@ export const postConstraints = {
     },
 };
 
-export class PostgresPost {
+export class Post {
     id: number;
     title: string;
     short_description: string;
@@ -20,6 +20,11 @@ export class PostgresPost {
     created_at: Date;
     updated_at: Date;
     deleted_at: Date | null;
+}
+
+export class PostWithLikesCount extends Post {
+    likes_count: number;
+    dislikes_count: number;
 }
 
 // Postgres posts table:

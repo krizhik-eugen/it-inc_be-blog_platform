@@ -6,13 +6,13 @@ import {
 } from '../../api/dto/query-params-dto';
 import {
     PaginatedPostgresPostsViewDto,
-    PostgresPostViewDto,
+    PostViewDto,
 } from '../../api/dto/view-dto';
 import { LikeParentType, LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
 import { BlogsRepository } from '../repositories/blogs.repository';
 import { PostsRepository } from '../repositories/posts.repository';
-import { PostgresPost } from '../../domain/post.entity';
+import { Post, PostWithLikesCount } from '../../domain/post.entity';
 import { LikesRepository } from '../repositories/likes.repository';
 
 @Injectable()
@@ -31,11 +31,16 @@ export class PostgresPostsQueryRepository {
     }: {
         postId: number;
         userId: number | null;
-    }): Promise<PostgresPostViewDto> {
+    }): Promise<PostViewDto> {
         const post =
             await this.postsRepository.findByIdNonDeletedOrNotFoundFail(postId);
 
         let likeStatus: LikeStatus = LikeStatus.None;
+        const postWithLikes: PostWithLikesCount = {
+            ...post,
+            likes_count: 0,
+            dislikes_count: 0,
+        };
 
         if (userId) {
             likeStatus =
@@ -48,12 +53,20 @@ export class PostgresPostsQueryRepository {
                 );
         }
 
+        const { likesCount, dislikesCount } =
+            await this.likesRepository.getLikesAndDislikesCountByParentId(
+                postId,
+                LikeParentType.Post,
+            );
+        postWithLikes.likes_count = likesCount;
+        postWithLikes.dislikes_count = dislikesCount;
+
         const newestLikes = await this.likesQueryRepository.getLastThreeLikes(
-            post.id,
+            postId,
             LikeParentType.Post,
         );
 
-        return PostgresPostViewDto.mapToView(post, likeStatus, newestLikes);
+        return PostViewDto.mapToView(postWithLikes, likeStatus, newestLikes);
     }
 
     async getAllPosts({
@@ -81,7 +94,7 @@ export class PostgresPostsQueryRepository {
         }
 
         const sqlQuery = `
-            SELECT p.*, COUNT(*) OVER() as total_count 
+            SELECT p.*, COUNT(*) OVER() as total_count
             FROM public.posts p
             WHERE ${filterCondition}
             ORDER BY ${this.sanitizeSortField(query.sortBy)} ${query.sortDirection}
@@ -91,7 +104,7 @@ export class PostgresPostsQueryRepository {
         queryParams.push(query.pageSize, query.calculateSkip());
 
         const data = await this.dataSource.query<
-            (PostgresPost & { total_count: string })[]
+            (Post & { total_count: string })[]
         >(sqlQuery, queryParams);
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;
@@ -99,8 +112,13 @@ export class PostgresPostsQueryRepository {
         const postsIds: number[] = [];
 
         const mappedPosts = data.map((post) => {
+            const postWithLikes: PostWithLikesCount = {
+                ...post,
+                likes_count: 0,
+                dislikes_count: 0,
+            };
             postsIds.push(post.id);
-            return PostgresPostViewDto.mapToView(post, LikeStatus.None, []);
+            return PostViewDto.mapToView(postWithLikes, LikeStatus.None, []);
         });
 
         if (userId) {

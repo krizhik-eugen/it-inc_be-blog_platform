@@ -13,7 +13,7 @@ import {
     PaginatedBlogsViewDto,
     PaginatedPostgresPostsViewDto,
     BlogViewDto,
-    PostgresPostViewDto,
+    PostViewDto,
 } from '../dto/view-dto';
 import {
     CreateBlogInputDto,
@@ -76,7 +76,7 @@ export const CreateBlogPostApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns a newly created post',
-            type: PostgresPostViewDto,
+            type: PostViewDto,
         }),
         ApiNotFoundResponse({
             description: 'If specified blog does not exist',

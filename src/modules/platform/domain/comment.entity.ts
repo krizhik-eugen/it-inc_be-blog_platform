@@ -21,6 +21,12 @@ export class CommentWithUserLogin extends Comment {
     user_login: string;
 }
 
+export class CommentWithUserLoginAndLikesCount extends Comment {
+    user_login: string;
+    likes_count: number;
+    dislikes_count: number;
+}
+
 // Postgres comments table:
 
 // CREATE TABLE comments (

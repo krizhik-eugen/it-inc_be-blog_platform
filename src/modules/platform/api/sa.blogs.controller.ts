@@ -34,7 +34,7 @@ import {
     PaginatedBlogsViewDto,
     BlogViewDto,
     PaginatedPostgresPostsViewDto,
-    PostgresPostViewDto,
+    PostViewDto,
 } from './dto/view-dto';
 import {
     CreateBlogInputDto,
@@ -100,7 +100,7 @@ export class SaBlogsController {
     async createBlogPost(
         @Param('blogId', ParseIntPipe) blogId: number,
         @Body() body: CreateBlogPostInputDto,
-    ): Promise<PostgresPostViewDto> {
+    ): Promise<PostViewDto> {
         const newPostId = await this.commandBus.execute<
             CreatePostCommand,
             number
@@ -110,7 +110,7 @@ export class SaBlogsController {
                 blogId,
             }),
         );
-        return this.queryBus.execute<GetPostByIdQuery, PostgresPostViewDto>(
+        return this.queryBus.execute<GetPostByIdQuery, PostViewDto>(
             new GetPostByIdQuery(newPostId, null),
         );
     }

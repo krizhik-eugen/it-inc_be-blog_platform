@@ -13,10 +13,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
-import {
-    PaginatedPostgresPostsViewDto,
-    PostgresPostViewDto,
-} from '../dto/view-dto';
+import { PaginatedPostgresPostsViewDto, PostViewDto } from '../dto/view-dto';
 import {
     CreatePostInputDto,
     CreateCommentInputDto,
@@ -127,7 +124,7 @@ export const CreatePostApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns the newly created post',
-            type: PostgresPostViewDto,
+            type: PostViewDto,
         }),
         ApiBody({
             type: CreatePostInputDto,
@@ -143,7 +140,7 @@ export const GetPostApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PostgresPostViewDto,
+            type: PostViewDto,
         }),
         ApiNotFoundResponse({
             description: 'Not found',
