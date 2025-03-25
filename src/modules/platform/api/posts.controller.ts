@@ -2,9 +2,12 @@ import {
     Body,
     Controller,
     Get,
+    HttpCode,
+    HttpStatus,
     Param,
     ParseIntPipe,
     Post,
+    Put,
     Query,
     UseGuards,
 } from '@nestjs/common';
@@ -18,6 +21,7 @@ import {
     GetAllPostCommentsApi,
     GetAllPostsApi,
     GetPostApi,
+    UpdatePostCommentLikeStatusApi,
 } from './swagger';
 import {
     ExtractUserFromRequest,
@@ -46,6 +50,9 @@ import {
     PaginatedCommentsViewDto,
 } from './dto/view-dto/comments.view-dto';
 import { GetCommentByIdQuery } from '../application/queries/comments';
+import { UpdateLikeInputDto } from './dto/input-dto/update';
+import { UpdateLikeStatusCommand } from '../application/use-cases/likes';
+import { LikeParentType } from '../domain/like.entity';
 
 @Controller('posts')
 export class PostsController {
@@ -54,19 +61,24 @@ export class PostsController {
         private queryBus: QueryBus,
     ) {}
 
-    // @UseGuards(JwtAuthGuard)
-    // @Put(':postId/like-status')
-    // @UpdatePostCommentLikeStatusApi()
-    // @HttpCode(HttpStatus.NO_CONTENT)
-    // async updateCommentLikeStatus(
-    //     @Param('postId', ObjectIdValidationPipe) postId: string,
-    //     @Body() body: UpdateLikeInputDto,
-    //     @ExtractUserFromRequest() user: UserContextDto,
-    // ): Promise<void> {
-    //     return this.commandBus.execute<UpdatePostLikeStatusCommand, void>(
-    //         new UpdatePostLikeStatusCommand(postId, body, user.id),
-    //     );
-    // }
+    @UseGuards(JwtAuthGuard)
+    @Put(':postId/like-status')
+    @UpdatePostCommentLikeStatusApi()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async updateCommentLikeStatus(
+        @Param('postId', ParseIntPipe) postId: number,
+        @Body() body: UpdateLikeInputDto,
+        @ExtractUserFromRequest() user: UserContextDto,
+    ): Promise<void> {
+        return this.commandBus.execute<UpdateLikeStatusCommand, void>(
+            new UpdateLikeStatusCommand(
+                body,
+                postId,
+                LikeParentType.Post,
+                user.id,
+            ),
+        );
+    }
 
     @UseGuards(JwtOptionalAuthGuard)
     @Get(':postId/comments')

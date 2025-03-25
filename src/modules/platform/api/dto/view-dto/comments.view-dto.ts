@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginatedViewDto } from '../../../../../core/dto';
-import { LikeStatus } from '../../../domain/like.entity';
 import { LikesInfoViewDto } from './likes.view-dto';
 import { CommentWithUserLogin } from '../../../domain/comment.entity';
+import { LikeStatus } from '../../../domain/like.entity';
 
 class CommentatorInfoViewDto {
     @ApiProperty()

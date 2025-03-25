@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import {
     LikesRepository,
     LikesQueryRepository,
@@ -31,7 +30,6 @@ import {
     GetPostByIdQueryHandler,
     GetPostsQueryHandler,
 } from './application/queries/posts';
-import { Like, LikeSchema } from './domain/like.entity';
 import { AccountsModule } from '../accounts/accounts.module';
 import { BlogsController } from './api/blogs.controller';
 import { PostsController } from './api/posts.controller';
@@ -43,6 +41,7 @@ import {
     DeleteCommentUseCase,
     UpdateCommentUseCase,
 } from './application/use-cases/comments';
+import { UpdateLikeStatusUseCase } from './application/use-cases/likes';
 
 const useCases = [
     CreateBlogUseCase,
@@ -54,6 +53,7 @@ const useCases = [
     DeleteBlogPostUseCase,
     UpdateCommentUseCase,
     DeleteCommentUseCase,
+    UpdateLikeStatusUseCase,
 ];
 const queries = [
     GetBlogByIdQueryHandler,
@@ -76,10 +76,7 @@ const repositories = [
 ];
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{ name: Like.name, schema: LikeSchema }]),
-        AccountsModule,
-    ],
+    imports: [AccountsModule],
     controllers: [
         BlogsController,
         SaBlogsController,
@@ -92,6 +89,6 @@ const repositories = [
         ...queries,
         BlogIsExistentConstraint,
     ],
-    exports: [MongooseModule],
+    exports: [],
 })
 export class PlatformModule {}

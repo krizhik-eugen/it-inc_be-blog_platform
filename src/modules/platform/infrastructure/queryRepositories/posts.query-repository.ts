@@ -8,16 +8,18 @@ import {
     PaginatedPostgresPostsViewDto,
     PostgresPostViewDto,
 } from '../../api/dto/view-dto';
-import { LikeStatus } from '../../domain/like.entity';
+import { LikeParentType, LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
 import { BlogsRepository } from '../repositories/blogs.repository';
 import { PostsRepository } from '../repositories/posts.repository';
 import { PostgresPost } from '../../domain/post.entity';
+import { LikesRepository } from '../repositories/likes.repository';
 
 @Injectable()
 export class PostgresPostsQueryRepository {
     constructor(
         private likesQueryRepository: LikesQueryRepository,
+        private likesRepository: LikesRepository,
         private blogsRepository: BlogsRepository,
         private postsRepository: PostsRepository,
         private dataSource: DataSource,
@@ -37,14 +39,18 @@ export class PostgresPostsQueryRepository {
 
         if (userId) {
             likeStatus =
-                await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
-                    // TODO: fix types for postId
-                    { parentId: postId.toString(), userId },
+                await this.likesRepository.getLikeStatusByUserIdAndParentIdAndType(
+                    {
+                        parentId: postId,
+                        userId,
+                        parentType: LikeParentType.Post,
+                    },
                 );
         }
 
         const newestLikes = await this.likesQueryRepository.getLastThreeLikes(
-            post.id.toString(),
+            post.id,
+            LikeParentType.Post,
         );
 
         return PostgresPostViewDto.mapToView(post, likeStatus, newestLikes);
@@ -90,22 +96,22 @@ export class PostgresPostsQueryRepository {
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;
 
-        const postsIds: string[] = [];
-        // TODO: fix types for id
+        const postsIds: number[] = [];
 
         const mappedPosts = data.map((post) => {
-            postsIds.push(post.id.toString());
+            postsIds.push(post.id);
             return PostgresPostViewDto.mapToView(post, LikeStatus.None, []);
         });
 
         if (userId) {
-            const likes = await this.likesQueryRepository.getLikesArray({
+            const likes = await this.likesRepository.getLikesArray({
                 parentIdsArray: postsIds,
                 userId,
+                parentType: LikeParentType.Post,
             });
             mappedPosts.forEach((post) => {
                 const like = likes.find(
-                    (like) => like.parentId === post.id.toString(),
+                    (like) => like.parent_id === parseInt(post.id),
                 );
                 post.extendedLikesInfo.myStatus =
                     like?.status ?? LikeStatus.None;
@@ -114,7 +120,10 @@ export class PostgresPostsQueryRepository {
 
         for (const post of mappedPosts) {
             post.extendedLikesInfo.newestLikes =
-                await this.likesQueryRepository.getLastThreeLikes(post.id);
+                await this.likesQueryRepository.getLastThreeLikes(
+                    parseInt(post.id),
+                    LikeParentType.Post,
+                );
         }
 
         return PaginatedPostgresPostsViewDto.mapToView({

@@ -11,7 +11,6 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ObjectIdValidationPipe } from '../../../core/pipes';
 import {
     JwtAuthGuard,
     JwtOptionalAuthGuard,
@@ -31,13 +30,14 @@ import {
     UpdateLikeInputDto,
 } from './dto/input-dto/update';
 import { UserContextDto } from '../../../modules/accounts/guards/dto';
-
 import { GetCommentByIdQuery } from '../application/queries/comments';
 import {
     DeleteCommentCommand,
     UpdateCommentCommand,
 } from '../application/use-cases/comments';
 import { CommentViewDto } from './dto/view-dto';
+import { UpdateLikeStatusCommand } from '../application/use-cases/likes';
+import { LikeParentType } from '../domain/like.entity';
 
 @Controller('comments')
 export class CommentsController {
@@ -46,19 +46,24 @@ export class CommentsController {
         private queryBus: QueryBus,
     ) {}
 
-    // @UseGuards(JwtAuthGuard)
-    // @Put(':commentId/like-status')
-    // @UpdateCommentLikeStatusApi()
-    // @HttpCode(HttpStatus.NO_CONTENT)
-    // async updateCommentLikeStatus(
-    //     @Param('commentId', ObjectIdValidationPipe) commentId: string,
-    //     @Body() body: UpdateLikeInputDto,
-    //     @ExtractUserFromRequest() user: UserContextDto,
-    // ): Promise<void> {
-    //     return this.commandBus.execute<UpdateCommentLikeStatusCommand, void>(
-    //         new UpdateCommentLikeStatusCommand(commentId, body, user.id),
-    //     );
-    // }
+    @UseGuards(JwtAuthGuard)
+    @Put(':commentId/like-status')
+    @UpdateCommentLikeStatusApi()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async updateCommentLikeStatus(
+        @Param('commentId', ParseIntPipe) commentId: number,
+        @Body() body: UpdateLikeInputDto,
+        @ExtractUserFromRequest() user: UserContextDto,
+    ): Promise<void> {
+        return this.commandBus.execute<UpdateLikeStatusCommand, void>(
+            new UpdateLikeStatusCommand(
+                body,
+                commentId,
+                LikeParentType.Comment,
+                user.id,
+            ),
+        );
+    }
 
     @UseGuards(JwtAuthGuard)
     @Put(':commentId')

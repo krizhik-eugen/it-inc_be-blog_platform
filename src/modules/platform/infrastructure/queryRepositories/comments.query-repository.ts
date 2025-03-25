@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { LikeStatus } from '../../domain/like.entity';
-import { LikesQueryRepository } from './likes.query-repository';
+import { LikeParentType, LikeStatus } from '../../domain/like.entity';
 import { PostsRepository } from '../repositories/posts.repository';
 import {
     CommentViewDto,
@@ -13,12 +12,13 @@ import {
     CommentsSortBy,
     GetCommentsQueryParams,
 } from '../../api/dto/query-params-dto';
+import { LikesRepository } from '../repositories/likes.repository';
 
 @Injectable()
 export class CommentsQueryRepository {
     constructor(
         private dataSource: DataSource,
-        private likesQueryRepository: LikesQueryRepository,
+        private likesRepository: LikesRepository,
         private postsRepository: PostsRepository,
     ) {}
 
@@ -46,8 +46,12 @@ export class CommentsQueryRepository {
 
         if (userId) {
             likeStatus =
-                await this.likesQueryRepository.getLikeStatusByUserIdAndParentId(
-                    { parentId: commentId.toString(), userId },
+                await this.likesRepository.getLikeStatusByUserIdAndParentIdAndType(
+                    {
+                        parentId: commentId,
+                        userId,
+                        parentType: LikeParentType.Comment,
+                    },
                 );
         }
 
@@ -85,19 +89,22 @@ export class CommentsQueryRepository {
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;
 
-        const commentsIds = data.map((comment) => comment.id.toString());
+        const commentsIds = data.map((comment) => comment.id);
         const mappedComments = data.map((comment) =>
             CommentViewDto.mapToView(comment, LikeStatus.None),
         );
 
         if (userId && commentsIds.length > 0) {
-            const likes = await this.likesQueryRepository.getLikesArray({
+            const likes = await this.likesRepository.getLikesArray({
                 parentIdsArray: commentsIds,
                 userId,
+                parentType: LikeParentType.Comment,
             });
 
             mappedComments.forEach((comment) => {
-                const like = likes.find((like) => like.parentId === comment.id);
+                const like = likes.find(
+                    (like) => like.parent_id === parseInt(comment.id),
+                );
                 comment.likesInfo.myStatus = like?.status ?? LikeStatus.None;
             });
         }

@@ -1,110 +1,171 @@
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import {
-    Like,
-    LikeDocument,
-    LikeModelType,
-    LikeStatus,
-} from '../../domain/like.entity';
+import { CreateLikeDomainDto } from '../../domain/dto/create';
 import { UpdateLikesCountDto } from '../../dto/update';
+import { Like, LikeParentType, LikeStatus } from '../../domain/like.entity';
+import { UpdateLikeDomainDto } from '../../domain/dto/update';
 
+@Injectable()
 export class LikesRepository {
-    constructor(
-        @InjectModel(Like.name)
-        private LikeModel: LikeModelType,
-    ) {}
+    constructor(private dataSource: DataSource) {}
 
-    async save(like: LikeDocument) {
-        return like.save();
+    async createLike(dto: CreateLikeDomainDto) {
+        const data: { id: number }[] = await this.dataSource.query(
+            `
+                INSERT INTO public.likes (parent_id, parent_type, user_id, status)
+                VALUES ($1, $2, $3, $4)
+                RETURNING id
+                `,
+            [dto.parentId, dto.parentType, dto.userId, dto.status],
+        );
+
+        return data[0].id;
     }
 
-    async findById(id: string): Promise<LikeDocument | null> {
-        return this.LikeModel.findOne({
-            _id: id,
-            deletedAt: null,
-        });
+    async findByIdNonDeleted(id: string): Promise<Like | null> {
+        const data: Like[] = await this.dataSource.query(
+            `
+                SELECT *
+                FROM public.likes
+                WHERE id = $1 AND deleted_at IS NULL
+                `,
+            [id],
+        );
+
+        return data[0] || null;
     }
 
-    async findByUserIdAndParentId({
+    async findByUserIdAndParentIdAndTypeNonDeleted({
         userId,
         parentId,
+        parentType,
     }: {
         userId: number;
-        parentId: string;
-    }): Promise<LikeDocument | null> {
-        return this.LikeModel.findOne({ userId, parentId, deletedAt: null });
+        parentId: number;
+        parentType: LikeParentType;
+    }): Promise<Like | null> {
+        const data: Like[] = await this.dataSource.query(
+            `
+                SELECT *
+                FROM public.likes
+                WHERE user_id = $1 AND parent_id = $2 AND parent_type = $3 AND deleted_at IS NULL
+                `,
+            [userId, parentId, parentType],
+        );
+
+        return data[0] || null;
     }
 
-    async findByIdOrNotFoundFail(id: string): Promise<LikeDocument> {
-        const like = await this.findById(id);
+    async findByIdNonDeletedOrNotFoundFail(id: string): Promise<Like> {
+        const like = await this.findByIdNonDeleted(id);
 
         if (!like) {
             throw NotFoundDomainException.create('Like not found');
         }
 
-        return like;
-    }
-
-    async findByIdNonDeletedOrNotFoundFail(id: string): Promise<LikeDocument> {
-        const like = await this.LikeModel.findOne({
-            _id: id,
-            deletedAt: null,
-        });
-        if (!like) {
-            throw NotFoundDomainException.create('Like not found');
-        }
         return like;
     }
 
     async getLikesAndDislikesCountByParentId(
-        parentId: string,
+        parentId: number,
+        parentType: LikeParentType,
     ): Promise<UpdateLikesCountDto> {
-        const result = await this.LikeModel.aggregate([
-            {
-                $match: { parentId },
-            },
-            {
-                $group: {
-                    _id: null,
-                    likesCount: {
-                        $sum: {
-                            $cond: [
-                                { $eq: ['$status', LikeStatus.Like] },
-                                1,
-                                0,
-                            ],
-                        },
-                    },
-                    dislikesCount: {
-                        $sum: {
-                            $cond: [
-                                { $eq: ['$status', LikeStatus.Dislike] },
-                                1,
-                                0,
-                            ],
-                        },
-                    },
-                },
-            },
-        ]);
+        const result: { likes_count: number; dislikes_count: number }[] =
+            await this.dataSource.query(
+                `
+                SELECT
+                    SUM(CASE WHEN status = 'Like' THEN 1 ELSE 0 END) AS likes_count,
+                    SUM(CASE WHEN status = 'Dislike' THEN 1 ELSE 0 END) AS dislikes_count
+                FROM public.likes
+                WHERE parent_id = $1 AND parent_type = $2 AND deleted_at IS NULL
+            `,
+                [parentId, parentType],
+            );
 
         return {
-            likesCount: (result[0] as UpdateLikesCountDto).likesCount,
-            dislikesCount: (result[0] as UpdateLikesCountDto).dislikesCount,
+            likesCount: result[0].likes_count,
+            dislikesCount: result[0].dislikes_count,
         };
     }
 
-    async deleteAllByParentId(parentId: string): Promise<void> {
-        await this.LikeModel.updateMany(
-            { parentId: parentId, deletedAt: null },
-            { deletedAt: new Date().toISOString() },
+    async getLikeStatusByUserIdAndParentIdAndType({
+        parentId,
+        userId,
+        parentType,
+    }: {
+        parentId: number;
+        userId: number;
+        parentType: LikeParentType;
+    }): Promise<LikeStatus> {
+        const data: Like[] = await this.dataSource.query(
+            `
+                SELECT *
+                FROM public.likes
+                WHERE user_id = $1 AND parent_id = $2 AND parent_type = $3 AND deleted_at IS NULL
+                `,
+            [userId, parentId, parentType],
+        );
+
+        return data[0] ? data[0].status : LikeStatus.None;
+    }
+
+    async getLikesArray({
+        parentIdsArray,
+        parentType,
+        userId,
+    }: {
+        parentIdsArray: number[];
+        parentType: LikeParentType;
+        userId: number;
+    }) {
+        const data: Like[] = await this.dataSource.query(
+            `
+                SELECT *
+                FROM public.likes
+                WHERE user_id = $1 AND parent_id = ANY($2) AND parent_type = $3 AND deleted_at IS NULL
+                `,
+            [userId, parentIdsArray, parentType],
+        );
+        return data;
+    }
+
+    async makeDeletedAllByParentIdAndType(
+        parentId: number,
+        parentType: LikeParentType,
+    ): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE public.likes
+                SET deleted_at = NOW()
+                WHERE parent_id = $1 AND parent_type = $2 AND deleted_at IS NULL
+            `,
+            [parentId, parentType],
         );
     }
 
-    async deleteAllByParentIds(parentIds: string[]): Promise<void> {
-        await this.LikeModel.updateMany(
-            { parentId: { $in: parentIds }, deletedAt: null },
-            { deletedAt: new Date().toISOString() },
+    async updateLikeStatusByParentIdAndType(dto: UpdateLikeDomainDto) {
+        await this.dataSource.query(
+            `
+                UPDATE public.likes
+                SET status = $1
+                WHERE parent_id = $2 AND parent_type = $3 AND deleted_at IS NULL
+            `,
+            [dto.status, dto.parentId, dto.parentType],
+        );
+    }
+
+    async deleteAllByParentIdsAndType(
+        parentIds: number[],
+        parentType: LikeParentType,
+    ): Promise<void> {
+        await this.dataSource.query(
+            `
+                UPDATE public.likes
+                SET deleted_at = NOW()
+                WHERE parent_id = ANY($1) AND parent_type = $2 AND deleted_at IS NULL
+            `,
+            [parentIds, parentType],
         );
     }
 }

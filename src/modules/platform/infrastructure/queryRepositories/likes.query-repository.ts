@@ -1,64 +1,38 @@
-import { InjectModel } from '@nestjs/mongoose';
-import { Like, LikeModelType, LikeStatus } from '../../domain/like.entity';
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { Like, LikeParentType } from '../../domain/like.entity';
 import { LikeViewDto } from '../../api/dto/view-dto';
 import { UsersRepository } from '../../../accounts/infrastructure';
 import { PostgresUser } from '../../../accounts/domain/user.entity';
 
+@Injectable()
 export class LikesQueryRepository {
     constructor(
-        @InjectModel(Like.name)
-        private LikeModel: LikeModelType,
+        private dataSource: DataSource,
         private usersRepository: UsersRepository,
     ) {}
 
-    async getLikeStatusByUserIdAndParentId({
-        parentId,
-        userId,
-    }: {
-        parentId: string;
-        userId: number;
-    }): Promise<LikeStatus> {
-        const like = await this.LikeModel.findOne({
-            userId,
-            parentId,
-            deletedAt: null,
-        });
+    async getLastThreeLikes(parentId: number, parentType: LikeParentType) {
+        const foundLikes: Like[] = await this.dataSource.query(
+            `
+                SELECT *
+                FROM public.likes
+                WHERE parent_id = $1 AND parent_type = $2 AND status = 'Like' AND deleted_at IS NULL
+                ORDER BY created_at DESC
+                LIMIT 3
+            `,
+            [parentId, parentType],
+        );
 
-        return like ? like.status : LikeStatus.None;
-    }
-
-    async getLikesArray({
-        parentIdsArray,
-        userId,
-    }: {
-        parentIdsArray: string[];
-        userId: number;
-    }) {
-        const foundLikes = await this.LikeModel.find({
-            parentId: { $in: parentIdsArray },
-            userId,
-        }).lean();
-        return foundLikes;
-    }
-
-    async getLastThreeLikes(parentId: string) {
-        const foundLikes = await this.LikeModel.find({
-            parentId,
-            status: LikeStatus.Like,
-        })
-            .sort({ createdAt: 'desc' })
-            .limit(3)
-            .exec();
-
-        const userIds = foundLikes.map((like) => like.userId);
+        const userIds = foundLikes.map((like) => like.user_id);
         const users = await this.usersRepository.findByIds(userIds);
 
         const mappedFoundLikes: LikeViewDto[] = [];
         for (const like of foundLikes) {
-            const user = users.find((u: PostgresUser) => u.id === like.userId);
+            const user = users.find((u: PostgresUser) => u.id === like.user_id);
             mappedFoundLikes.push({
-                addedAt: like.createdAt,
-                userId: like.userId.toString(),
+                addedAt: new Date(like.created_at).toISOString(),
+                userId: like.user_id.toString(),
                 login: user?.login || '',
             });
         }

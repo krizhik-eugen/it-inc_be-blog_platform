@@ -1,7 +1,5 @@
 import { configModule } from './config-module';
-
 import { DynamicModule, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CoreModule } from './core/core.module';
@@ -12,15 +10,15 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { TestingModule } from './modules/testing/testing.module';
 
 const imports = [
-    MongooseModule.forRootAsync({
-        useFactory: (coreConfig: CoreConfig) => {
-            return {
-                uri: coreConfig.mongoURL,
-                dbName: coreConfig.mongoDBName,
-            };
-        },
-        inject: [CoreConfig],
-    }),
+    // MongooseModule.forRootAsync({
+    //     useFactory: (coreConfig: CoreConfig) => {
+    //         return {
+    //             uri: coreConfig.mongoURL,
+    //             dbName: coreConfig.mongoDBName,
+    //         };
+    //     },
+    //     inject: [CoreConfig],
+    // }),
     // TypeOrmModule.forRoot({
     //     type: 'postgres',
     //     host: 'localhost',
