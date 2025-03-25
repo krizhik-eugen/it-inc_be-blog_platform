@@ -1,4 +1,4 @@
-import { ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateLikeDto } from '../../../dto/update';
 import { LikesRepository } from '../../../infrastructure';
 import { LikeParentType } from '../../../domain/like.entity';
@@ -12,6 +12,7 @@ export class UpdateLikeStatusCommand {
     ) {}
 }
 
+@CommandHandler(UpdateLikeStatusCommand)
 export class UpdateLikeStatusUseCase
     implements ICommandHandler<UpdateLikeStatusCommand, void>
 {

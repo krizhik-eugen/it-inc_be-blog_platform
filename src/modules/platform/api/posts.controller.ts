@@ -43,7 +43,6 @@ import {
     PostgresPostViewDto,
 } from './dto/view-dto';
 import { CreateCommentInputDto } from './dto/input-dto/create';
-
 import { CreateCommentCommand } from '../application/use-cases/posts';
 import {
     CommentViewDto,

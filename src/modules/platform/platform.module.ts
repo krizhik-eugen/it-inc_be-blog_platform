@@ -66,13 +66,13 @@ const queries = [
 ];
 const repositories = [
     CommentsRepository,
+    CommentsQueryRepository,
     LikesRepository,
     LikesQueryRepository,
     BlogsRepository,
     PostgresBlogsQueryRepository,
     PostsRepository,
     PostgresPostsQueryRepository,
-    CommentsQueryRepository,
 ];
 
 @Module({
