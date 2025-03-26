@@ -1,6 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateLikeDto } from '../../../dto/update';
-import { LikesRepository } from '../../../infrastructure';
+import {
+    CommentsRepository,
+    LikesRepository,
+    PostsRepository,
+} from '../../../infrastructure';
 import { LikeParentType } from '../../../domain/like.entity';
 
 export class UpdateLikeStatusCommand {
@@ -16,7 +20,11 @@ export class UpdateLikeStatusCommand {
 export class UpdateLikeStatusUseCase
     implements ICommandHandler<UpdateLikeStatusCommand, void>
 {
-    constructor(private likesRepository: LikesRepository) {}
+    constructor(
+        private likesRepository: LikesRepository,
+        private postsRepository: PostsRepository,
+        private commentsRepository: CommentsRepository,
+    ) {}
 
     async execute({
         dto,
@@ -24,6 +32,12 @@ export class UpdateLikeStatusUseCase
         parentType,
         userId,
     }: UpdateLikeStatusCommand): Promise<void> {
+        await (
+            parentType === LikeParentType.Post
+                ? this.postsRepository
+                : this.commentsRepository
+        ).findByIdNonDeletedOrNotFoundFail(parentId);
+
         const like =
             await this.likesRepository.findByUserIdAndParentIdAndTypeNonDeleted(
                 {

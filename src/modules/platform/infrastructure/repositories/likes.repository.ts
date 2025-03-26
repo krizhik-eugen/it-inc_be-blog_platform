@@ -71,7 +71,7 @@ export class LikesRepository {
         parentId: number,
         parentType: LikeParentType,
     ): Promise<UpdateLikesCountDto> {
-        const result: { likes_count: number; dislikes_count: number }[] =
+        const result: { likes_count: string; dislikes_count: string }[] =
             await this.dataSource.query(
                 `
                 SELECT
@@ -84,8 +84,12 @@ export class LikesRepository {
             );
 
         return {
-            likesCount: result[0].likes_count,
-            dislikesCount: result[0].dislikes_count,
+            likesCount: result[0].likes_count
+                ? parseInt(result[0].likes_count)
+                : 0,
+            dislikesCount: result[0].dislikes_count
+                ? parseInt(result[0].dislikes_count)
+                : 0,
         };
     }
 
