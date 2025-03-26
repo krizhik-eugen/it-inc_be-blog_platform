@@ -114,7 +114,27 @@ export class LikesRepository {
         return data[0] ? data[0].status : LikeStatus.None;
     }
 
-    async getLikesArray({
+    // async getLikesArray({
+    //     parentIdsArray,
+    //     parentType,
+    //     userId,
+    // }: {
+    //     parentIdsArray: number[];
+    //     parentType: LikeParentType;
+    //     userId: number;
+    // }) {
+    //     const data: Like[] = await this.dataSource.query(
+    //         `
+    //             SELECT *
+    //             FROM public.likes
+    //             WHERE user_id = $1 AND parent_id = ANY($2) AND parent_type = $3 AND deleted_at IS NULL
+    //             `,
+    //         [userId, parentIdsArray, parentType],
+    //     );
+    //     return data;
+    // }
+
+    async getParentsLikesAndCountArray({
         parentIdsArray,
         parentType,
         userId,
@@ -122,16 +142,54 @@ export class LikesRepository {
         parentIdsArray: number[];
         parentType: LikeParentType;
         userId: number;
-    }) {
-        const data: Like[] = await this.dataSource.query(
+    }): Promise<
+        Array<{
+            parent_id: number;
+            like_status: LikeStatus;
+            likes_count: number;
+            dislikes_count: number;
+        }>
+    > {
+        const results: Array<{
+            parent_id: number;
+            status: LikeStatus | null;
+            likes_count: string;
+            dislikes_count: string;
+        }> = await this.dataSource.query(
             `
-                SELECT *
+            WITH like_counts AS (
+                SELECT 
+                    parent_id,
+                    SUM(CASE WHEN status = 'Like' THEN 1 ELSE 0 END) AS likes_count,
+                    SUM(CASE WHEN status = 'Dislike' THEN 1 ELSE 0 END) AS dislikes_count
+                FROM public.likes
+                WHERE parent_id = ANY($2) AND parent_type = $3 AND deleted_at IS NULL
+                GROUP BY parent_id
+            ),
+            user_likes AS (
+                SELECT parent_id, status
                 FROM public.likes
                 WHERE user_id = $1 AND parent_id = ANY($2) AND parent_type = $3 AND deleted_at IS NULL
-                `,
+            )
+            SELECT 
+                lc.parent_id,
+                ul.status AS status,
+                COALESCE(lc.likes_count::text, '0') AS likes_count,
+                COALESCE(lc.dislikes_count::text, '0') AS dislikes_count
+            FROM like_counts lc
+            LEFT JOIN user_likes ul ON lc.parent_id = ul.parent_id
+            `,
             [userId, parentIdsArray, parentType],
         );
-        return data;
+
+        return results.map((result) => ({
+            parent_id: result.parent_id,
+            like_status: result.status ?? LikeStatus.None,
+            likes_count: result.likes_count ? parseInt(result.likes_count) : 0,
+            dislikes_count: result.dislikes_count
+                ? parseInt(result.dislikes_count)
+                : 0,
+        }));
     }
 
     async makeDeletedAllByParentIdAndType(

@@ -116,17 +116,23 @@ export class CommentsQueryRepository {
         });
 
         if (userId && commentsIds.length > 0) {
-            const likes = await this.likesRepository.getLikesArray({
-                parentIdsArray: commentsIds,
-                userId,
-                parentType: LikeParentType.Comment,
-            });
+            const parentLikes =
+                await this.likesRepository.getParentsLikesAndCountArray({
+                    parentIdsArray: commentsIds,
+                    userId,
+                    parentType: LikeParentType.Comment,
+                });
 
             mappedComments.forEach((comment) => {
-                const like = likes.find(
+                const like = parentLikes.find(
                     (like) => like.parent_id === parseInt(comment.id),
                 );
-                comment.likesInfo.myStatus = like?.status ?? LikeStatus.None;
+                comment.likesInfo.myStatus =
+                    like?.like_status ?? LikeStatus.None;
+                comment.likesInfo.likesCount = like ? like.likes_count : 0;
+                comment.likesInfo.dislikesCount = like
+                    ? like.dislikes_count
+                    : 0;
             });
         }
 

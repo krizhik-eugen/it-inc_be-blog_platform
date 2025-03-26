@@ -119,17 +119,22 @@ export class PostsQueryRepository {
         });
 
         if (userId) {
-            const likes = await this.likesRepository.getLikesArray({
-                parentIdsArray: postsIds,
-                userId,
-                parentType: LikeParentType.Post,
-            });
+            const parentLikes =
+                await this.likesRepository.getParentsLikesAndCountArray({
+                    parentIdsArray: postsIds,
+                    userId,
+                    parentType: LikeParentType.Post,
+                });
             mappedPosts.forEach((post) => {
-                const like = likes.find(
+                const like = parentLikes.find(
                     (like) => like.parent_id === parseInt(post.id),
                 );
                 post.extendedLikesInfo.myStatus =
-                    like?.status ?? LikeStatus.None;
+                    like?.like_status ?? LikeStatus.None;
+                post.extendedLikesInfo.likesCount = like ? like.likes_count : 0;
+                post.extendedLikesInfo.dislikesCount = like
+                    ? like.dislikes_count
+                    : 0;
             });
         }
 
