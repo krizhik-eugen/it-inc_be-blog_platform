@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { Like, LikeParentType } from '../../domain/like.entity';
 import { LikeViewDto } from '../../api/dto/view-dto';
 import { UsersRepository } from '../../../accounts/infrastructure';
-import { PostgresUser } from '../../../accounts/domain/user.entity';
+import { User } from '../../../accounts/domain/user.entity';
 
 @Injectable()
 export class LikesQueryRepository {
@@ -29,7 +29,7 @@ export class LikesQueryRepository {
 
         const mappedFoundLikes: LikeViewDto[] = [];
         for (const like of foundLikes) {
-            const user = users.find((u: PostgresUser) => u.id === like.user_id);
+            const user = users.find((u: User) => u.id === like.user_id);
             mappedFoundLikes.push({
                 addedAt: new Date(like.created_at).toISOString(),
                 userId: like.user_id.toString(),

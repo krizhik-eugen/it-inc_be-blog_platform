@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import {
-    PaginatedPostgresUsersViewDto,
-    PostgresMeViewDto,
-    PostgresUserViewDto,
+    PaginatedUsersViewDto,
+    MeViewDto,
+    UserViewDto,
 } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresUser } from '../../domain/user.entity';
+import { User } from '../../domain/user.entity';
 import {
     GetUsersQueryParams,
     UsersSortBy,
 } from '../../api/dto/query-params-dto';
 
 @Injectable()
-export class UsersPostgresQueryRepository {
+export class UsersQueryRepository {
     constructor(private dataSource: DataSource) {}
 
     async getCurrentUserByIdOrNotFoundFail(id: number) {
-        const data: PostgresUser[] = await this.dataSource.query(
+        const data: User[] = await this.dataSource.query(
             `
                 SELECT * FROM public.users
                 WHERE id = $1 AND deleted_at IS NULL
@@ -26,14 +26,14 @@ export class UsersPostgresQueryRepository {
         );
 
         if (!data.length) {
-            throw NotFoundDomainException.create('PostgresUser is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
 
-        return PostgresMeViewDto.mapToView(data[0]);
+        return MeViewDto.mapToView(data[0]);
     }
 
-    async getByIdOrNotFoundFail(id: number): Promise<PostgresUserViewDto> {
-        const data: PostgresUser[] = await this.dataSource.query(
+    async getByIdOrNotFoundFail(id: number): Promise<UserViewDto> {
+        const data: User[] = await this.dataSource.query(
             `
                 SELECT * FROM public.users
                 WHERE id = $1 AND deleted_at IS NULL
@@ -42,15 +42,15 @@ export class UsersPostgresQueryRepository {
         );
 
         if (!data.length) {
-            throw NotFoundDomainException.create('PostgresUser is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
 
-        return PostgresUserViewDto.mapToView(data[0]);
+        return UserViewDto.mapToView(data[0]);
     }
 
     async getAllUsers(
         query: GetUsersQueryParams,
-    ): Promise<PaginatedPostgresUsersViewDto> {
+    ): Promise<PaginatedUsersViewDto> {
         const queryParams: (string | number)[] = [];
         let paramIndex = 1;
 
@@ -91,15 +91,13 @@ export class UsersPostgresQueryRepository {
 
         queryParams.push(query.pageSize, query.calculateSkip());
 
-        const result: Array<PostgresUser & { total_count: string }> =
+        const result: Array<User & { total_count: string }> =
             await this.dataSource.query(sqlQuery, queryParams);
 
         const totalCount = Number(result[0]?.total_count) || 0;
-        const mappedUsers = result.map((user) =>
-            PostgresUserViewDto.mapToView(user),
-        );
+        const mappedUsers = result.map((user) => UserViewDto.mapToView(user));
 
-        return PaginatedPostgresUsersViewDto.mapToView({
+        return PaginatedUsersViewDto.mapToView({
             items: mappedUsers,
             page: query.pageNumber,
             size: query.pageSize,

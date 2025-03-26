@@ -13,9 +13,9 @@ export class UpdateUserCommand {
 export class UpdateUserUseCase
     implements ICommandHandler<UpdateUserCommand, void>
 {
-    constructor(private usersPostgresRepository: UsersRepository) {}
+    constructor(private usersRepository: UsersRepository) {}
 
     async execute({ id, dto }: UpdateUserCommand): Promise<void> {
-        await this.usersPostgresRepository.updateUserEmail(id, dto.email);
+        await this.usersRepository.updateUserEmail(id, dto.email);
     }
 }

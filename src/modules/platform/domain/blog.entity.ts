@@ -13,7 +13,7 @@ export const blogConstraints = {
     },
 };
 
-export class PostgresBlog {
+export class Blog {
     id: number;
     name: string;
     description: string;

@@ -3,8 +3,8 @@ import {
     LikesRepository,
     LikesQueryRepository,
     BlogsRepository,
-    PostgresBlogsQueryRepository,
-    PostgresPostsQueryRepository,
+    BlogsQueryRepository,
+    PostsQueryRepository,
     PostsRepository,
     CommentsRepository,
     CommentsQueryRepository,
@@ -70,9 +70,9 @@ const repositories = [
     LikesRepository,
     LikesQueryRepository,
     BlogsRepository,
-    PostgresBlogsQueryRepository,
+    BlogsQueryRepository,
     PostsRepository,
-    PostgresPostsQueryRepository,
+    PostsQueryRepository,
 ];
 
 @Module({

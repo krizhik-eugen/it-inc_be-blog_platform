@@ -33,7 +33,7 @@ import {
 import {
     PaginatedBlogsViewDto,
     BlogViewDto,
-    PaginatedPostgresPostsViewDto,
+    PaginatedPostsViewDto,
     PostViewDto,
 } from './dto/view-dto';
 import {
@@ -88,11 +88,10 @@ export class SaBlogsController {
         @Param('blogId', ParseIntPipe) blogId: number,
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
-    ): Promise<PaginatedPostgresPostsViewDto> {
-        return this.queryBus.execute<
-            GetBlogPostsQuery,
-            PaginatedPostgresPostsViewDto
-        >(new GetBlogPostsQuery(query, blogId, user?.id));
+    ): Promise<PaginatedPostsViewDto> {
+        return this.queryBus.execute<GetBlogPostsQuery, PaginatedPostsViewDto>(
+            new GetBlogPostsQuery(query, blogId, user?.id),
+        );
     }
 
     @Post(':blogId/posts')

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostgresSessionsRepository } from '../../../infrastructure';
+import { SessionsRepository } from '../../../infrastructure';
 import { SessionContextDto } from '../../../guards/dto/session-context.dto';
 import { ForbiddenDomainException } from '../../../../../core/exceptions/domain-exceptions';
 
@@ -13,13 +13,11 @@ export class DeleteSessionCommand {
 export class DeleteSessionUseCase
     implements ICommandHandler<DeleteSessionCommand, void>
 {
-    constructor(
-        private postgresSessionsRepository: PostgresSessionsRepository,
-    ) {}
+    constructor(private sessionsRepository: SessionsRepository) {}
 
     async execute({ deviceId, session }: DeleteSessionCommand): Promise<void> {
         const foundSession =
-            await this.postgresSessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
+            await this.sessionsRepository.findByDeviceIdNonDeletedOrNotFoundFail(
                 deviceId,
             );
 
@@ -29,8 +27,6 @@ export class DeleteSessionUseCase
             );
         }
 
-        await this.postgresSessionsRepository.makeSessionDeletedById(
-            foundSession.id,
-        );
+        await this.sessionsRepository.makeSessionDeletedById(foundSession.id);
     }
 }

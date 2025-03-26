@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import { Session } from '../../domain/session.entity';
 
 @Injectable()
-export class PostgresSessionsRepository {
+export class SessionsRepository {
     constructor(private dataSource: DataSource) {}
 
     async createSession({

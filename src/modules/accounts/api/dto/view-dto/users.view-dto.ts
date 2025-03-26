@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginatedViewDto } from '../../../../../core/dto';
-import { PostgresUser } from '../../../domain/user.entity';
+import { User } from '../../../domain/user.entity';
 
-export class PostgresUserViewDto {
+export class UserViewDto {
     @ApiProperty()
     id: string;
     @ApiProperty()
@@ -12,8 +12,8 @@ export class PostgresUserViewDto {
     @ApiProperty()
     createdAt: string;
 
-    static mapToView(user: PostgresUser): PostgresUserViewDto {
-        const dto = new PostgresUserViewDto();
+    static mapToView(user: User): UserViewDto {
+        const dto = new UserViewDto();
 
         dto.id = user.id.toString();
         dto.login = user.login;
@@ -24,16 +24,14 @@ export class PostgresUserViewDto {
     }
 }
 
-export class PaginatedPostgresUsersViewDto extends PaginatedViewDto<
-    PostgresUserViewDto[]
-> {
+export class PaginatedUsersViewDto extends PaginatedViewDto<UserViewDto[]> {
     @ApiProperty({
-        type: [PostgresUserViewDto],
+        type: [UserViewDto],
     })
-    items: PostgresUserViewDto[];
+    items: UserViewDto[];
 }
 
-export class PostgresMeViewDto {
+export class MeViewDto {
     @ApiProperty()
     userId: string;
     @ApiProperty()
@@ -41,8 +39,8 @@ export class PostgresMeViewDto {
     @ApiProperty()
     email: string;
 
-    static mapToView(user: PostgresUser): PostgresMeViewDto {
-        const dto = new PostgresMeViewDto();
+    static mapToView(user: User): MeViewDto {
+        const dto = new MeViewDto();
 
         dto.userId = user.id.toString();
         dto.login = user.login;

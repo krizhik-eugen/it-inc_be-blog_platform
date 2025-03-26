@@ -15,22 +15,24 @@ export class RegisterUserUseCase
 {
     constructor(
         private authService: AuthService,
-        private usersPostgresRepository: UsersRepository,
+        private usersRepository: UsersRepository,
         private commandBus: CommandBus,
     ) {}
 
     async execute({ dto }: RegisterUserCommand): Promise<void> {
-        const foundUserByLogin =
-            await this.usersPostgresRepository.findByLoginOrEmail(dto.login);
-        const foundUserByEmail =
-            await this.usersPostgresRepository.findByLoginOrEmail(dto.email);
+        const foundUserByLogin = await this.usersRepository.findByLoginOrEmail(
+            dto.login,
+        );
+        const foundUserByEmail = await this.usersRepository.findByLoginOrEmail(
+            dto.email,
+        );
 
         if (foundUserByLogin || foundUserByEmail) {
             const fieldName = foundUserByLogin ? 'login' : 'email';
-            let message = `PostgresUser with this ${fieldName} already exists`;
+            let message = `User with this ${fieldName} already exists`;
 
             if (foundUserByLogin?.deleted_at || foundUserByEmail?.deleted_at) {
-                message = `PostgresUser with this ${fieldName} was in the system and has been deleted`;
+                message = `User with this ${fieldName} was in the system and has been deleted`;
             }
 
             throw BadRequestDomainException.create(message, fieldName);
@@ -42,7 +44,7 @@ export class RegisterUserUseCase
         >(new CreateUserCommand(dto));
 
         const newUser =
-            await this.usersPostgresRepository.findUserWithConfirmationStatus(
+            await this.usersRepository.findUserWithConfirmationStatus(
                 newUserId,
             );
 

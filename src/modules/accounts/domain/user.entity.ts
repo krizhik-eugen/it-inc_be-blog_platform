@@ -19,7 +19,7 @@ export const userEmailConstraints = {
         'Email should be a valid email address, example: example@example.com',
 };
 
-export class PostgresEmailConfirmation {
+export class EmailConfirmation {
     id: number;
     user_id: number;
     confirmation_code: string;
@@ -27,14 +27,14 @@ export class PostgresEmailConfirmation {
     is_confirmed: boolean;
 }
 
-export class PostgresRecoveryCode {
+export class RecoveryCode {
     id: number;
     user_id: number;
     recovery_code: string;
     expiration_date: Date;
 }
 
-export class PostgresUser {
+export class User {
     id: number;
     login: string;
     password_hash: string;

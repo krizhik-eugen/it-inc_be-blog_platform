@@ -11,7 +11,7 @@ import {
 } from '@nestjs/swagger';
 import {
     PaginatedBlogsViewDto,
-    PaginatedPostgresPostsViewDto,
+    PaginatedPostsViewDto,
     BlogViewDto,
     PostViewDto,
 } from '../dto/view-dto';
@@ -57,7 +57,7 @@ export const GetAllBlogPostsApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedPostgresPostsViewDto,
+            type: PaginatedPostsViewDto,
         }),
         ApiNotFoundResponse({
             description: 'If specified blog does not exist',

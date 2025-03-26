@@ -7,7 +7,7 @@ import {
     REFRESH_TOKEN_STRATEGY_INJECT_TOKEN,
 } from '../../../constants';
 import { TypedJwtService } from '../../typedJwtService';
-import { PostgresSessionsRepository } from '../../../infrastructure';
+import { SessionsRepository } from '../../../infrastructure';
 
 export class LoginUseCaseResponse {
     accessToken: string;
@@ -29,7 +29,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
         private refreshTokenContext: TypedJwtService,
 
-        private postgresSessionRepository: PostgresSessionsRepository,
+        private sessionRepository: SessionsRepository,
     ) {}
 
     async execute({ dto }: LoginUserCommand): Promise<LoginUseCaseResponse> {
@@ -44,7 +44,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         const decodedIssuedToken =
             this.refreshTokenContext.decode(refreshToken);
 
-        await this.postgresSessionRepository.createSession({
+        await this.sessionRepository.createSession({
             userId: dto.userId,
             deviceId,
             deviceName: getDeviceTitle(dto.userAgent),

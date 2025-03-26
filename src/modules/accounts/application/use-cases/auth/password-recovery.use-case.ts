@@ -11,12 +11,12 @@ export class PasswordRecoveryUseCase
     implements ICommandHandler<PasswordRecoveryCommand, void>
 {
     constructor(
-        private postgresUserRepository: UsersRepository,
+        private userRepository: UsersRepository,
         private authService: AuthService,
     ) {}
 
     async execute({ dto }: PasswordRecoveryCommand): Promise<void> {
-        const foundUser = await this.postgresUserRepository.findByLoginOrEmail(
+        const foundUser = await this.userRepository.findByLoginOrEmail(
             dto.email,
         );
         if (foundUser) {

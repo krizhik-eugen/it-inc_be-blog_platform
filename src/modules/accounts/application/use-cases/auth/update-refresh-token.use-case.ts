@@ -6,7 +6,7 @@ import {
 } from '../../../constants';
 import { TypedJwtPayload, TypedJwtService } from '../../typedJwtService';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/domain-exceptions';
-import { PostgresSessionsRepository } from '../../../infrastructure';
+import { SessionsRepository } from '../../../infrastructure';
 
 export class UpdateRefreshTokenUseCaseResponse {
     accessToken: string;
@@ -32,16 +32,14 @@ export class UpdateRefreshTokenUseCase
         @Inject(REFRESH_TOKEN_STRATEGY_INJECT_TOKEN)
         private refreshTokenContext: TypedJwtService,
 
-        private postgresSessionRepository: PostgresSessionsRepository,
+        private sessionRepository: SessionsRepository,
     ) {}
 
     async execute({
         dto,
     }: UpdateRefreshTokenCommand): Promise<UpdateRefreshTokenUseCaseResponse> {
         const foundSession =
-            await this.postgresSessionRepository.findByDeviceIdNonDeleted(
-                dto.deviceId,
-            );
+            await this.sessionRepository.findByDeviceIdNonDeleted(dto.deviceId);
 
         if (!foundSession) {
             throw UnauthorizedDomainException.create('Session not found');
@@ -63,7 +61,7 @@ export class UpdateRefreshTokenUseCase
         const decodedIssuedToken =
             this.refreshTokenContext.decode(updatedRefreshToken);
 
-        await this.postgresSessionRepository.updateSession({
+        await this.sessionRepository.updateSession({
             deviceId: dto.deviceId,
             ip: dto.ip,
             iat: decodedIssuedToken.iat!,

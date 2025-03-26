@@ -49,9 +49,7 @@ export class PostViewDto {
     }
 }
 
-export class PaginatedPostgresPostsViewDto extends PaginatedViewDto<
-    PostViewDto[]
-> {
+export class PaginatedPostsViewDto extends PaginatedViewDto<PostViewDto[]> {
     @ApiProperty({
         type: [PostViewDto],
     })

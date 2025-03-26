@@ -13,7 +13,7 @@ export class CreateUserUseCase
     implements ICommandHandler<CreateUserCommand, number>
 {
     constructor(
-        private usersPostgresRepository: UsersRepository,
+        private usersRepository: UsersRepository,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,
     ) {}
@@ -23,17 +23,14 @@ export class CreateUserUseCase
             dto.password,
         );
 
-        const newUserId = await this.usersPostgresRepository.addNewUser({
+        const newUserId = await this.usersRepository.addNewUser({
             login: dto.login,
             email: dto.email,
             passwordHash,
         });
 
         if (this.accountsConfig.isUserAutomaticallyConfirmed) {
-            await this.usersPostgresRepository.updateUserIsConfirmed(
-                newUserId,
-                true,
-            );
+            await this.usersRepository.updateUserIsConfirmed(newUserId, true);
         }
 
         return newUserId;

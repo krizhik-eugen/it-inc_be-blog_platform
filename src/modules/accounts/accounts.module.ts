@@ -30,9 +30,9 @@ import {
 import { AuthService } from './application/auth.service';
 import { CryptoService } from './application/crypto.service';
 import {
-    UsersPostgresQueryRepository,
+    UsersQueryRepository,
     UsersRepository,
-    PostgresSessionsRepository,
+    SessionsRepository,
     SessionsQueryRepository,
 } from './infrastructure';
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -69,9 +69,9 @@ const queries = [
     GetSessionsQueryHandler,
 ] as Provider[];
 const repositories = [
-    UsersPostgresQueryRepository,
+    UsersQueryRepository,
     UsersRepository,
-    PostgresSessionsRepository,
+    SessionsRepository,
     SessionsQueryRepository,
 ] as Provider[];
 const strategies = [

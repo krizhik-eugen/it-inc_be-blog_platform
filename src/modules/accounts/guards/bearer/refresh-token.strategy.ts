@@ -5,7 +5,7 @@ import { Strategy } from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
 import { AccountsConfig } from '../../config';
 import { TypedJwtPayload } from '../../application/typedJwtService';
-import { PostgresSessionsRepository } from '../../infrastructure';
+import { SessionsRepository } from '../../infrastructure';
 import { UnauthorizedDomainException } from '../../../../core/exceptions';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
     constructor(
         accountsConfig: AccountsConfig,
-        private postgresSessionRepository: PostgresSessionsRepository,
+        private sessionRepository: SessionsRepository,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
@@ -29,12 +29,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
     async validate(payload: TypedJwtPayload) {
         if (payload.exp && payload.exp < Date.now() / 1000) {
             const foundSession =
-                await this.postgresSessionRepository.findByDeviceIdNonDeleted(
+                await this.sessionRepository.findByDeviceIdNonDeleted(
                     payload.deviceId,
                 );
 
             if (foundSession) {
-                await this.postgresSessionRepository.makeSessionDeletedById(
+                await this.sessionRepository.makeSessionDeletedById(
                     foundSession.id,
                 );
             }

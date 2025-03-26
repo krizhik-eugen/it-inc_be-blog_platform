@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresBlog } from '../../domain/blog.entity';
+import { Blog } from '../../domain/blog.entity';
 import { CreateBlogDomainDto } from '../../domain/dto/create';
 import { UpdateBlogDomainDto } from '../../domain/dto/update';
 
@@ -9,8 +9,8 @@ import { UpdateBlogDomainDto } from '../../domain/dto/update';
 export class BlogsRepository {
     constructor(private dataSource: DataSource) {}
 
-    async findById(id: number): Promise<PostgresBlog | null> {
-        const data: PostgresBlog[] = await this.dataSource.query(
+    async findById(id: number): Promise<Blog | null> {
+        const data: Blog[] = await this.dataSource.query(
             `
                 SELECT * FROM public.blogs
                 WHERE id = $1
@@ -21,18 +21,18 @@ export class BlogsRepository {
         return data[0] || null;
     }
 
-    async findByIdOrNotFoundFail(id: number): Promise<PostgresBlog> {
+    async findByIdOrNotFoundFail(id: number): Promise<Blog> {
         const blog = await this.findById(id);
 
         if (!blog) {
-            throw NotFoundDomainException.create('PostgresBlog not found');
+            throw NotFoundDomainException.create('Blog not found');
         }
 
         return blog;
     }
 
-    async findByIdNonDeleted(id: number): Promise<PostgresBlog | null> {
-        const data: PostgresBlog[] = await this.dataSource.query(
+    async findByIdNonDeleted(id: number): Promise<Blog | null> {
+        const data: Blog[] = await this.dataSource.query(
             `
                 SELECT * FROM public.blogs
                 WHERE id = $1 AND deleted_at IS NULL
@@ -43,8 +43,8 @@ export class BlogsRepository {
         return data[0] || null;
     }
 
-    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<PostgresBlog> {
-        const data: PostgresBlog[] = await this.dataSource.query(
+    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<Blog> {
+        const data: Blog[] = await this.dataSource.query(
             `
                 SELECT * FROM public.blogs
                 WHERE id = $1 AND deleted_at IS NULL
@@ -53,7 +53,7 @@ export class BlogsRepository {
         );
 
         if (!data[0]) {
-            throw NotFoundDomainException.create('PostgresBlog not found');
+            throw NotFoundDomainException.create('Blog not found');
         }
         return data[0];
     }

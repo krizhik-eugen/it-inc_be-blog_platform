@@ -12,10 +12,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
-import {
-    PaginatedPostgresUsersViewDto,
-    PostgresUserViewDto,
-} from '../dto/view-dto';
+import { PaginatedUsersViewDto, UserViewDto } from '../dto/view-dto';
 import { CreateUserInputDto, UpdateUserInputDto } from '../dto/input-dto';
 
 export const GetUsersApi = () => {
@@ -26,7 +23,7 @@ export const GetUsersApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedPostgresUsersViewDto,
+            type: PaginatedUsersViewDto,
         }),
         ApiUnauthorizedResponse({
             description: 'Unauthorized',
@@ -42,7 +39,7 @@ export const CreateUserApi = () => {
         }),
         ApiCreatedResponse({
             description: 'Returns the newly created user',
-            type: PostgresUserViewDto,
+            type: UserViewDto,
         }),
         ApiBadRequestResponse({
             type: HttpErrorViewDto,

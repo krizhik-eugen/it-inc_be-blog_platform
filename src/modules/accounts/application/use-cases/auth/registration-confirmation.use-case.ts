@@ -10,12 +10,11 @@ export class RegistrationConfirmationCommand {
 export class RegistrationConfirmationUseCase
     implements ICommandHandler<RegistrationConfirmationCommand, void>
 {
-    constructor(private usersPostgresRepository: UsersRepository) {}
+    constructor(private usersRepository: UsersRepository) {}
     async execute({ dto }: RegistrationConfirmationCommand): Promise<void> {
-        const foundUser =
-            await this.usersPostgresRepository.findUserByConfirmationCode(
-                dto.code,
-            );
+        const foundUser = await this.usersRepository.findUserByConfirmationCode(
+            dto.code,
+        );
 
         if (!foundUser) {
             throw BadRequestDomainException.create(
@@ -45,9 +44,6 @@ export class RegistrationConfirmationUseCase
             throw BadRequestDomainException.create('Code expired', 'code');
         }
 
-        await this.usersPostgresRepository.updateUserIsConfirmed(
-            foundUser.id,
-            true,
-        );
+        await this.usersRepository.updateUserIsConfirmed(foundUser.id, true);
     }
 }

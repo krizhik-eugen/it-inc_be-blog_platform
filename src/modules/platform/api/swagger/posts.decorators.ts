@@ -13,7 +13,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { HttpErrorViewDto } from '../../../../core/dto';
-import { PaginatedPostgresPostsViewDto, PostViewDto } from '../dto/view-dto';
+import { PaginatedPostsViewDto, PostViewDto } from '../dto/view-dto';
 import {
     CreatePostInputDto,
     CreateCommentInputDto,
@@ -111,7 +111,7 @@ export const GetAllPostsApi = () => {
         }),
         ApiOkResponse({
             description: 'Success',
-            type: PaginatedPostgresPostsViewDto,
+            type: PaginatedPostsViewDto,
         }),
     );
 };

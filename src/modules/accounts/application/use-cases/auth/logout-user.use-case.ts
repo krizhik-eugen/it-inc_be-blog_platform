@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionContextDto } from '../../../guards/dto/session-context.dto';
 import { UnauthorizedDomainException } from '../../../../../core/exceptions/domain-exceptions';
-import { PostgresSessionsRepository } from '../../../infrastructure';
+import { SessionsRepository } from '../../../infrastructure';
 
 export class LogoutUserCommand {
     constructor(public session: SessionContextDto) {}
@@ -9,13 +9,11 @@ export class LogoutUserCommand {
 
 @CommandHandler(LogoutUserCommand)
 export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
-    constructor(
-        private postgresSessionsRepository: PostgresSessionsRepository,
-    ) {}
+    constructor(private sessionsRepository: SessionsRepository) {}
 
     async execute({ session }: LogoutUserCommand): Promise<void> {
         const foundSession =
-            await this.postgresSessionsRepository.findByDeviceIdNonDeleted(
+            await this.sessionsRepository.findByDeviceIdNonDeleted(
                 session.deviceId,
             );
 
@@ -29,12 +27,10 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
             throw UnauthorizedDomainException.create('Session expired');
         }
 
-        await this.postgresSessionsRepository.makeSessionDeletedById(
-            foundSession.id,
-        );
+        await this.sessionsRepository.makeSessionDeletedById(foundSession.id);
 
         // foundSession.makeDeleted();
 
-        // await this.postgresSessionsRepository.save(foundSession);
+        // await this.sessionsRepository.save(foundSession);
     }
 }

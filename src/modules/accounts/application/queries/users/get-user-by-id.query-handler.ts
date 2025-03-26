@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PostgresUserViewDto } from '../../../api/dto/view-dto';
-import { UsersPostgresQueryRepository } from '../../../infrastructure';
+import { UserViewDto } from '../../../api/dto/view-dto';
+import { UsersQueryRepository } from '../../../infrastructure';
 
 export class GetUserByIdQuery {
     constructor(public userId: number) {}
@@ -8,13 +8,11 @@ export class GetUserByIdQuery {
 
 @QueryHandler(GetUserByIdQuery)
 export class GetUserByIdQueryHandler
-    implements IQueryHandler<GetUserByIdQuery, PostgresUserViewDto>
+    implements IQueryHandler<GetUserByIdQuery, UserViewDto>
 {
-    constructor(
-        private usersPostgresQueryRepository: UsersPostgresQueryRepository,
-    ) {}
+    constructor(private usersQueryRepository: UsersQueryRepository) {}
 
-    async execute({ userId }: GetUserByIdQuery): Promise<PostgresUserViewDto> {
-        return this.usersPostgresQueryRepository.getByIdOrNotFoundFail(userId);
+    async execute({ userId }: GetUserByIdQuery): Promise<UserViewDto> {
+        return this.usersQueryRepository.getByIdOrNotFoundFail(userId);
     }
 }

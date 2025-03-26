@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PaginatedBlogsViewDto, BlogViewDto } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { PostgresBlog } from '../../domain/blog.entity';
+import { Blog } from '../../domain/blog.entity';
 import {
     BlogsSortBy,
     GetBlogsQueryParams,
 } from '../../api/dto/query-params-dto';
 
 @Injectable()
-export class PostgresBlogsQueryRepository {
+export class BlogsQueryRepository {
     constructor(private dataSource: DataSource) {}
 
     async getByIdOrNotFoundFail(id: number): Promise<BlogViewDto> {
-        const data: PostgresBlog[] = await this.dataSource.query(
+        const data: Blog[] = await this.dataSource.query(
             `
                 SELECT * FROM public.blogs
                 WHERE id = $1 AND deleted_at IS NULL
@@ -22,7 +22,7 @@ export class PostgresBlogsQueryRepository {
         );
 
         if (!data.length) {
-            throw NotFoundDomainException.create('PostgresBlog not found');
+            throw NotFoundDomainException.create('Blog not found');
         }
 
         return BlogViewDto.mapToView(data[0]);
@@ -57,7 +57,7 @@ export class PostgresBlogsQueryRepository {
         queryParams.push(query.pageSize, query.calculateSkip());
 
         const data = await this.dataSource.query<
-            (PostgresBlog & { total_count: string })[]
+            (Blog & { total_count: string })[]
         >(sqlQuery, queryParams);
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;

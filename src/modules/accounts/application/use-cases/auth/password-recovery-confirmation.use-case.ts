@@ -12,13 +12,13 @@ export class PasswordRecoveryConfirmationUseCase
     implements ICommandHandler<PasswordRecoveryConfirmationCommand, void>
 {
     constructor(
-        private usersPostgresRepository: UsersRepository,
+        private usersRepository: UsersRepository,
         private cryptoService: CryptoService,
     ) {}
 
     async execute({ dto }: PasswordRecoveryConfirmationCommand): Promise<void> {
         const foundUser =
-            await this.usersPostgresRepository.findUserByRecoveryCodeOrNotFoundFail(
+            await this.usersRepository.findUserByRecoveryCodeOrNotFoundFail(
                 dto.recoveryCode,
             );
 
@@ -26,7 +26,7 @@ export class PasswordRecoveryConfirmationUseCase
             dto.newPassword,
         );
 
-        await this.usersPostgresRepository.changeUserPasswordById(
+        await this.usersRepository.changeUserPasswordById(
             foundUser.id,
             newPasswordHash,
         );

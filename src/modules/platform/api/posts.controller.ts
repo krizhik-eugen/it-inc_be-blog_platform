@@ -38,7 +38,7 @@ import {
     GetPostByIdQuery,
     GetPostsQuery,
 } from '../application/queries/posts';
-import { PaginatedPostgresPostsViewDto, PostViewDto } from './dto/view-dto';
+import { PaginatedPostsViewDto, PostViewDto } from './dto/view-dto';
 import { CreateCommentInputDto } from './dto/input-dto/create';
 import { CreateCommentCommand } from '../application/use-cases/posts';
 import {
@@ -114,11 +114,10 @@ export class PostsController {
     async getAllPosts(
         @Query() query: GetPostsQueryParams,
         @ExtractUserIfExistsFromRequest() user: UserContextDto,
-    ): Promise<PaginatedPostgresPostsViewDto> {
-        return this.queryBus.execute<
-            GetPostsQuery,
-            PaginatedPostgresPostsViewDto
-        >(new GetPostsQuery(query, user?.id));
+    ): Promise<PaginatedPostsViewDto> {
+        return this.queryBus.execute<GetPostsQuery, PaginatedPostsViewDto>(
+            new GetPostsQuery(query, user?.id),
+        );
     }
 
     // @UseGuards(BasicAuthGuard)

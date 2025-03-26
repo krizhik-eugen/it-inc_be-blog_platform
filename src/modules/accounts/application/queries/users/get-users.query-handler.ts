@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PaginatedPostgresUsersViewDto } from '../../../api/dto/view-dto';
+import { PaginatedUsersViewDto } from '../../../api/dto/view-dto';
 import { GetUsersQueryParams } from '../../../api/dto/query-params-dto';
-import { UsersPostgresQueryRepository } from '../../../infrastructure';
+import { UsersQueryRepository } from '../../../infrastructure';
 
 export class GetUsersQuery {
     constructor(public query: GetUsersQueryParams) {}
@@ -9,15 +9,11 @@ export class GetUsersQuery {
 
 @QueryHandler(GetUsersQuery)
 export class GetUsersQueryHandler
-    implements IQueryHandler<GetUsersQuery, PaginatedPostgresUsersViewDto>
+    implements IQueryHandler<GetUsersQuery, PaginatedUsersViewDto>
 {
-    constructor(
-        private usersPostgresQueryRepository: UsersPostgresQueryRepository,
-    ) {}
+    constructor(private usersQueryRepository: UsersQueryRepository) {}
 
-    async execute({
-        query,
-    }: GetUsersQuery): Promise<PaginatedPostgresUsersViewDto> {
-        return this.usersPostgresQueryRepository.getAllUsers(query);
+    async execute({ query }: GetUsersQuery): Promise<PaginatedUsersViewDto> {
+        return this.usersQueryRepository.getAllUsers(query);
     }
 }

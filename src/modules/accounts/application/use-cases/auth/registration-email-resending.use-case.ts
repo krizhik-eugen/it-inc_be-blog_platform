@@ -12,12 +12,12 @@ export class RegistrationEmailResendingUseCase
     implements ICommandHandler<RegistrationEmailResendingCommand, void>
 {
     constructor(
-        private usersPostgresRepository: UsersRepository,
+        private usersRepository: UsersRepository,
         private authService: AuthService,
     ) {}
     async execute({ dto }: RegistrationEmailResendingCommand): Promise<void> {
         const foundUser =
-            await this.usersPostgresRepository.findByEmailWithConfirmationStatusNonDeleted(
+            await this.usersRepository.findByEmailWithConfirmationStatusNonDeleted(
                 dto.email,
             );
 

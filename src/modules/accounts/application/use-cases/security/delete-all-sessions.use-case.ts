@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostgresSessionsRepository } from '../../../infrastructure';
+import { SessionsRepository } from '../../../infrastructure';
 import { SessionContextDto } from '../../../guards/dto/session-context.dto';
 
 export class DeleteAllSessionsCommand {
@@ -9,12 +9,10 @@ export class DeleteAllSessionsCommand {
 export class DeleteAllSessionsUseCase
     implements ICommandHandler<DeleteAllSessionsCommand, void>
 {
-    constructor(
-        private postgresSessionsRepository: PostgresSessionsRepository,
-    ) {}
+    constructor(private sessionsRepository: SessionsRepository) {}
 
     async execute({ session }: DeleteAllSessionsCommand): Promise<void> {
-        await this.postgresSessionsRepository.deleteAllSessionsExceptCurrent({
+        await this.sessionsRepository.deleteAllSessionsExceptCurrent({
             userId: session.userId,
             deviceId: session.deviceId,
         });

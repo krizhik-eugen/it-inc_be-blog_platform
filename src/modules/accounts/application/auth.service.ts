@@ -10,12 +10,12 @@ import {
     UserPasswordRecoveryEvent,
     UserRegisteredEvent,
 } from '../domain/events';
-import { PostgresUser } from '../domain/user.entity';
+import { User } from '../domain/user.entity';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private usersPostgresRepository: UsersRepository,
+        private usersRepository: UsersRepository,
         private accountsConfig: AccountsConfig,
         private cryptoService: CryptoService,
         private eventBus: EventBus,
@@ -26,7 +26,7 @@ export class AuthService {
         password: string,
     ): Promise<UserContextDto | null> {
         const user =
-            await this.usersPostgresRepository.findByLoginOrEmail(loginOrEmail);
+            await this.usersRepository.findByLoginOrEmail(loginOrEmail);
 
         if (!user) {
             return null;
@@ -44,16 +44,14 @@ export class AuthService {
         return { id: user.id };
     }
 
-    async sendEmailConfirmationMessageToUser(
-        user: PostgresUser,
-    ): Promise<void> {
+    async sendEmailConfirmationMessageToUser(user: User): Promise<void> {
         const confirmationCode = randomUUID();
 
         const expirationDate = add(new Date(), {
             hours: this.accountsConfig.confirmationCodeExpirationTimeInHours,
         });
 
-        await this.usersPostgresRepository.setConfirmationCode(
+        await this.usersRepository.setConfirmationCode(
             user.id,
             confirmationCode,
             expirationDate,
@@ -64,16 +62,14 @@ export class AuthService {
         );
     }
 
-    async sendEmailPasswordRecoveryMessageToUser(
-        user: PostgresUser,
-    ): Promise<void> {
+    async sendEmailPasswordRecoveryMessageToUser(user: User): Promise<void> {
         const newRecoveryCode = randomUUID();
 
         const expirationDate = add(new Date(), {
             hours: this.accountsConfig.recoveryCodeExpirationTimeInHours,
         });
 
-        await this.usersPostgresRepository.setPasswordRecoveryCode(
+        await this.usersRepository.setPasswordRecoveryCode(
             user.id,
             newRecoveryCode,
             expirationDate,

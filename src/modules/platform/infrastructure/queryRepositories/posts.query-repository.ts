@@ -4,10 +4,7 @@ import {
     GetPostsQueryParams,
     PostsSortBy,
 } from '../../api/dto/query-params-dto';
-import {
-    PaginatedPostgresPostsViewDto,
-    PostViewDto,
-} from '../../api/dto/view-dto';
+import { PaginatedPostsViewDto, PostViewDto } from '../../api/dto/view-dto';
 import { LikeParentType, LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
 import { BlogsRepository } from '../repositories/blogs.repository';
@@ -16,7 +13,7 @@ import { Post, PostWithLikesCount } from '../../domain/post.entity';
 import { LikesRepository } from '../repositories/likes.repository';
 
 @Injectable()
-export class PostgresPostsQueryRepository {
+export class PostsQueryRepository {
     constructor(
         private likesQueryRepository: LikesQueryRepository,
         private likesRepository: LikesRepository,
@@ -77,7 +74,7 @@ export class PostgresPostsQueryRepository {
         query: GetPostsQueryParams;
         blogId: number | null;
         userId: number | null;
-    }): Promise<PaginatedPostgresPostsViewDto> {
+    }): Promise<PaginatedPostsViewDto> {
         if (blogId) {
             await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(blogId);
         }
@@ -144,7 +141,7 @@ export class PostgresPostsQueryRepository {
                 );
         }
 
-        return PaginatedPostgresPostsViewDto.mapToView({
+        return PaginatedPostsViewDto.mapToView({
             items: mappedPosts,
             page: query.pageNumber,
             size: query.pageSize,

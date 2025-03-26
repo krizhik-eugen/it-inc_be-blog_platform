@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { CreateUserDomainDto } from '../../domain/dto/create';
-import {
-    PostgresEmailConfirmation,
-    PostgresUser,
-} from '../../domain/user.entity';
+import { EmailConfirmation, User } from '../../domain/user.entity';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 
 @Injectable()
 export class UsersRepository {
     constructor(private dataSource: DataSource) {}
 
-    async findById(id: number): Promise<PostgresUser | null> {
-        const data: PostgresUser[] = await this.dataSource.query(
+    async findById(id: number): Promise<User | null> {
+        const data: User[] = await this.dataSource.query(
             `
                 SELECT * FROM public.users
                 WHERE id = $1
@@ -23,8 +20,8 @@ export class UsersRepository {
         return data[0] || null;
     }
 
-    async findByIdNonDeleted(id: number): Promise<PostgresUser | null> {
-        const data: PostgresUser[] = await this.dataSource.query(
+    async findByIdNonDeleted(id: number): Promise<User | null> {
+        const data: User[] = await this.dataSource.query(
             `
                 SELECT * FROM public.users
                 WHERE id = $1 AND deleted_at IS NULL
@@ -35,26 +32,26 @@ export class UsersRepository {
         return data[0] || null;
     }
 
-    async findByIdOrNotFoundFail(id: number): Promise<PostgresUser> {
+    async findByIdOrNotFoundFail(id: number): Promise<User> {
         const user = await this.findById(id);
         if (!user) {
-            throw NotFoundDomainException.create('PostgresUser is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
         return user;
     }
 
-    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<PostgresUser> {
+    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<User> {
         const user = await this.findByIdNonDeleted(id);
         if (!user) {
-            throw NotFoundDomainException.create('PostgresUser is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
         return user;
     }
 
     async findUserWithConfirmationStatus(
         userId: number,
-    ): Promise<(PostgresUser & PostgresEmailConfirmation) | null> {
-        const result: Array<PostgresEmailConfirmation & PostgresUser> =
+    ): Promise<(User & EmailConfirmation) | null> {
+        const result: Array<EmailConfirmation & User> =
             await this.dataSource.query(
                 `
                 SELECT u.*, e.* FROM public.users u
@@ -69,24 +66,21 @@ export class UsersRepository {
 
     async findByEmailWithConfirmationStatusNonDeleted(
         email: string,
-    ): Promise<(PostgresUser & PostgresEmailConfirmation) | null> {
-        const data: (PostgresUser & PostgresEmailConfirmation)[] =
-            await this.dataSource.query(
-                `
+    ): Promise<(User & EmailConfirmation) | null> {
+        const data: (User & EmailConfirmation)[] = await this.dataSource.query(
+            `
                 SELECT u.*, e.* FROM public.users u
                 JOIN public.email_confirmation e ON u.id = e.user_id
                 WHERE u.email = $1 AND u.deleted_at IS NULL
                 `,
-                [email],
-            );
+            [email],
+        );
 
         return data[0] || null;
     }
 
-    async findByLoginOrEmail(
-        loginOrEmail: string,
-    ): Promise<PostgresUser | null> {
-        const data: PostgresUser[] = await this.dataSource.query(
+    async findByLoginOrEmail(loginOrEmail: string): Promise<User | null> {
+        const data: User[] = await this.dataSource.query(
             `
                 SELECT * FROM public.users
                 WHERE login = $1 OR email = $1 AND deleted_at IS NULL
@@ -99,8 +93,8 @@ export class UsersRepository {
 
     async findByLoginOrEmailNonDeleted(
         loginOrEmail: string,
-    ): Promise<PostgresUser | null> {
-        const data: PostgresUser[] = await this.dataSource.query(
+    ): Promise<User | null> {
+        const data: User[] = await this.dataSource.query(
             `
                 SELECT * FROM public.users
                 WHERE login = $1 OR email = $1 AND deleted_at IS NULL
@@ -113,16 +107,16 @@ export class UsersRepository {
 
     async findByLoginOrEmailNonDeletedOrNotFoundFail(
         loginOrEmail: string,
-    ): Promise<PostgresUser> {
+    ): Promise<User> {
         const user = await this.findByLoginOrEmailNonDeleted(loginOrEmail);
         if (!user) {
-            throw NotFoundDomainException.create('PostgresUser is not found');
+            throw NotFoundDomainException.create('User is not found');
         }
         return user;
     }
 
-    async findByIds(ids: number[]): Promise<PostgresUser[]> {
-        const data: PostgresUser[] = await this.dataSource.query(
+    async findByIds(ids: number[]): Promise<User[]> {
+        const data: User[] = await this.dataSource.query(
             `
                 SELECT * FROM public.users
                 WHERE id = ANY($1)
@@ -237,8 +231,8 @@ export class UsersRepository {
 
     async findUserByConfirmationCode(
         confirmationCode: string,
-    ): Promise<(PostgresUser & PostgresEmailConfirmation) | null> {
-        const result: (PostgresUser & PostgresEmailConfirmation)[] =
+    ): Promise<(User & EmailConfirmation) | null> {
+        const result: (User & EmailConfirmation)[] =
             await this.dataSource.query(
                 `
             SELECT u.*, e.* FROM users u
@@ -253,8 +247,8 @@ export class UsersRepository {
 
     async findUserByRecoveryCodeOrNotFoundFail(
         recoveryCode: string,
-    ): Promise<PostgresUser> {
-        const result: PostgresUser[] = await this.dataSource.query(
+    ): Promise<User> {
+        const result: User[] = await this.dataSource.query(
             `
                 WITH recovery_code AS (
                     SELECT * FROM password_recovery

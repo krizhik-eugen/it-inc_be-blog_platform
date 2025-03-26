@@ -39,10 +39,10 @@ export class CoreConfig {
     })
     nodeEnv: string = this.configService.get('NODE_ENV') as string;
 
-    @IsNotEmpty({
-        message: 'Set Env variable MONGO_URL, example: mongodb://localhost/',
-    })
-    mongoURL: string = this.configService.get('MONGO_URL') as string;
+    // @IsNotEmpty({
+    //     message: 'Set Env variable MONGO_URL, example: mongodb://localhost/',
+    // })
+    // mongoURL: string = this.configService.get('MONGO_URL') as string;
 
     @IsNotEmpty({
         message: 'Set Env variable POSTGRES_URL, example: postgresql://',
@@ -54,10 +54,10 @@ export class CoreConfig {
     // })
     // pgHost: string = this.configService.get('PG_HOST') as string;
 
-    @IsNotEmpty({
-        message: 'Set Env variable MONGO_DB_NAME, example: database-name',
-    })
-    mongoDBName: string = this.configService.get('MONGO_DB_NAME') as string;
+    // @IsNotEmpty({
+    //     message: 'Set Env variable MONGO_DB_NAME, example: database-name',
+    // })
+    // mongoDBName: string = this.configService.get('MONGO_DB_NAME') as string;
 
     // TODO: add connection string variable
 

@@ -24,7 +24,7 @@ export class BlogIsExistentConstraint implements ValidatorConstraintInterface {
     }
 
     defaultMessage(): string {
-        return `PostgresBlog with provided Id does not exist`;
+        return `Blog with provided Id does not exist`;
     }
 }
 

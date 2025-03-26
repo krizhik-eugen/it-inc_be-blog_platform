@@ -23,9 +23,9 @@ import {
 } from './swagger';
 import { CreateUserInputDto, UpdateUserInputDto } from './dto/input-dto';
 import { GetUsersQueryParams } from './dto/query-params-dto';
-import { PostgresUserViewDto } from './dto/view-dto';
+import { UserViewDto } from './dto/view-dto';
 import { GetUserByIdQuery, GetUsersQuery } from '../application/queries/users';
-import { PaginatedPostgresUsersViewDto } from './dto/view-dto/users.view-dto';
+import { PaginatedUsersViewDto } from './dto/view-dto/users.view-dto';
 import {
     CreateUserCommand,
     DeleteUserCommand,
@@ -45,18 +45,15 @@ export class UsersController {
     @GetUsersApi()
     async getAllUsers(
         @Query() query: GetUsersQueryParams,
-    ): Promise<PaginatedPostgresUsersViewDto> {
-        return this.queryBus.execute<
-            GetUsersQuery,
-            PaginatedPostgresUsersViewDto
-        >(new GetUsersQuery(query));
+    ): Promise<PaginatedUsersViewDto> {
+        return this.queryBus.execute<GetUsersQuery, PaginatedUsersViewDto>(
+            new GetUsersQuery(query),
+        );
     }
 
     @Post()
     @CreateUserApi()
-    async createUser(
-        @Body() body: CreateUserInputDto,
-    ): Promise<PostgresUserViewDto> {
+    async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
         const newUserId = await this.commandBus.execute<
             CreateUserCommand,
             number
@@ -67,7 +64,7 @@ export class UsersController {
                 password: body.password,
             }),
         );
-        return this.queryBus.execute<GetUserByIdQuery, PostgresUserViewDto>(
+        return this.queryBus.execute<GetUserByIdQuery, UserViewDto>(
             new GetUserByIdQuery(newUserId),
         );
     }
