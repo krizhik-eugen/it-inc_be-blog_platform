@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Like, LikeParentType } from '../../domain/like.entity';
 import { LikeViewDto } from '../../api/dto/view-dto';
-import { UsersRepository } from '../../../accounts/infrastructure';
-import { User } from '../../../accounts/domain/user.entity';
+import { UserEntity } from '../../../accounts/domain/user.entity';
+import { UsersService } from '../../../accounts/application/users.service';
 
 @Injectable()
 export class LikesQueryRepository {
     constructor(
         private dataSource: DataSource,
-        private usersRepository: UsersRepository,
+        private usersService: UsersService,
     ) {}
 
     async getLastThreeLikes(parentId: number, parentType: LikeParentType) {
@@ -25,11 +25,11 @@ export class LikesQueryRepository {
         );
 
         const userIds = foundLikes.map((like) => like.user_id);
-        const users = await this.usersRepository.findByIds(userIds);
+        const users = await this.usersService.findByIds(userIds);
 
         const mappedFoundLikes: LikeViewDto[] = [];
         for (const like of foundLikes) {
-            const user = users.find((u: User) => u.id === like.user_id);
+            const user = users.find((u: UserEntity) => u.id === like.user_id);
             mappedFoundLikes.push({
                 addedAt: new Date(like.created_at).toISOString(),
                 userId: like.user_id.toString(),

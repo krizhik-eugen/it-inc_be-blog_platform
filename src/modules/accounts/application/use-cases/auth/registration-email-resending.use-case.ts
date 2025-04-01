@@ -28,7 +28,7 @@ export class RegistrationEmailResendingUseCase
             );
         }
 
-        if (foundUser.is_confirmed) {
+        if (foundUser.emailConfirmations.is_confirmed) {
             throw BadRequestDomainException.create(
                 'Email is already confirmed',
                 'email',

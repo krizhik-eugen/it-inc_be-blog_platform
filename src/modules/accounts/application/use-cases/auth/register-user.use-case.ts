@@ -48,7 +48,7 @@ export class RegisterUserUseCase
                 newUserId,
             );
 
-        if (newUser && !newUser.is_confirmed) {
+        if (newUser && !newUser.emailConfirmations.is_confirmed) {
             await this.authService.sendEmailConfirmationMessageToUser(newUser);
         }
     }

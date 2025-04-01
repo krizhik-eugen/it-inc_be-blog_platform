@@ -1,3 +1,8 @@
+import { Column, Entity, OneToOne } from 'typeorm';
+import { PasswordRecoveryEntity } from './password-recovery.entity';
+import { EmailConfirmationEntity } from './email-confirmation.entity';
+import { BaseEntity } from '../../../core/entities/base.entity';
+
 export const userLoginConstraints = {
     minLength: 3,
     maxLength: 10,
@@ -19,19 +24,36 @@ export const userEmailConstraints = {
         'Email should be a valid email address, example: example@example.com',
 };
 
-export class EmailConfirmation {
-    id: number;
-    user_id: number;
-    confirmation_code: string;
-    expiration_date: Date;
-    is_confirmed: boolean;
-}
+@Entity('users')
+export class UserEntity extends BaseEntity {
+    @Column({
+        length: 255,
+        unique: true,
+    })
+    public login: string;
 
-export class RecoveryCode {
-    id: number;
-    user_id: number;
-    recovery_code: string;
-    expiration_date: Date;
+    @Column({
+        type: 'text',
+    })
+    public password_hash: string;
+
+    @Column({
+        length: 255,
+        unique: true,
+    })
+    public email: string;
+
+    @OneToOne(
+        () => EmailConfirmationEntity,
+        (emailConfirmation) => emailConfirmation.user,
+    )
+    public emailConfirmations: EmailConfirmationEntity;
+
+    @OneToOne(
+        () => PasswordRecoveryEntity,
+        (passwordRecovery) => passwordRecovery.user,
+    )
+    public passwordRecoveries: PasswordRecoveryEntity;
 }
 
 export class User {
@@ -54,30 +76,4 @@ export class User {
 //     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 //     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 //     deleted_at TIMESTAMP WITH TIME ZONE NULL
-// );
-
-// Postgres email_confirmation table:
-
-// CREATE TABLE email_confirmation (
-//     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-//     user_id PRIMARY KEY INTEGER NOT NULL,
-//     is_confirmed BOOLEAN NOT NULL DEFAULT FALSE,
-//     confirmation_code VARCHAR(255),
-//     expiration_date TIMESTAMP WITH TIME ZONE NULL,
-
-// -- Foreign key to users table
-//     CONSTRAINT fk_email_confirmation_user FOREIGN KEY (user_id) REFERENCES public.users (id) ON UPDATE NO ACTION ON DELETE CASCADE
-// );
-
-// Postgres password_recovery table:
-
-// CREATE TABLE password_recovery (
-
-// id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-// user_id PRIMARY KEY INTEGER NOT NULL,
-// recovery_code VARCHAR(255),
-// expiration_date TIMESTAMP WITH TIME ZONE NULL,
-
-// -- Foreign key to users table
-// CONSTRAINT fk_password_recovery_user FOREIGN KEY (user_id) REFERENCES public.users (id) ON UPDATE NO ACTION ON DELETE CASCADE
 // );

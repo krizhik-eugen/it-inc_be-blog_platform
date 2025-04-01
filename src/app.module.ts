@@ -47,8 +47,8 @@ const imports = [
             useFactory: (coreConfig: CoreConfig) => {
                 return {
                     type: 'postgres',
-                    // host: coreConfig.pgHost,
                     url: coreConfig.postgresURL,
+                    // host: coreConfig.pgHost,
                     // port: 5432,
                     // username: coreConfig.pgDBLogin,
                     // password: coreConfig.pgDBPassword,

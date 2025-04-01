@@ -45,6 +45,11 @@ import {
     DeleteAllSessionsUseCase,
     DeleteSessionUseCase,
 } from './application/use-cases/security';
+import { UserEntity } from './domain/user.entity';
+import { EmailConfirmationEntity } from './domain/email-confirmation.entity';
+import { PasswordRecoveryEntity } from './domain/password-recovery.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersService } from './application/users.service';
 
 const useCases = [
     RegistrationConfirmationUseCase,
@@ -81,11 +86,21 @@ const strategies = [
 ] as Provider[];
 
 @Module({
-    imports: [JwtModule, NotificationsModule],
+    imports: [
+        JwtModule,
+        NotificationsModule,
+        TypeOrmModule.forFeature([
+            UserEntity,
+            EmailConfirmationEntity,
+            PasswordRecoveryEntity,
+        ]),
+    ],
     controllers: [AuthController, UsersController, SessionsController],
     providers: [
         AccountsConfig,
         AuthService,
+        UsersService,
+        CryptoService,
         {
             provide: ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
             useFactory: (accountsConfig: AccountsConfig): TypedJwtService => {
@@ -114,8 +129,7 @@ const strategies = [
         ...repositories,
         ...useCases,
         ...queries,
-        CryptoService,
     ],
-    exports: [AccountsConfig, UsersRepository],
+    exports: [AccountsConfig, UsersService],
 })
 export class AccountsModule {}

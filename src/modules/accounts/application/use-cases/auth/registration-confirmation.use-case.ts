@@ -23,24 +23,24 @@ export class RegistrationConfirmationUseCase
             );
         }
 
-        if (foundUser.is_confirmed) {
+        if (foundUser.emailConfirmations.is_confirmed) {
             throw BadRequestDomainException.create(
                 'The user has already been confirmed',
                 'code',
             );
         }
 
-        if (foundUser.confirmation_code !== dto.code) {
+        if (foundUser.emailConfirmations.confirmation_code !== dto.code) {
             throw BadRequestDomainException.create('Invalid code', 'code');
         }
 
-        if (!foundUser.expiration_date) {
+        if (!foundUser.emailConfirmations.expiration_date) {
             throw new Error(
                 'Expiration date for email confirmation is not set',
             );
         }
 
-        if (new Date() > foundUser.expiration_date) {
+        if (new Date() > foundUser.emailConfirmations.expiration_date) {
             throw BadRequestDomainException.create('Code expired', 'code');
         }
 
