@@ -53,7 +53,7 @@ const imports = [
                     // username: coreConfig.pgDBLogin,
                     // password: coreConfig.pgDBPassword,
                     // database: coreConfig.pgDBName,
-                    autoLoadEntities: false,
+                    autoLoadEntities: true,
                     synchronize: false,
                 };
             },
