@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsOptional } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../core/dto';
 
 export enum PostsSortBy {

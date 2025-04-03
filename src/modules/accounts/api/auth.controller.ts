@@ -11,7 +11,6 @@ import {
     Ip,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response, Request } from 'express';
 import { MeViewDto } from './dto/view-dto';
 import {

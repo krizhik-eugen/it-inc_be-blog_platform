@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Any, DataSource, EntityManager, IsNull, Repository } from 'typeorm';
 import { CreateUserDomainDto } from '../../domain/dto/create';
-import { User, UserEntity } from '../../domain/user.entity';
+import { UserEntity } from '../../domain/user.entity';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailConfirmationEntity } from '../../domain/email-confirmation.entity';
