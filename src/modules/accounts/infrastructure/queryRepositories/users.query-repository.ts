@@ -137,10 +137,7 @@ export class UsersQueryRepository {
         }
 
         const sortField = this.sanitizeSortField(query.sortBy);
-        qb.orderBy(
-            `users.${sortField}`,
-            query.sortDirection.toUpperCase() as 'ASC' | 'DESC',
-        );
+        qb.orderBy(`users.${sortField}`, query.sortDirection);
 
         qb.skip(query.calculateSkip()).take(query.pageSize);
 
