@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginatedViewDto } from '../../../../../core/dto';
-import { User } from '../../../domain/user.entity';
+import { UserEntity } from '../../../domain/user.entity';
 
 export class UserViewDto {
     @ApiProperty()
@@ -12,7 +12,7 @@ export class UserViewDto {
     @ApiProperty()
     createdAt: string;
 
-    static mapToView(user: User): UserViewDto {
+    static mapToView(user: UserEntity): UserViewDto {
         const dto = new UserViewDto();
 
         dto.id = user.id.toString();
@@ -39,7 +39,7 @@ export class MeViewDto {
     @ApiProperty()
     email: string;
 
-    static mapToView(user: User): MeViewDto {
+    static mapToView(user: UserEntity): MeViewDto {
         const dto = new MeViewDto();
 
         dto.userId = user.id.toString();

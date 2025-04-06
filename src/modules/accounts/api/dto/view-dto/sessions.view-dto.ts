@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Session } from '../../../domain/session.entity';
+import { SessionEntity } from '../../../domain/session.entity';
 
 export class SessionViewDto {
     @ApiProperty()
@@ -11,7 +11,7 @@ export class SessionViewDto {
     @ApiProperty()
     deviceId: string;
 
-    static mapToView(session: Session): SessionViewDto {
+    static mapToView(session: SessionEntity): SessionViewDto {
         const dto = new SessionViewDto();
 
         dto.ip = session.ip;

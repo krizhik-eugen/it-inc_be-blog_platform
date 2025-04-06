@@ -50,6 +50,7 @@ import { EmailConfirmationEntity } from './domain/email-confirmation.entity';
 import { PasswordRecoveryEntity } from './domain/password-recovery.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from './application/users.service';
+import { SessionEntity } from './domain/session.entity';
 
 const useCases = [
     RegistrationConfirmationUseCase,
@@ -93,6 +94,7 @@ const strategies = [
             UserEntity,
             EmailConfirmationEntity,
             PasswordRecoveryEntity,
+            SessionEntity,
         ]),
     ],
     controllers: [AuthController, UsersController, SessionsController],

@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { Session } from '../../domain/session.entity';
+import { SessionEntity } from '../../domain/session.entity';
 
 @Injectable()
 export class SessionsRepository {
     constructor(
-        @InjectRepository(Session)
-        private readonly sessionsRepo: Repository<Session>,
+        @InjectRepository(SessionEntity)
+        private readonly sessionsRepo: Repository<SessionEntity>,
     ) {}
 
     async createSession({
@@ -40,7 +40,9 @@ export class SessionsRepository {
         return newSession.id;
     }
 
-    async findByDeviceIdNonDeleted(deviceId: string): Promise<Session | null> {
+    async findByDeviceIdNonDeleted(
+        deviceId: string,
+    ): Promise<SessionEntity | null> {
         const result = await this.sessionsRepo.findOneBy({
             device_id: deviceId,
             deleted_at: IsNull(),
@@ -51,7 +53,7 @@ export class SessionsRepository {
 
     async findByDeviceIdNonDeletedOrNotFoundFail(
         deviceId: string,
-    ): Promise<Session> {
+    ): Promise<SessionEntity> {
         const session = await this.findByDeviceIdNonDeleted(deviceId);
 
         if (!session) {

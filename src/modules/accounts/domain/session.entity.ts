@@ -1,3 +1,43 @@
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { UserEntity } from './user.entity';
+import { BaseEntity } from '../../../core/entities/base.entity';
+
+@Entity('sessions')
+export class SessionEntity extends BaseEntity {
+    @Column()
+    public user_id: number;
+
+    @Column({
+        length: 255,
+    })
+    public device_id: string;
+
+    @Column({
+        default: 'Unknown device',
+        length: 255,
+    })
+    public device_name: string;
+
+    @Column({
+        length: 45,
+    })
+    public ip: string;
+
+    @Column()
+    public iat: number;
+
+    @Column()
+    public exp: number;
+
+    @OneToOne(() => UserEntity, {
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn({
+        name: 'user_id',
+    })
+    public user: UserEntity;
+}
+
 export class Session {
     id: number;
     user_id: number;

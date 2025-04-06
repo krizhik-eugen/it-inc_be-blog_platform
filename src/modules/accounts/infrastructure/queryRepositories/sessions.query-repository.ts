@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { SessionViewDto } from '../../api/dto/view-dto/sessions.view-dto';
-import { Session } from '../../domain/session.entity';
+import { SessionEntity } from '../../domain/session.entity';
 
 @Injectable()
 export class SessionsQueryRepository {
     constructor(
-        @InjectRepository(Session)
-        private readonly sessionsRepo: Repository<Session>,
+        @InjectRepository(SessionEntity)
+        private readonly sessionsRepo: Repository<SessionEntity>,
     ) {}
 
     async getAllSessionsDevices(userId: number): Promise<SessionViewDto[]> {
