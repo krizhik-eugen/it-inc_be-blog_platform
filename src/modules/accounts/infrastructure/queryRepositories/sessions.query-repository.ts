@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { SessionViewDto } from '../../api/dto/view-dto/sessions.view-dto';
 import { Session } from '../../domain/session.entity';
 
 @Injectable()
 export class SessionsQueryRepository {
-    constructor(private dataSource: DataSource) {}
+    constructor(
+        @InjectRepository(Session)
+        private readonly sessionsRepo: Repository<Session>,
+    ) {}
 
     async getAllSessionsDevices(userId: number): Promise<SessionViewDto[]> {
-        const sessions: Session[] = await this.dataSource.query(
-            `SELECT * FROM sessions WHERE user_id = $1 AND deleted_at IS NULL`,
-            [userId],
-        );
+        const sessions = await this.sessionsRepo.find({
+            where: { user_id: userId, deleted_at: IsNull() },
+        });
+
         return sessions.map((session) => SessionViewDto.mapToView(session));
     }
 }

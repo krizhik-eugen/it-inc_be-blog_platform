@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { DataSource } from 'typeorm';
 import { Session } from '../../domain/session.entity';
 
 @Injectable()
 export class SessionsRepository {
-    constructor(private dataSource: DataSource) {}
+    constructor(
+        @InjectRepository(Session)
+        private readonly sessionsRepo: Repository<Session>,
+    ) {}
 
     async createSession({
         userId,
@@ -22,29 +26,27 @@ export class SessionsRepository {
         iat: number;
         exp: number;
     }): Promise<number> {
-        const result: Session[] = await this.dataSource.query(
-            `
-                INSERT INTO sessions (user_id, device_id, device_name, ip, iat, exp)
-                VALUES ($1, $2, $3, $4, $5, $6)
-                RETURNING id
-            `,
-            [userId, deviceId, deviceName, ip, iat, exp],
-        );
+        const newSession = this.sessionsRepo.create({
+            user_id: userId,
+            device_id: deviceId,
+            device_name: deviceName,
+            ip,
+            iat,
+            exp,
+        });
 
-        return result[0].id;
+        await this.sessionsRepo.save(newSession);
+
+        return newSession.id;
     }
 
     async findByDeviceIdNonDeleted(deviceId: string): Promise<Session | null> {
-        const sessions: Session[] = await this.dataSource.query(
-            `
-                SELECT * FROM sessions
-                WHERE device_id = $1
-                AND deleted_at IS NULL
-            `,
-            [deviceId],
-        );
+        const result = await this.sessionsRepo.findOneBy({
+            device_id: deviceId,
+            deleted_at: IsNull(),
+        });
 
-        return sessions[0] || null;
+        return result;
     }
 
     async findByDeviceIdNonDeletedOrNotFoundFail(
@@ -60,14 +62,7 @@ export class SessionsRepository {
     }
 
     async makeSessionDeletedById(id: number): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE sessions
-                SET deleted_at = NOW()
-                WHERE id = $1
-            `,
-            [id],
-        );
+        await this.sessionsRepo.softDelete(id);
     }
 
     async updateSession({
@@ -81,14 +76,9 @@ export class SessionsRepository {
         iat: number;
         exp: number;
     }): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE sessions
-                SET ip = $1, iat = $2, exp = $3, updated_at = NOW()
-                WHERE device_id = $4
-                AND deleted_at IS NULL
-            `,
-            [ip, iat, exp, deviceId],
+        await this.sessionsRepo.update(
+            { device_id: deviceId },
+            { ip, iat, exp },
         );
     }
 
@@ -99,14 +89,9 @@ export class SessionsRepository {
         userId: number;
         deviceId: string;
     }): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE sessions
-                SET deleted_at = NOW()
-                WHERE user_id = $1
-                AND device_id != $2
-            `,
-            [userId, deviceId],
-        );
+        await this.sessionsRepo.softDelete({
+            user_id: userId,
+            device_id: Not(deviceId),
+        });
     }
 }
