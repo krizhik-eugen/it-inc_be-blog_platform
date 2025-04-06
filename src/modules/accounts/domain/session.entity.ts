@@ -38,18 +38,18 @@ export class SessionEntity extends BaseEntity {
     public user: UserEntity;
 }
 
-export class Session {
-    id: number;
-    user_id: number;
-    device_id: string;
-    device_name: string;
-    ip: string;
-    iat: number;
-    exp: number;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
-}
+// export class Session {
+//     id: number;
+//     user_id: number;
+//     device_id: string;
+//     device_name: string;
+//     ip: string;
+//     iat: number;
+//     exp: number;
+//     created_at: Date;
+//     updated_at: Date;
+//     deleted_at: Date | null;
+// }
 
 //Postgres sessions table:
 

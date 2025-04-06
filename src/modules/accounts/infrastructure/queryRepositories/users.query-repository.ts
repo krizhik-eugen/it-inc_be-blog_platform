@@ -6,7 +6,7 @@ import {
     UserViewDto,
 } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { User, UserEntity } from '../../domain/user.entity';
+import { UserEntity } from '../../domain/user.entity';
 import {
     GetUsersQueryParams,
     UsersSortBy,

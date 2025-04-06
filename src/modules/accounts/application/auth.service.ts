@@ -10,7 +10,7 @@ import {
     UserPasswordRecoveryEvent,
     UserRegisteredEvent,
 } from '../domain/events';
-import { User } from '../domain/user.entity';
+import { UserEntity } from '../domain/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -44,7 +44,7 @@ export class AuthService {
         return { id: user.id };
     }
 
-    async sendEmailConfirmationMessageToUser(user: User): Promise<void> {
+    async sendEmailConfirmationMessageToUser(user: UserEntity): Promise<void> {
         const confirmationCode = randomUUID();
 
         const expirationDate = add(new Date(), {
@@ -62,7 +62,9 @@ export class AuthService {
         );
     }
 
-    async sendEmailPasswordRecoveryMessageToUser(user: User): Promise<void> {
+    async sendEmailPasswordRecoveryMessageToUser(
+        user: UserEntity,
+    ): Promise<void> {
         const newRecoveryCode = randomUUID();
 
         const expirationDate = add(new Date(), {

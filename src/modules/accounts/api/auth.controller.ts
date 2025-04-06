@@ -52,8 +52,9 @@ import {
     UpdateRefreshTokenUseCaseResponse,
 } from '../application/use-cases/auth';
 import { GetCurrentUserQuery } from '../application/queries/auth';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
-// @UseGuards(ThrottlerGuard)
+@UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class AuthController {
     constructor(

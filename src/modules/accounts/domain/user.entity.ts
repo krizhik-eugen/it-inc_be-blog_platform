@@ -56,15 +56,15 @@ export class UserEntity extends BaseEntity {
     public passwordRecoveries: PasswordRecoveryEntity;
 }
 
-export class User {
-    id: number;
-    login: string;
-    password_hash: string;
-    email: string;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
-}
+// export class User {
+//     id: number;
+//     login: string;
+//     password_hash: string;
+//     email: string;
+//     created_at: Date;
+//     updated_at: Date;
+//     deleted_at: Date | null;
+// }
 
 // Postgres users table:
 
