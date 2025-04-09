@@ -1,27 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { Post } from '../../domain/post.entity';
+import { PostEntity } from '../../domain/post.entity';
 import { CreatePostDomainDto } from '../../domain/dto/create';
 import { UpdatePostDomainDto } from '../../domain/dto/update';
 
 @Injectable()
 export class PostsRepository {
-    constructor(private dataSource: DataSource) {}
+    constructor(
+        @InjectRepository(PostEntity)
+        private postsRepository: Repository<PostEntity>,
+        private dataSource: DataSource,
+    ) {}
 
-    async findById(id: number): Promise<Post | null> {
-        const data: Post[] = await this.dataSource.query(
-            `
-                SELECT * FROM public.posts
-                WHERE id = $1
-                `,
-            [id],
-        );
-
-        return data[0] || null;
+    async findById(id: number): Promise<PostEntity | null> {
+        return this.postsRepository.findOne({
+            where: { id },
+        });
     }
 
-    async findByIdOrNotFoundFail(id: number): Promise<Post> {
+    async findByIdOrNotFoundFail(id: number): Promise<PostEntity> {
         const post = await this.findById(id);
 
         if (!post) {
@@ -31,108 +30,121 @@ export class PostsRepository {
         return post;
     }
 
-    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<Post> {
-        const post: Post[] = await this.dataSource.query(
-            `
-                SELECT * FROM public.posts
-                WHERE id = $1 AND deleted_at IS NULL
-                `,
-            [id],
-        );
+    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<PostEntity> {
+        const post = await this.postsRepository.findOne({
+            where: { id, deleted_at: IsNull() },
+        });
 
-        if (!post[0]) {
+        if (!post) {
             throw NotFoundDomainException.create('Post not found');
         }
-        return post[0];
+        return post;
     }
 
-    async findAllByBlogIdNonDeleted(blogId: number): Promise<Post[]> {
-        const data: Post[] = await this.dataSource.query(
-            `
-                SELECT * FROM public.posts
-                WHERE blog_id = $1 AND deleted_at IS NULL
-                `,
-            [blogId],
-        );
-
-        return data;
+    async findAllByBlogIdNonDeleted(blogId: number): Promise<PostEntity[]> {
+        return this.postsRepository.find({
+            where: { blog_id: blogId, deleted_at: IsNull() },
+        });
     }
 
     async addNewPost(post: CreatePostDomainDto): Promise<number> {
-        const data: { id: number }[] = await this.dataSource.query(
-            `
-                INSERT INTO public.posts (title, short_description, content, blog_id, blog_name)
-                VALUES ($1, $2, $3, $4, $5)
-                RETURNING id
-                `,
-            [
-                post.title,
-                post.shortDescription,
-                post.content,
-                post.blogId,
-                post.blogName,
-            ],
-        );
+        // const data: { id: number }[] = await this.dataSource.query(
+        //     `
+        //         INSERT INTO public.posts (title, short_description, content, blog_id, blog_name)
+        //         VALUES ($1, $2, $3, $4, $5)
+        //         RETURNING id
+        //         `,
+        //     [
+        //         post.title,
+        //         post.shortDescription,
+        //         post.content,
+        //         post.blogId,
+        //         post.blogName,
+        //     ],
+        // );
 
-        return data[0].id;
+        // return data[0].id;
+
+        const postEntity = this.postsRepository.create({
+            title: post.title,
+            short_description: post.shortDescription,
+            content: post.content,
+            blog_id: post.blogId,
+            blog_name: post.blogName,
+        });
+
+        await this.postsRepository.save(postEntity);
+
+        return postEntity.id;
     }
 
-    async updatePostById(id: number, dto: UpdatePostDomainDto) {
-        await this.findByIdNonDeletedOrNotFoundFail(id);
+    async updatePostById(id: number, updatePostDto: UpdatePostDomainDto) {
+        const post = await this.findByIdNonDeletedOrNotFoundFail(id);
 
-        let query = `
-            UPDATE public.posts
-            SET
-        `;
+        // let query = `
+        //     UPDATE public.posts
+        //     SET
+        // `;
 
-        const params: (string | number)[] = [];
-        let paramIndex = 1;
-        let hasUpdates = false;
+        // const params: (string | number)[] = [];
+        // let paramIndex = 1;
+        // let hasUpdates = false;
 
-        if (dto.title) {
-            query += `title = $${paramIndex}`;
-            params.push(dto.title);
-            paramIndex++;
-            hasUpdates = true;
-        }
+        // if (dto.title) {
+        //     query += `title = $${paramIndex}`;
+        //     params.push(dto.title);
+        //     paramIndex++;
+        //     hasUpdates = true;
+        // }
 
-        if (dto.shortDescription) {
-            if (hasUpdates) {
-                query += `, `;
-            }
-            query += `short_description = $${paramIndex}`;
-            params.push(dto.shortDescription);
-            paramIndex++;
-            hasUpdates = true;
-        }
+        // if (dto.shortDescription) {
+        //     if (hasUpdates) {
+        //         query += `, `;
+        //     }
+        //     query += `short_description = $${paramIndex}`;
+        //     params.push(dto.shortDescription);
+        //     paramIndex++;
+        //     hasUpdates = true;
+        // }
 
-        if (dto.content) {
-            if (hasUpdates) {
-                query += `, `;
-            }
-            query += `content = $${paramIndex}`;
-            params.push(dto.content);
-            paramIndex++;
-            hasUpdates = true;
-        }
+        // if (dto.content) {
+        //     if (hasUpdates) {
+        //         query += `, `;
+        //     }
+        //     query += `content = $${paramIndex}`;
+        //     params.push(dto.content);
+        //     paramIndex++;
+        //     hasUpdates = true;
+        // }
 
-        query += ` WHERE id = $${paramIndex}`;
-        params.push(id);
+        // query += ` WHERE id = $${paramIndex}`;
+        // params.push(id);
 
-        if (hasUpdates) {
-            await this.dataSource.query(query, params);
-        }
+        // if (hasUpdates) {
+        //     await this.dataSource.query(query, params);
+        // }
+
+        const updatedPost = this.postsRepository.create({
+            ...post,
+            ...updatePostDto,
+        });
+
+        await this.postsRepository.save(updatedPost);
+
+        return updatedPost.id;
     }
 
     async makeDeletedAllByBlogId(blogId: number): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE public.posts
-                SET deleted_at = NOW()
-                WHERE blog_id = $1
-                `,
-            [blogId],
-        );
+        // await this.dataSource.query(
+        //     `
+        //         UPDATE public.posts
+        //         SET deleted_at = NOW()
+        //         WHERE blog_id = $1
+        //         `,
+        //     [blogId],
+        // );
+
+        await this.postsRepository.softDelete({ blog_id: blogId });
     }
 
     async makePostDeletedById(id: number): Promise<void> {
@@ -140,13 +152,14 @@ export class PostsRepository {
         if (post.deleted_at) {
             throw NotFoundDomainException.create('Entity is already deleted');
         }
-        await this.dataSource.query(
-            `
-                UPDATE public.posts
-                SET deleted_at = NOW()
-                WHERE id = $1
-                `,
-            [id],
-        );
+        await this.postsRepository.softDelete({ id });
+        // await this.dataSource.query(
+        //     `
+        //         UPDATE public.posts
+        //         SET deleted_at = NOW()
+        //         WHERE id = $1
+        //         `,
+        //     [id],
+        // );
     }
 }

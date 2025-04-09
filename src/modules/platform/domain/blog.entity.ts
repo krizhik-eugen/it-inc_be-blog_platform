@@ -1,3 +1,7 @@
+import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity } from '../../../core/entities/base.entity';
+import { PostEntity } from './post.entity';
+
 export const blogConstraints = {
     name: {
         maxLength: 15,
@@ -13,16 +17,46 @@ export const blogConstraints = {
     },
 };
 
-export class Blog {
-    id: number;
-    name: string;
-    description: string;
-    website_url: string;
-    is_membership: boolean;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
+@Entity('blogs')
+export class BlogEntity extends BaseEntity {
+    @Column({
+        length: 255,
+    })
+    public name: string;
+
+    @Column({
+        type: 'text',
+    })
+    public description: string;
+
+    @Column({
+        length: 255,
+    })
+    public website_url: string;
+
+    @Column({
+        type: 'boolean',
+        default: false,
+    })
+    public is_membership: boolean;
+
+    @OneToMany(() => PostEntity, (post) => post.blog, {
+        onDelete: 'CASCADE',
+        onUpdate: 'NO ACTION',
+    })
+    public posts: PostEntity[];
 }
+
+// export class Blog {
+//     id: number;
+//     name: string;
+//     description: string;
+//     website_url: string;
+//     is_membership: boolean;
+//     created_at: Date;
+//     updated_at: Date;
+//     deleted_at: Date | null;
+// }
 
 // Postgres blogs table:
 

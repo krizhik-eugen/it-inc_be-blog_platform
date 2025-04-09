@@ -1,3 +1,7 @@
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { BaseEntity } from '../../../core/entities/base.entity';
+import { BlogEntity } from './blog.entity';
+
 export const postConstraints = {
     title: {
         maxLength: 30,
@@ -10,19 +14,53 @@ export const postConstraints = {
     },
 };
 
-export class Post {
-    id: number;
-    title: string;
-    short_description: string;
-    content: string;
-    blog_id: number;
-    blog_name: string;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
+@Entity('posts')
+export class PostEntity extends BaseEntity {
+    @Column({
+        length: 255,
+    })
+    public title: string;
+
+    @Column({
+        length: 255,
+    })
+    public short_description: string;
+
+    @Column({
+        type: 'text',
+    })
+    public content: string;
+
+    @Column({
+        type: 'integer',
+    })
+    public blog_id: number;
+
+    @Column({
+        length: 255,
+    })
+    public blog_name: string;
+
+    @ManyToOne(() => BlogEntity, (blog) => blog.posts, {
+        onDelete: 'CASCADE',
+        onUpdate: 'NO ACTION',
+    })
+    public blog: BlogEntity;
 }
 
-export class PostWithLikesCount extends Post {
+// export class Post {
+//     id: number;
+//     title: string;
+//     short_description: string;
+//     content: string;
+//     blog_id: number;
+//     blog_name: string;
+//     created_at: Date;
+//     updated_at: Date;
+//     deleted_at: Date | null;
+// }
+
+export class PostWithLikesCount extends PostEntity {
     likes_count: number;
     dislikes_count: number;
 }

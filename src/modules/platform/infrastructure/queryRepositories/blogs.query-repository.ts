@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PaginatedBlogsViewDto, BlogViewDto } from '../../api/dto/view-dto';
 import { NotFoundDomainException } from '../../../../core/exceptions';
-import { Blog } from '../../domain/blog.entity';
+import { BlogEntity } from '../../domain/blog.entity';
 import {
     BlogsSortBy,
     GetBlogsQueryParams,
@@ -13,7 +13,7 @@ export class BlogsQueryRepository {
     constructor(private dataSource: DataSource) {}
 
     async getByIdOrNotFoundFail(id: number): Promise<BlogViewDto> {
-        const data: Blog[] = await this.dataSource.query(
+        const data: BlogEntity[] = await this.dataSource.query(
             `
                 SELECT * FROM public.blogs
                 WHERE id = $1 AND deleted_at IS NULL
@@ -57,7 +57,7 @@ export class BlogsQueryRepository {
         queryParams.push(query.pageSize, query.calculateSkip());
 
         const data = await this.dataSource.query<
-            (Blog & { total_count: string })[]
+            (BlogEntity & { total_count: string })[]
         >(sqlQuery, queryParams);
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;

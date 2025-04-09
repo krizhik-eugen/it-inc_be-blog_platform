@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginatedViewDto } from '../../../../../core/dto';
-import { Blog } from '../../../domain/blog.entity';
+import { BlogEntity } from '../../../domain/blog.entity';
 
 export class BlogViewDto {
     @ApiProperty()
@@ -19,7 +19,7 @@ export class BlogViewDto {
     })
     isMembership: boolean;
 
-    static mapToView(blog: Blog): BlogViewDto {
+    static mapToView(blog: BlogEntity): BlogViewDto {
         const dto = new BlogViewDto();
 
         dto.id = blog.id.toString();

@@ -9,7 +9,7 @@ import { LikeParentType, LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
 import { BlogsRepository } from '../repositories/blogs.repository';
 import { PostsRepository } from '../repositories/posts.repository';
-import { Post, PostWithLikesCount } from '../../domain/post.entity';
+import { PostEntity, PostWithLikesCount } from '../../domain/post.entity';
 import { LikesRepository } from '../repositories/likes.repository';
 
 @Injectable()
@@ -101,7 +101,7 @@ export class PostsQueryRepository {
         queryParams.push(query.pageSize, query.calculateSkip());
 
         const data = await this.dataSource.query<
-            (Post & { total_count: string })[]
+            (PostEntity & { total_count: string })[]
         >(sqlQuery, queryParams);
 
         const totalCount = data.length ? parseInt(data[0].total_count) : 0;
