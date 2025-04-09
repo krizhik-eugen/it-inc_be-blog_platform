@@ -103,12 +103,24 @@ export class BlogsRepository {
         // if (hasUpdates) {
         //     await this.dataSource.query(query, params);
         // }
-        const updatedBlog = this.blogsRepo.create({
-            ...blog,
-            ...updateBlogDto,
-        });
 
-        await this.blogsRepo.save(updatedBlog);
+        const updatedBlog = { ...blog };
+
+        if (updateBlogDto.name) {
+            updatedBlog.name = updateBlogDto.name;
+        }
+
+        if (updateBlogDto.description) {
+            updatedBlog.description = updateBlogDto.description;
+        }
+
+        if (updateBlogDto.websiteUrl) {
+            updatedBlog.website_url = updateBlogDto.websiteUrl;
+        }
+
+        const updatedBlogEntity = this.blogsRepo.create(updatedBlog);
+
+        await this.blogsRepo.save(updatedBlogEntity);
     }
 
     async makeBlogDeletedById(id: number): Promise<void> {

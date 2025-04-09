@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../core/entities/base.entity';
 import { BlogEntity } from './blog.entity';
 
@@ -44,6 +44,9 @@ export class PostEntity extends BaseEntity {
     @ManyToOne(() => BlogEntity, (blog) => blog.posts, {
         onDelete: 'CASCADE',
         onUpdate: 'NO ACTION',
+    })
+    @JoinColumn({
+        name: 'blog_id',
     })
     public blog: BlogEntity;
 }
