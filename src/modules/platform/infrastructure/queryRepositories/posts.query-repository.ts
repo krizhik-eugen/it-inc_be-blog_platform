@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import {
     GetPostsQueryParams,
     PostsSortBy,
@@ -11,15 +11,19 @@ import { BlogsRepository } from '../repositories/blogs.repository';
 import { PostsRepository } from '../repositories/posts.repository';
 import { PostEntity, PostWithLikesCount } from '../../domain/post.entity';
 import { LikesRepository } from '../repositories/likes.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { NotFoundDomainException } from '../../../../core/exceptions/domain-exceptions';
+import { BlogEntity } from '../../domain/blog.entity';
 
 @Injectable()
 export class PostsQueryRepository {
     constructor(
+        @InjectRepository(PostEntity)
+        private postsRepo: Repository<PostEntity>,
+        @InjectRepository(BlogEntity)
+        private blogsRepo: Repository<BlogEntity>,
         private likesQueryRepository: LikesQueryRepository,
         private likesRepository: LikesRepository,
-        private blogsRepository: BlogsRepository,
-        private postsRepository: PostsRepository,
-        private dataSource: DataSource,
     ) {}
 
     async getByIdOrNotFoundFail({
@@ -29,8 +33,13 @@ export class PostsQueryRepository {
         postId: number;
         userId: number | null;
     }): Promise<PostViewDto> {
-        const post =
-            await this.postsRepository.findByIdNonDeletedOrNotFoundFail(postId);
+        const post = await this.postsRepo.findOne({
+            where: { id: postId, deleted_at: IsNull() },
+        });
+
+        if (!post) {
+            throw NotFoundDomainException.create('Post not found');
+        }
 
         let likeStatus: LikeStatus = LikeStatus.None;
         const postWithLikes: PostWithLikesCount = {
@@ -76,39 +85,33 @@ export class PostsQueryRepository {
         userId: number | null;
     }): Promise<PaginatedPostsViewDto> {
         if (blogId) {
-            await this.blogsRepository.findByIdNonDeletedOrNotFoundFail(blogId);
+            const blog = await this.blogsRepo.findOne({
+                where: { id: blogId, deleted_at: IsNull() },
+            });
+
+            if (!blog) {
+                throw NotFoundDomainException.create('Blog not found');
+            }
         }
 
-        const queryParams: (string | number)[] = [];
-        let paramIndex = 1;
-
-        let filterCondition = `deleted_at IS NULL`;
+        const qb = this.postsRepo
+            .createQueryBuilder('posts')
+            .where('posts.deleted_at IS NULL');
 
         if (blogId) {
-            filterCondition += ` AND blog_id = $${paramIndex}`;
-            queryParams.push(blogId);
-            paramIndex++;
+            qb.andWhere('posts.blog_id = :blogId', { blogId });
         }
 
-        const sqlQuery = `
-            SELECT p.*, COUNT(*) OVER() as total_count
-            FROM public.posts p
-            WHERE ${filterCondition}
-            ORDER BY ${this.sanitizeSortField(query.sortBy)} ${query.sortDirection}
-            LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-        `;
+        const sortBy = this.sanitizeSortField(query.sortBy);
+        qb.orderBy(sortBy, query.sortDirection.toUpperCase() as 'ASC' | 'DESC');
 
-        queryParams.push(query.pageSize, query.calculateSkip());
+        qb.skip(query.calculateSkip()).take(query.pageSize);
 
-        const data = await this.dataSource.query<
-            (PostEntity & { total_count: string })[]
-        >(sqlQuery, queryParams);
-
-        const totalCount = data.length ? parseInt(data[0].total_count) : 0;
+        const [posts, totalCount] = await qb.getManyAndCount();
 
         const postsIds: number[] = [];
 
-        const mappedPosts = data.map((post) => {
+        const mappedPosts = posts.map((post) => {
             const postWithLikes: PostWithLikesCount = {
                 ...post,
                 likes_count: 0,

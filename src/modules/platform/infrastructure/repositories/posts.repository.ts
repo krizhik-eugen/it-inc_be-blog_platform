@@ -10,12 +10,12 @@ import { UpdatePostDomainDto } from '../../domain/dto/update';
 export class PostsRepository {
     constructor(
         @InjectRepository(PostEntity)
-        private postsRepository: Repository<PostEntity>,
+        private postsRepo: Repository<PostEntity>,
         private dataSource: DataSource,
     ) {}
 
     async findById(id: number): Promise<PostEntity | null> {
-        return this.postsRepository.findOne({
+        return this.postsRepo.findOne({
             where: { id },
         });
     }
@@ -31,7 +31,7 @@ export class PostsRepository {
     }
 
     async findByIdNonDeletedOrNotFoundFail(id: number): Promise<PostEntity> {
-        const post = await this.postsRepository.findOne({
+        const post = await this.postsRepo.findOne({
             where: { id, deleted_at: IsNull() },
         });
 
@@ -42,7 +42,7 @@ export class PostsRepository {
     }
 
     async findAllByBlogIdNonDeleted(blogId: number): Promise<PostEntity[]> {
-        return this.postsRepository.find({
+        return this.postsRepo.find({
             where: { blog_id: blogId, deleted_at: IsNull() },
         });
     }
@@ -65,7 +65,7 @@ export class PostsRepository {
 
         // return data[0].id;
 
-        const postEntity = this.postsRepository.create({
+        const postEntity = this.postsRepo.create({
             title: post.title,
             short_description: post.shortDescription,
             content: post.content,
@@ -73,7 +73,7 @@ export class PostsRepository {
             blog_name: post.blogName,
         });
 
-        await this.postsRepository.save(postEntity);
+        await this.postsRepo.save(postEntity);
 
         return postEntity.id;
     }
@@ -124,12 +124,12 @@ export class PostsRepository {
         //     await this.dataSource.query(query, params);
         // }
 
-        const updatedPost = this.postsRepository.create({
+        const updatedPost = this.postsRepo.create({
             ...post,
             ...updatePostDto,
         });
 
-        await this.postsRepository.save(updatedPost);
+        await this.postsRepo.save(updatedPost);
 
         return updatedPost.id;
     }
@@ -144,7 +144,7 @@ export class PostsRepository {
         //     [blogId],
         // );
 
-        await this.postsRepository.softDelete({ blog_id: blogId });
+        await this.postsRepo.softDelete({ blog_id: blogId });
     }
 
     async makePostDeletedById(id: number): Promise<void> {
@@ -152,7 +152,7 @@ export class PostsRepository {
         if (post.deleted_at) {
             throw NotFoundDomainException.create('Entity is already deleted');
         }
-        await this.postsRepository.softDelete({ id });
+        await this.postsRepo.softDelete({ id });
         // await this.dataSource.query(
         //     `
         //         UPDATE public.posts

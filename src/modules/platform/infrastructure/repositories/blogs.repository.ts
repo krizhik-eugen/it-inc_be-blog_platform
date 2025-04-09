@@ -10,11 +10,11 @@ import { UpdateBlogDomainDto } from '../../domain/dto/update';
 export class BlogsRepository {
     constructor(
         @InjectRepository(BlogEntity)
-        private blogsRepository: Repository<BlogEntity>,
+        private blogsRepo: Repository<BlogEntity>,
     ) {}
 
     async findById(id: number): Promise<BlogEntity | null> {
-        return this.blogsRepository.findOne({ where: { id } });
+        return this.blogsRepo.findOne({ where: { id } });
     }
 
     async findByIdOrNotFoundFail(id: number): Promise<BlogEntity> {
@@ -28,7 +28,7 @@ export class BlogsRepository {
     }
 
     async findByIdNonDeleted(id: number): Promise<BlogEntity | null> {
-        return this.blogsRepository.findOne({
+        return this.blogsRepo.findOne({
             where: { id, deleted_at: IsNull() },
         });
     }
@@ -44,13 +44,13 @@ export class BlogsRepository {
     }
 
     async addNewBlog(newBlogDto: CreateBlogDomainDto): Promise<number> {
-        const newBlog = this.blogsRepository.create({
+        const newBlog = this.blogsRepo.create({
             name: newBlogDto.name,
             description: newBlogDto.description,
             website_url: newBlogDto.websiteUrl,
         });
 
-        await this.blogsRepository.save(newBlog);
+        await this.blogsRepo.save(newBlog);
 
         return newBlog.id;
     }
@@ -103,12 +103,12 @@ export class BlogsRepository {
         // if (hasUpdates) {
         //     await this.dataSource.query(query, params);
         // }
-        const updatedBlog = this.blogsRepository.create({
+        const updatedBlog = this.blogsRepo.create({
             ...blog,
             ...updateBlogDto,
         });
 
-        await this.blogsRepository.save(updatedBlog);
+        await this.blogsRepo.save(updatedBlog);
     }
 
     async makeBlogDeletedById(id: number): Promise<void> {
@@ -116,6 +116,6 @@ export class BlogsRepository {
         if (blog.deleted_at) {
             throw NotFoundDomainException.create('Entity is already deleted');
         }
-        await this.blogsRepository.softDelete(id);
+        await this.blogsRepo.softDelete(id);
     }
 }
