@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../../core/entities/base.entity';
 import { BlogEntity } from './blog.entity';
+import { CommentEntity } from './comment.entity';
 
 export const postConstraints = {
     title: {
@@ -52,6 +53,9 @@ export class PostEntity extends BaseEntity {
         name: 'blog_id',
     })
     public blog: BlogEntity;
+
+    @OneToMany(() => CommentEntity, (comment) => comment.post)
+    public comments: CommentEntity[];
 }
 
 // export class Post {

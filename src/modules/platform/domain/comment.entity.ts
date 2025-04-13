@@ -1,5 +1,7 @@
-import { Column } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../core/entities/base.entity';
+import { PostEntity } from './post.entity';
+import { UserEntity } from 'src/modules/accounts/domain/user.entity';
 export const commentConstraints = {
     content: {
         minLength: 20,
@@ -9,6 +11,7 @@ export const commentConstraints = {
     },
 };
 
+@Entity('comments')
 export class CommentEntity extends BaseEntity {
     @Column({
         type: 'integer',
@@ -27,23 +30,41 @@ export class CommentEntity extends BaseEntity {
         nullable: false,
     })
     public content: string;
+
+    @ManyToOne(() => UserEntity, (user) => user.comments, {
+        onDelete: 'CASCADE',
+        onUpdate: 'NO ACTION',
+    })
+    @JoinColumn({
+        name: 'user_id',
+    })
+    public user: UserEntity;
+
+    @ManyToOne(() => PostEntity, (post) => post.comments, {
+        onDelete: 'CASCADE',
+        onUpdate: 'NO ACTION',
+    })
+    @JoinColumn({
+        name: 'post_id',
+    })
+    public post: PostEntity;
 }
 
-export class Comment {
-    id: number;
-    post_id: number;
-    user_id: number;
-    content: string;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
-}
+// export class Comment {
+//     id: number;
+//     post_id: number;
+//     user_id: number;
+//     content: string;
+//     created_at: Date;
+//     updated_at: Date;
+//     deleted_at: Date | null;
+// }
 
-export class CommentWithUserLogin extends Comment {
+export class CommentWithUserLogin extends CommentEntity {
     user_login: string;
 }
 
-export class CommentWithUserLoginAndLikesCount extends Comment {
+export class CommentWithUserLoginAndLikesCount extends CommentEntity {
     user_login: string;
     likes_count: number;
     dislikes_count: number;

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Any, DataSource, EntityManager, IsNull, Repository } from 'typeorm';
+import { DataSource, EntityManager, In, IsNull, Repository } from 'typeorm';
 import { CreateUserDomainDto } from '../../domain/dto/create';
 import { UserEntity } from '../../domain/user.entity';
 import { NotFoundDomainException } from '../../../../core/exceptions';
@@ -92,7 +92,7 @@ export class UsersRepository {
 
     async findByIds(ids: number[]): Promise<UserEntity[]> {
         const result = await this.usersRepo.findBy({
-            id: Any(ids),
+            id: In(ids),
             deleted_at: IsNull(),
         });
         return result;

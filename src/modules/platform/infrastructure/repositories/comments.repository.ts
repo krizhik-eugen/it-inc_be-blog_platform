@@ -1,37 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { CreateCommentDomainDto } from '../../domain/dto/create';
-import { CommentWithUserLogin } from '../../domain/comment.entity';
+import {
+    CommentEntity,
+    CommentWithUserLogin,
+} from '../../domain/comment.entity';
 import { UpdateCommentDomainDto } from '../../domain/dto/update';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CommentsRepository {
-    constructor(private dataSource: DataSource) {}
+    constructor(
+        @InjectRepository(CommentEntity)
+        private commentsRepo: Repository<CommentEntity>,
+    ) {}
     async addNewComment(comment: CreateCommentDomainDto): Promise<number> {
-        const data: { id: number }[] = await this.dataSource.query(
-            `
-                INSERT INTO public.comments (post_id, user_id, content)
-                VALUES ($1, $2, $3)
-                RETURNING id
-                `,
-            [comment.postId, comment.userId, comment.content],
-        );
+        const newComment = this.commentsRepo.create({
+            post_id: comment.postId,
+            user_id: comment.userId,
+            content: comment.content,
+        });
 
-        return data[0].id;
+        await this.commentsRepo.save(newComment);
+
+        return newComment.id;
     }
 
     async findByIdNonDeleted(id: number): Promise<CommentWithUserLogin | null> {
-        const data: CommentWithUserLogin[] = await this.dataSource.query(
-            `
-                SELECT c.* , u.login AS user_login FROM public.comments c 
-                JOIN public.users u ON c.user_id = u.id
-                WHERE c.id = $1 AND c.deleted_at IS NULL    
-                `,
-            [id],
-        );
+        const comment = await this.commentsRepo
+            .createQueryBuilder('c')
+            .leftJoin('c.user', 'u')
+            .addSelect(['u.login'])
+            .where('c.id = :id', { id })
+            .andWhere('c.deleted_at IS NULL')
+            .getOne();
 
-        return data[0] || null;
+        if (!comment) return null;
+        const result: CommentWithUserLogin = {
+            ...comment,
+            user_login: comment.user?.login,
+        };
+
+        return result;
     }
 
     async findByIdNonDeletedOrNotFoundFail(
@@ -47,77 +58,58 @@ export class CommentsRepository {
     }
 
     async findAllByPostIdNonDeleted(
-        postId: string,
+        postId: number,
     ): Promise<CommentWithUserLogin[]> {
-        const data: CommentWithUserLogin[] = await this.dataSource.query(
-            `
-                SELECT c.* , u.login AS user_login FROM public.comments c 
-                JOIN public.users u ON c.user_id = u.id
-                WHERE c.post_id = $1 AND c.deleted_at IS NULL
-                `,
-            [postId],
-        );
+        const comments = await this.commentsRepo
+            .createQueryBuilder('c')
+            .leftJoin('c.user', 'u')
+            .addSelect(['u.login'])
+            .where('c.post_id = :postId', { postId })
+            .andWhere('c.deleted_at IS NULL')
+            .getMany();
 
-        return data;
+        const result: CommentWithUserLogin[] = comments.map((comment) => ({
+            ...comment,
+            user_login: comment.user?.login,
+        }));
+
+        return result;
     }
 
     async findAllByPostIdsNonDeleted(
         postIds: number[],
     ): Promise<CommentWithUserLogin[]> {
-        const data: CommentWithUserLogin[] = await this.dataSource.query(
-            `
-                SELECT c.* , u.login AS user_login FROM public.comments c 
-                JOIN public.users u ON c.user_id = u.id
-                WHERE c.post_id = ANY($1) AND c.deleted_at IS NULL
-                `,
-            [postIds],
-        );
+        const comments = await this.commentsRepo
+            .createQueryBuilder('c')
+            .leftJoin('c.user', 'u')
+            .addSelect(['u.login'])
+            .where('c.post_id = ANY(:postIds)', { postIds })
+            .andWhere('c.deleted_at IS NULL')
+            .getMany();
 
-        return data;
+        const result: CommentWithUserLogin[] = comments.map((comment) => ({
+            ...comment,
+            user_login: comment.user?.login,
+        }));
+
+        return result;
     }
 
     async updateCommentById(id: number, dto: UpdateCommentDomainDto) {
         await this.findByIdNonDeletedOrNotFoundFail(id);
 
-        await this.dataSource.query(
-            `
-                UPDATE public.comments
-                SET content = $1 WHERE id = $2
-            `,
-            [dto.content, id],
-        );
+        await this.commentsRepo.update(id, dto);
     }
 
     async makeDeleted(id: number): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE public.comments
-                SET deleted_at = NOW()
-                WHERE id = $1
-                `,
-            [id],
-        );
+        await this.commentsRepo.softDelete(id);
     }
 
     async makeDeletedAllByPostId(postId: number): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE public.comments
-                SET deleted_at = NOW()
-                WHERE post_id = $1
-                `,
-            [postId],
-        );
+        await this.commentsRepo.softDelete({ post_id: postId });
     }
 
     async makeDeletedAllByPostIds(postIds: number[]): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE public.comments
-                SET deleted_at = NOW()
-                WHERE post_id = ANY($1)
-                `,
-            [postIds],
-        );
+        await this.commentsRepo.softDelete({ post_id: In(postIds) });
     }
 }

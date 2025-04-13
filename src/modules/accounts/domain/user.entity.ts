@@ -1,7 +1,9 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { PasswordRecoveryEntity } from './password-recovery.entity';
 import { EmailConfirmationEntity } from './email-confirmation.entity';
 import { BaseEntity } from '../../../core/entities/base.entity';
+import { SessionEntity } from './session.entity';
+import { CommentEntity } from '../../platform/domain/comment.entity';
 
 export const userLoginConstraints = {
     minLength: 3,
@@ -56,6 +58,12 @@ export class UserEntity extends BaseEntity {
         (passwordRecovery) => passwordRecovery.user,
     )
     public passwordRecoveries: PasswordRecoveryEntity;
+
+    @OneToMany(() => SessionEntity, (session) => session.user)
+    public sessions: SessionEntity[];
+
+    @OneToMany(() => CommentEntity, (comment) => comment.user)
+    public comments: CommentEntity[];
 }
 
 // export class User {

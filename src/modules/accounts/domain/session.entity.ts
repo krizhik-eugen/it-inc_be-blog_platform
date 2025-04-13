@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { BaseEntity } from '../../../core/entities/base.entity';
 
@@ -42,7 +42,7 @@ export class SessionEntity extends BaseEntity {
     })
     public exp: number;
 
-    @OneToOne(() => UserEntity, {
+    @ManyToOne(() => UserEntity, (user) => user.sessions, {
         onDelete: 'CASCADE',
     })
     @JoinColumn({
