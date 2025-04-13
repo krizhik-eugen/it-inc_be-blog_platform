@@ -20,6 +20,7 @@ export const blogConstraints = {
 @Entity('blogs')
 export class BlogEntity extends BaseEntity {
     @Column({
+        type: 'varchar',
         length: 255,
     })
     public name: string;
@@ -30,6 +31,7 @@ export class BlogEntity extends BaseEntity {
     public description: string;
 
     @Column({
+        type: 'varchar',
         length: 255,
     })
     public website_url: string;

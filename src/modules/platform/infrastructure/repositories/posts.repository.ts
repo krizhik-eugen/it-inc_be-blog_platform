@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { PostEntity } from '../../domain/post.entity';
 import { CreatePostDomainDto } from '../../domain/dto/create';
@@ -11,7 +11,6 @@ export class PostsRepository {
     constructor(
         @InjectRepository(PostEntity)
         private postsRepo: Repository<PostEntity>,
-        private dataSource: DataSource,
     ) {}
 
     async findById(id: number): Promise<PostEntity | null> {

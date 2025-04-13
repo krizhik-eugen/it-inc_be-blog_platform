@@ -4,29 +4,42 @@ import { BaseEntity } from '../../../core/entities/base.entity';
 
 @Entity('sessions')
 export class SessionEntity extends BaseEntity {
-    @Column()
+    @Column({
+        type: 'integer',
+        nullable: false,
+    })
     public user_id: number;
 
     @Column({
+        type: 'varchar',
         length: 255,
+        nullable: false,
     })
     public device_id: string;
 
     @Column({
         default: 'Unknown device',
+        type: 'varchar',
         length: 255,
     })
     public device_name: string;
 
     @Column({
+        type: 'varchar',
         length: 45,
     })
     public ip: string;
 
-    @Column()
+    @Column({
+        type: 'bigint',
+        nullable: false,
+    })
     public iat: number;
 
-    @Column()
+    @Column({
+        type: 'bigint',
+        nullable: false,
+    })
     public exp: number;
 
     @OneToOne(() => UserEntity, {

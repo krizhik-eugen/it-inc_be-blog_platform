@@ -17,11 +17,13 @@ export const postConstraints = {
 @Entity('posts')
 export class PostEntity extends BaseEntity {
     @Column({
+        type: 'varchar',
         length: 255,
     })
     public title: string;
 
     @Column({
+        type: 'varchar',
         length: 255,
     })
     public short_description: string;
@@ -37,6 +39,7 @@ export class PostEntity extends BaseEntity {
     public blog_id: number;
 
     @Column({
+        type: 'varchar',
         length: 255,
     })
     public blog_name: string;

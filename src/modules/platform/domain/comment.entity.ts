@@ -1,3 +1,5 @@
+import { Column } from 'typeorm';
+import { BaseEntity } from '../../../core/entities/base.entity';
 export const commentConstraints = {
     content: {
         minLength: 20,
@@ -6,6 +8,26 @@ export const commentConstraints = {
             'Comment content must be between 20 and 300 characters',
     },
 };
+
+export class CommentEntity extends BaseEntity {
+    @Column({
+        type: 'integer',
+        nullable: false,
+    })
+    public post_id: number;
+
+    @Column({
+        type: 'integer',
+        nullable: false,
+    })
+    public user_id: number;
+
+    @Column({
+        type: 'text',
+        nullable: false,
+    })
+    public content: string;
+}
 
 export class Comment {
     id: number;

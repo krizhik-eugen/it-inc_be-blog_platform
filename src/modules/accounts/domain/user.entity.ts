@@ -27,6 +27,7 @@ export const userEmailConstraints = {
 @Entity('users')
 export class UserEntity extends BaseEntity {
     @Column({
+        type: 'varchar',
         length: 255,
         unique: true,
     })
@@ -38,6 +39,7 @@ export class UserEntity extends BaseEntity {
     public password_hash: string;
 
     @Column({
+        type: 'varchar',
         length: 255,
         unique: true,
     })
