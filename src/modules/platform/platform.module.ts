@@ -46,6 +46,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlogEntity } from './domain/blog.entity';
 import { PostEntity } from './domain/post.entity';
 import { CommentEntity } from './domain/comment.entity';
+import { LikeEntity } from './domain/like.entity';
 
 const useCases = [
     CreateBlogUseCase,
@@ -82,7 +83,12 @@ const repositories = [
 @Module({
     imports: [
         AccountsModule,
-        TypeOrmModule.forFeature([BlogEntity, PostEntity, CommentEntity]),
+        TypeOrmModule.forFeature([
+            BlogEntity,
+            PostEntity,
+            CommentEntity,
+            LikeEntity,
+        ]),
     ],
     controllers: [
         BlogsController,

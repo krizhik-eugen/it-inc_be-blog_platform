@@ -1,39 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, In, IsNull, Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { CreateLikeDomainDto } from '../../domain/dto/create';
 import { UpdateLikesCountDto } from '../../dto/update';
-import { Like, LikeParentType, LikeStatus } from '../../domain/like.entity';
+import {
+    LikeEntity,
+    LikeParentType,
+    LikeStatus,
+} from '../../domain/like.entity';
 import { UpdateLikeDomainDto } from '../../domain/dto/update';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class LikesRepository {
-    constructor(private dataSource: DataSource) {}
+    constructor(
+        @InjectRepository(LikeEntity)
+        private likeRepo: Repository<LikeEntity>,
+        private dataSource: DataSource,
+    ) {}
 
     async createLike(dto: CreateLikeDomainDto) {
-        const data: { id: number }[] = await this.dataSource.query(
-            `
-                INSERT INTO public.likes (parent_id, parent_type, user_id, status)
-                VALUES ($1, $2, $3, $4)
-                RETURNING id
-                `,
-            [dto.parentId, dto.parentType, dto.userId, dto.status],
-        );
+        const newLike = this.likeRepo.create({
+            parent_id: dto.parentId,
+            parent_type: dto.parentType,
+            user_id: dto.userId,
+            status: dto.status,
+        });
 
-        return data[0].id;
+        await this.likeRepo.save(newLike);
+
+        return newLike.id;
     }
 
-    async findByIdNonDeleted(id: string): Promise<Like | null> {
-        const data: Like[] = await this.dataSource.query(
-            `
-                SELECT *
-                FROM public.likes
-                WHERE id = $1 AND deleted_at IS NULL
-                `,
-            [id],
-        );
+    async findByIdNonDeleted(id: number): Promise<LikeEntity | null> {
+        const like = await this.likeRepo.findOne({
+            where: { id, deleted_at: IsNull() },
+        });
 
-        return data[0] || null;
+        return like;
     }
 
     async findByUserIdAndParentIdAndTypeNonDeleted({
@@ -44,20 +48,20 @@ export class LikesRepository {
         userId: number;
         parentId: number;
         parentType: LikeParentType;
-    }): Promise<Like | null> {
-        const data: Like[] = await this.dataSource.query(
-            `
-                SELECT *
-                FROM public.likes
-                WHERE user_id = $1 AND parent_id = $2 AND parent_type = $3 AND deleted_at IS NULL
-                `,
-            [userId, parentId, parentType],
-        );
+    }): Promise<LikeEntity | null> {
+        const like = await this.likeRepo.findOne({
+            where: {
+                user_id: userId,
+                parent_id: parentId,
+                parent_type: parentType,
+                deleted_at: IsNull(),
+            },
+        });
 
-        return data[0] || null;
+        return like;
     }
 
-    async findByIdNonDeletedOrNotFoundFail(id: string): Promise<Like> {
+    async findByIdNonDeletedOrNotFoundFail(id: number): Promise<LikeEntity> {
         const like = await this.findByIdNonDeleted(id);
 
         if (!like) {
@@ -102,16 +106,13 @@ export class LikesRepository {
         userId: number;
         parentType: LikeParentType;
     }): Promise<LikeStatus> {
-        const data: Like[] = await this.dataSource.query(
-            `
-                SELECT *
-                FROM public.likes
-                WHERE user_id = $1 AND parent_id = $2 AND parent_type = $3 AND deleted_at IS NULL
-                `,
-            [userId, parentId, parentType],
-        );
+        const like = await this.findByUserIdAndParentIdAndTypeNonDeleted({
+            userId,
+            parentId,
+            parentType,
+        });
 
-        return data[0] ? data[0].status : LikeStatus.None;
+        return like ? like.status : LikeStatus.None;
     }
 
     // async getLikesArray({
@@ -196,24 +197,21 @@ export class LikesRepository {
         parentId: number,
         parentType: LikeParentType,
     ): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE public.likes
-                SET deleted_at = NOW()
-                WHERE parent_id = $1 AND parent_type = $2 AND deleted_at IS NULL
-            `,
-            [parentId, parentType],
-        );
+        await this.likeRepo.softDelete({
+            parent_id: parentId,
+            parent_type: parentType,
+            deleted_at: IsNull(),
+        });
     }
 
     async updateLikeStatusByParentIdAndType(dto: UpdateLikeDomainDto) {
-        await this.dataSource.query(
-            `
-                UPDATE public.likes
-                SET status = $1
-                WHERE parent_id = $2 AND parent_type = $3 AND deleted_at IS NULL
-            `,
-            [dto.status, dto.parentId, dto.parentType],
+        await this.likeRepo.update(
+            {
+                parent_id: dto.parentId,
+                parent_type: dto.parentType,
+                deleted_at: IsNull(),
+            },
+            { status: dto.status },
         );
     }
 
@@ -221,13 +219,10 @@ export class LikesRepository {
         parentIds: number[],
         parentType: LikeParentType,
     ): Promise<void> {
-        await this.dataSource.query(
-            `
-                UPDATE public.likes
-                SET deleted_at = NOW()
-                WHERE parent_id = ANY($1) AND parent_type = $2 AND deleted_at IS NULL
-            `,
-            [parentIds, parentType],
-        );
+        await this.likeRepo.softDelete({
+            parent_id: In(parentIds),
+            parent_type: parentType,
+            deleted_at: IsNull(),
+        });
     }
 }
