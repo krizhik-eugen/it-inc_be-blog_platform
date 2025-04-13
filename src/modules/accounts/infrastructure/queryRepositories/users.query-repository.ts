@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IsNull, Repository } from 'typeorm';
 import {
     PaginatedUsersViewDto,
     MeViewDto,
@@ -11,14 +12,12 @@ import {
     GetUsersQueryParams,
     UsersSortBy,
 } from '../../api/dto/query-params-dto';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersQueryRepository {
     constructor(
         @InjectRepository(UserEntity)
         private readonly usersRepo: Repository<UserEntity>,
-        private dataSource: DataSource,
     ) {}
 
     async getCurrentUserByIdOrNotFoundFail(id: number) {
@@ -111,12 +110,12 @@ export class UsersQueryRepository {
         const searchEmailTerm = query.searchEmailTerm || null;
 
         const qb = this.usersRepo
-            .createQueryBuilder('users')
-            .where('users.deleted_at IS NULL');
+            .createQueryBuilder('u')
+            .where('u.deleted_at IS NULL');
 
         if (searchLoginTerm && searchEmailTerm) {
             qb.andWhere(
-                '(users.login ILIKE :loginTerm OR users.email ILIKE :emailTerm)',
+                '(u.login ILIKE :loginTerm OR u.email ILIKE :emailTerm)',
                 {
                     loginTerm: `%${searchLoginTerm}%`,
                     emailTerm: `%${searchEmailTerm}%`,
@@ -124,13 +123,13 @@ export class UsersQueryRepository {
             );
         } else {
             if (searchLoginTerm) {
-                qb.andWhere('users.login ILIKE :loginTerm', {
+                qb.andWhere('u.login ILIKE :loginTerm', {
                     loginTerm: `%${searchLoginTerm}%`,
                 });
             }
 
             if (searchEmailTerm) {
-                qb.andWhere('users.email ILIKE :emailTerm', {
+                qb.andWhere('u.email ILIKE :emailTerm', {
                     emailTerm: `%${searchEmailTerm}%`,
                 });
             }
@@ -138,7 +137,7 @@ export class UsersQueryRepository {
 
         const sortField = this.sanitizeSortField(query.sortBy);
         qb.orderBy(
-            `users.${sortField}`,
+            `u.${sortField}`,
             query.sortDirection.toUpperCase() as 'ASC' | 'DESC',
         );
 
