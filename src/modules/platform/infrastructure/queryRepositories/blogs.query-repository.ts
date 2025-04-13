@@ -80,11 +80,11 @@ export class BlogsQueryRepository {
             : null;
 
         const qb = this.blogsRepo
-            .createQueryBuilder('blogs')
-            .where('blogs.deleted_at IS NULL');
+            .createQueryBuilder('b')
+            .where('b.deleted_at IS NULL');
 
         if (searchNameTerm) {
-            qb.andWhere('blogs.name ILIKE :nameTerm', {
+            qb.andWhere('b.name ILIKE :nameTerm', {
                 nameTerm: `%${searchNameTerm}%`,
             });
         }

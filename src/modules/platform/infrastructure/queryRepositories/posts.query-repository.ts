@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import {
     GetPostsQueryParams,
     PostsSortBy,
@@ -7,8 +7,6 @@ import {
 import { PaginatedPostsViewDto, PostViewDto } from '../../api/dto/view-dto';
 import { LikeParentType, LikeStatus } from '../../domain/like.entity';
 import { LikesQueryRepository } from './likes.query-repository';
-import { BlogsRepository } from '../repositories/blogs.repository';
-import { PostsRepository } from '../repositories/posts.repository';
 import { PostEntity, PostWithLikesCount } from '../../domain/post.entity';
 import { LikesRepository } from '../repositories/likes.repository';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -95,11 +93,11 @@ export class PostsQueryRepository {
         }
 
         const qb = this.postsRepo
-            .createQueryBuilder('posts')
-            .where('posts.deleted_at IS NULL');
+            .createQueryBuilder('p')
+            .where('p.deleted_at IS NULL');
 
         if (blogId) {
-            qb.andWhere('posts.blog_id = :blogId', { blogId });
+            qb.andWhere('p.blog_id = :blogId', { blogId });
         }
 
         const sortBy = this.sanitizeSortField(query.sortBy);

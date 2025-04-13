@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { NotFoundDomainException } from '../../../../core/exceptions';
 import { LikeParentType, LikeStatus } from '../../domain/like.entity';
 import { PostsRepository } from '../repositories/posts.repository';
@@ -122,6 +122,8 @@ export class CommentsQueryRepository {
                 `c.${sortField}`,
                 query.sortDirection.toUpperCase() as 'ASC' | 'DESC',
             )
+            .skip(query.calculateSkip())
+            .take(query.pageSize)
             .getManyAndCount();
 
         const commentsIds = comments.map((comment) => comment.id);
