@@ -92,7 +92,7 @@ export class BlogsQueryRepository {
         const sortBy = this.sanitizeSortField(query.sortBy);
 
         qb.orderBy(
-            `blogs.${sortBy}`,
+            `b.${sortBy}`,
             query.sortDirection.toUpperCase() as 'ASC' | 'DESC',
         );
 
