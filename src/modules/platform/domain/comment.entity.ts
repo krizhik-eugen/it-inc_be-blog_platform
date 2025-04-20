@@ -1,7 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../core/entities/base.entity';
 import { PostEntity } from './post.entity';
-import { UserEntity } from 'src/modules/accounts/domain/user.entity';
+import { UserEntity } from '../../accounts/domain/user.entity';
+
 export const commentConstraints = {
     content: {
         minLength: 20,
