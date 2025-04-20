@@ -47,12 +47,6 @@ export class UserEntity extends BaseEntity {
     })
     public email: string;
 
-    @Column({
-        type: 'varchar',
-        length: 255,
-    })
-    public name: string;
-
     @OneToOne(
         () => EmailConfirmationEntity,
         (emailConfirmation) => emailConfirmation.user,
