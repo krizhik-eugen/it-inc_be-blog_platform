@@ -55,6 +55,7 @@ const imports = [
                     // database: coreConfig.pgDBName,
                     autoLoadEntities: true,
                     synchronize: false,
+                    logging: true,
                 };
             },
             inject: [CoreConfig],
