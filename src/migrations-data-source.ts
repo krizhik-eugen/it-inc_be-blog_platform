@@ -4,10 +4,10 @@ config({
     path: envFilePaths,
 });
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { options } from './db/options';
 
 const migrationOptions: DataSourceOptions = {
-    ...options,
+    type: 'postgres',
+    url: process.env.POSTGRES_URL,
     migrations: [__dirname + '/migrations/*.ts'],
     entities: ['src/**/*.entity.ts'],
 } as DataSourceOptions;

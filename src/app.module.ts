@@ -48,11 +48,6 @@ const imports = [
                 return {
                     type: 'postgres',
                     url: coreConfig.postgresURL,
-                    // host: coreConfig.pgHost,
-                    // port: 5432,
-                    // username: coreConfig.pgDBLogin,
-                    // password: coreConfig.pgDBPassword,
-                    // database: coreConfig.pgDBName,
                     autoLoadEntities: true,
                     synchronize: false,
                     logging: true,
